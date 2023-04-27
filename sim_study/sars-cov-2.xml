@@ -1,0 +1,70 @@
+<beast version='2.0'
+  namespace='master:master.model:master.steppers:master.conditions:master.postprocessors:master.outputs'>
+
+  <!-- duration of infection is supposed to be 5 days. 
+       The become uninfectious rate is 365.25 / 10  years^-1, and 
+       this is the sum of Death and Sampling. Sampling proportion
+       is 0.8:
+       sampling_prop = 0.8
+       become_uninfectious_rate = 36.525
+       reproductive_number = 2.5
+
+       sampling_rate = 36.525 * 0.8
+       sampling_rate = 29.22
+       death_rate =  36.525 - 29.22 = 7.305
+       
+       birth_rate_1 = 2 * 36.525 = 73.05
+       
+       outbreak_time= 0.16 years change_time
+      -->
+
+  <run spec='InheritanceTrajectory'
+    samplePopulationSizes="true"
+    verbosity="2"
+    simulationTime="0.16">
+
+    <model spec='Model' id='model'>
+      <population spec='Population' populationName='I' id='I' />
+      <population spec='Population' populationName='R' id='R' />
+      <population spec="Population" populationName="I_sampled" id="I_sampled" />
+      <reaction spec='Reaction' reactionName="Birth" rate="73.05"> 
+        I -> I + I 
+      </reaction>
+      <reaction spec='Reaction' reactionName="Death" rate="7.305"> 
+        I -> R
+      </reaction>
+      <reaction spec="Reaction" reactionName="Sampling" rate="29.22">
+        I -> I_sampled
+      </reaction>
+    </model>
+
+    <initialState spec='InitState'>
+      <lineageSeed spec='Individual' population='@I' />
+      <populationSize spec='PopulationSize' population='@R' size='0' />
+      <populationSize spec="PopulationSize" population="@I_sampled" size="0" />
+    </initialState>
+
+    <populationEndCondition spec='PopulationEndCondition'
+      population='@I' threshold="0" exceedCondition="false"
+      isRejection="true" />
+
+    <!--populationEndCondition
+    spec='PopulationEndCondition'
+				threshold="200" population='@I_sampled'
+				isRejection="false"/-->
+
+    <postSimCondition spec="LeafCountPostSimCondition"
+      nLeaves="20" exact="false"
+      exceedCondition="true" />
+    <!--postSimCondition spec="LeafCountPostSimCondition"
+      nLeaves="500" exact="false"
+      exceedCondition="false" /-->
+
+
+    <inheritancePostProcessor spec="LineageFilter" reactionName="Sampling" />
+
+    <output spec='NewickOutput' fileName="sars-cov-2_$(ID).newick.tree" />
+    <!-- <output spec="NexusOutput" fileName="BD_h1n1.nexus.tree"/> -->
+    <!-- <output spec='JsonOutput' fileName="sars-cov-2_$(ID).json" /> -->
+  </run>
+</beast>
