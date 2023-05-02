@@ -17,7 +17,7 @@
     :feast.fileio" 
     required="" version="2.6">
 
-<alignment spec='feast.fileio.AlignmentFromFasta' fileName="h1n1.fasta" id="alignment"/>
+<alignment spec='feast.fileio.AlignmentFromFasta' fileName="h1n1_$(ID).fasta" id="alignment"/>
     
     <map name="Uniform" >beast.math.distributions.Uniform</map>
     <map name="Exponential" >beast.math.distributions.Exponential</map>
@@ -29,7 +29,7 @@
     <map name="prior" >beast.math.distributions.Prior</map>
     <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
     <map name="OneOnX" >beast.math.distributions.OneOnX</map>
-    <run id="mcmc" spec="MCMC" chainLength="50000000">
+    <run id="mcmc" spec="MCMC" chainLength="10000000">
         <state id="state" spec="State" storeEvery="5000">
         
             <tree id="Tree" spec="beast.evolution.tree.Tree" name="stateNode">
@@ -152,7 +152,7 @@
         <operator id="samplingProportionScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@samplingProportion_BDSKY_Serial" weight="10.0"/>
         <operator id="origScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@origin_BDSKY_Serial" weight="1.0"/>
 
-        <logger id="tracelog" spec="Logger" fileName="h1n1-$(date-resolution).log" logEvery="5000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <logger id="tracelog" spec="Logger" fileName="h1n1-$(date-resolution)_$(ID).log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
@@ -165,7 +165,6 @@
             <log idref="origin_BDSKY_Serial"/>
             <log idref="reproductiveNumber_BDSKY_Serial"/>
             <log idref="samplingProportion_BDSKY_Serial"/>
-            <log idref="R0_changeTime"/>
         </logger>
 
         <logger id="screenlog" spec="Logger" logEvery="10000">
@@ -173,7 +172,7 @@
             <log idref="likelihood"/>
             <log idref="prior"/>
         </logger>
-        <logger id="treelog" spec="Logger" fileName="h1n1-$(date-resolution).trees" logEvery="5000" mode="tree">
+        <logger id="treelog" spec="Logger" fileName="h1n1-$(date-resolution)_$(ID).trees" logEvery="1000" mode="tree">
             <log id="TreeWithMetaDataLogger" spec="beast.evolution.tree.TreeWithMetaDataLogger" branchratemodel="@StrictClock" tree="@Tree"/>
         </logger>
         <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>

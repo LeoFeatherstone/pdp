@@ -65,6 +65,6 @@
 
     <output spec='NewickOutput' fileName="h1n1_$(ID).newick.tree" />
     <!-- <output spec="NexusOutput" fileName="BD_h1n1.nexus.tree"/> -->
-    <output spec='JsonOutput' fileName="h1n1_$(ID).json" />
+    <!-- <output spec='JsonOutput' fileName="h1n1_$(ID).json" /> -->
   </run>
 </beast>

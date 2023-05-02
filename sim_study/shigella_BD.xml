@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.base.evolution.alignment:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="BEAST.base v2.7.4:BDSKY v1.5.0" version="2.7">
 
  
-    <alignment spec='feast.fileio.AlignmentFromFasta' fileName="shigella.fasta" id="snp-alignment"/>
+    <alignment spec='feast.fileio.AlignmentFromFasta' fileName="shigella_$(ID).fasta" id="snp-alignment"/>
     <data id='alignment' spec='FilteredAlignment' filter='-' data='@snp-alignment' constantSiteWeights='1170960 1209040 1209040 1170960'/>
 
     <map name="Uniform" >beast.base.inference.distribution.Uniform</map>
@@ -24,7 +24,7 @@
 
     <map name="OneOnX" >beast.base.inference.distribution.OneOnX</map>
 
-    <run id="mcmc" spec="MCMC" chainLength="50000000">
+    <run id="mcmc" spec="MCMC" chainLength="10000000">
         <state id="state" spec="State" storeEvery="5000">
             <tree id="Tree" spec="beast.base.evolution.tree.Tree" name="stateNode">
 
@@ -213,7 +213,7 @@
         <operator id="reproductiveNumberScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@reproductiveNumber_BDSKY_Serial" weight="10.0"/>
         <operator id="samplingProportionScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@samplingProportion_BDSKY_Serial" weight="10.0"/>
         <operator id="origScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@origin_BDSKY_Serial" weight="1.0"/>
-        <logger id="tracelog" spec="Logger" fileName="shigella-$(date-resolution).log" logEvery="5000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <logger id="tracelog" spec="Logger" fileName="shigella-$(date-resolution)_$(ID).log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
@@ -232,12 +232,12 @@
             <log idref="reproductiveNumber_BDSKY_Serial"/>
             <log idref="samplingProportion_BDSKY_Serial"/>
         </logger>
-        <logger id="screenlog" spec="Logger" logEvery="1000">
+        <logger id="screenlog" spec="Logger" logEvery="10000">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
         </logger>
-        <logger id="treelog" spec="Logger" fileName="shigella-$(date-resolution).trees" logEvery="5000" mode="tree">
+        <logger id="treelog" spec="Logger" fileName="shigella-$(date-resolution)_$(ID).trees" logEvery="1000" mode="tree">
             <log id="TreeWithMetaDataLogger" spec="beast.base.evolution.TreeWithMetaDataLogger" tree="@Tree"/>
         </logger>
         <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>
