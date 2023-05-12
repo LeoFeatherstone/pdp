@@ -3,3 +3,4 @@
 # Below fnctions as a .gitinclude
 !**/*.xml
 !**/*.R
+backupXML/

@@ -30,7 +30,7 @@
     <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
     <map name="OneOnX" >beast.math.distributions.OneOnX</map>
     <run id="mcmc" spec="MCMC" chainLength="10000000">
-        <state id="state" spec="State" storeEvery="5000">
+        <state id="state" spec="State" storeEvery="10000">
         
             <tree id="Tree" spec="beast.evolution.tree.Tree" name="stateNode">
 
@@ -67,8 +67,9 @@
                     spec="bdmmprime.distribution.BirthDeathMigrationDistribution"
                     tree="@Tree">
 
-                <!--finalSampleOffset idref="finalSampleOffset"/-->
+                <!--finalSampleOffset idref="finalSampleOffset"/--> 
 
+                <!--TODO check if swapping ORIGIN*_BDSKY to processLength is ok!/--> 
                 <parameterization spec="EpiParameterization"
                                   origin="@origin_BDSKY_Serial">
                   <R0 spec="SkylineVectorParameter">
@@ -152,7 +153,7 @@
         <operator id="samplingProportionScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@samplingProportion_BDSKY_Serial" weight="10.0"/>
         <operator id="origScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@origin_BDSKY_Serial" weight="1.0"/>
 
-        <logger id="tracelog" spec="Logger" fileName="h1n1-$(date-resolution)_$(ID).log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <logger id="tracelog" spec="Logger" fileName="h1n1_BD_$(date-resolution)_$(ID).log" logEvery="10000" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
@@ -172,7 +173,7 @@
             <log idref="likelihood"/>
             <log idref="prior"/>
         </logger>
-        <logger id="treelog" spec="Logger" fileName="h1n1-$(date-resolution)_$(ID).trees" logEvery="1000" mode="tree">
+        <logger id="treelog" spec="Logger" fileName="h1n1_BD_$(date-resolution)_$(ID).trees" logEvery="10000" mode="tree">
             <log id="TreeWithMetaDataLogger" spec="beast.evolution.tree.TreeWithMetaDataLogger" branchratemodel="@StrictClock" tree="@Tree"/>
         </logger>
         <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>

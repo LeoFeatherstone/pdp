@@ -283,10 +283,23 @@ shigella <- emp_data %>%
     ) +
     theme_minimal()
 
-cowplot::plot_grid(
+empirical_plot <- cowplot::plot_grid(
     labels = "AUTO",
     covid, h1n1, shigella, tb,
     nrow = 2, ncol = 2
 )
-
+pdf("empirical_plot.pdf", useDingbats = FALSE)
+    empirical_plot
+dev.off()
 ## TODO: neaten up axes etc once figure commited to paper
+
+
+## Tabular results
+# mean
+emp_data %>%
+    group_by(organism, resolution) %>%
+    summarise_if(is.numeric, mean, na.rm = TRUE)
+# precision
+emp_data %>%
+    group_by(organism, resolution) %>%
+    summarise_if(is.numeric, var, na.rm = TRUE)

@@ -19,7 +19,7 @@
                  :feast.fileio">
 
 <alignment spec='feast.fileio.AlignmentFromFasta' fileName="sars-cov-2.fasta" id="alignment"/>
-
+ 
     <map name="Uniform" >beast.math.distributions.Uniform</map>
     
     <map name="Exponential" >beast.math.distributions.Exponential</map>
@@ -40,7 +40,7 @@
     
     <map name="OneOnX" >beast.math.distributions.OneOnX</map>
     
-    <run id="mcmc" spec="MCMC" chainLength="5000000">
+    <run id="mcmc" spec="MCMC" chainLength="1000000">
             
         <state id="state" spec="State" storeEvery="5000">
 
@@ -225,7 +225,7 @@
             
         <operator id="gammaShapeScaler.s" spec="ScaleOperator" parameter="@gammaShape.s" scaleFactor="0.5" weight="0.1"/>
 
-        <logger id="tracelog" spec="Logger" fileName="sars-cov-2_$(date-resolution).log" logEvery="5000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <logger id="tracelog" spec="Logger" fileName="sars-cov-2_BD_$(date-resolution).log" logEvery="10000" model="@posterior" sanitiseHeaders="true" sort="smart">
                     
             <log idref="posterior"/>
                     
@@ -253,7 +253,7 @@
 
         </logger>
             
-        <logger id="screenlog" spec="Logger" logEvery="1000">
+        <logger id="screenlog" spec="Logger" logEvery="10000">
                     
             <log idref="posterior"/>
 
@@ -265,7 +265,7 @@
                 
         </logger>
             
-        <logger id="treelog" spec="Logger" fileName="sars-cov-2_$(date-precision).trees" logEvery="5000" mode="tree">
+        <logger id="treelog" spec="Logger" fileName="sars-cov-2_BD_$(date-resolution).trees" logEvery="10000" mode="tree">
                     
             <log id="TreeWithMetaDataLogger" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree"/>
                 
