@@ -4,3 +4,7 @@
 !**/*.xml
 !**/*.R
 backupXML/
+
+# mask overleaf integration
+**.tex
+**.bib
