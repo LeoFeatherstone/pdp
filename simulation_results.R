@@ -204,30 +204,49 @@ sim_data %>%
     )
 
 
-# clock rate
-sim_data %>%
-    #filter(organism != "h1n1") %>%
+## clock rate
+# define true value df
+rate_true <- data.frame(
+    organism = c("h1n1", "sars-cov-2", "shigella", "tb"),
+    rate = c(0.004, 0.001, 0.0000006, 0.00000001)
+)
+
+clock_data <- sim_data %>%
     select(resolution, replicate, organism, clockRate) %>%
     group_by(replicate, resolution, organism) %>%
     summarise(mean_clock_rate = ((mean(clockRate)))) %>%
     pivot_wider(
         names_from = resolution,
-        values_from = c(mean_clock_rate)) %>%
-    ggparcoord(
-        columns = 3:5,
-        scale = "globalminmax",
-        alphaLines = 0.4,
-        groupColumn = "organism"
-    ) +
-    scale_y_continuous(
-        trans = "log10",
-        breaks = scales::trans_breaks("log10", function(x) 10^x),
-        labels = scales::trans_format("log10", scales::math_format(10^.x))
-     ) +
-    facet_wrap(~organism, scales = "free_y") +
-    ylab("Posterior mean  substitution rate") +
-    xlab("Date resolution") +
-    theme_minimal()
+        values_from = c(mean_clock_rate))
+
+pdf(file = "sim_clock_trajectory.pdf", useDingbats = TRUE)
+    sim_data %>%
+        select(resolution, replicate, organism, clockRate) %>%
+        group_by(replicate, resolution, organism) %>%
+        summarise(mean_clock_rate = ((mean(clockRate)))) %>%
+        ggplot() +
+        geom_boxplot(
+            aes(x = resolution, y = mean_clock_rate, col = organism)
+        ) +
+        geom_line(
+            aes(x = resolution, y = mean_clock_rate, group = replicate, col = organism),
+            alpha = 0.5
+        ) +
+        geom_segment(
+            data = rate_true,
+            aes(y = rate, yend = rate, x = -Inf, xend = Inf),
+            col = "black"
+        ) +
+        scale_y_continuous(
+            trans = "log10",
+            breaks = scales::trans_breaks("log10", function(x) 10^x),
+            labels = scales::trans_format("log10", scales::math_format(10^.x))
+        ) +
+        facet_wrap(~organism, scales = "free_y") +
+        ylab("Posterior mean  substitution rate") +
+        xlab("Date resolution") +
+        theme_minimal()
+dev.off()
 
 # summary table
 sim_table <- sim_data %>%

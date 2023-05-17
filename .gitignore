@@ -1,9 +1,10 @@
 *.*
 
-# Below fnctions as a .gitinclude
+# Below functions as a .gitinclude
 !**/*.xml
 !**/*.R
 backupXML/
+*.pdf
 
 # mask overleaf integration
 **.tex
