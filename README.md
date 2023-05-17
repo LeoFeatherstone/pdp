@@ -1,2 +1,0 @@
-# PDP
-Phylodynamic Date Precision
