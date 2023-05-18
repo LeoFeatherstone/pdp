@@ -4,7 +4,6 @@
 
 library(tidyverse)
 library(coda)
-library(GGally)
 
 ## function applies burnin
 # df is data frame
@@ -140,69 +139,7 @@ sim_data <-
         names = c("organism", "treePrior", "resolution", "replicate")
     )
 
-# sim plots
-
-#tmp <- 
-sim_data %>%
-    filter(organism == "h1n1") %>%
-    select(resolution, replicate, reproductiveNumber_BDSKY_Serial) %>%
-    group_by(replicate, resolution) %>%
-    summarise(meanR0 = mean(reproductiveNumber_BDSKY_Serial)) %>%
-    pivot_wider(
-        names_from = resolution,
-        values_from = c(meanR0)) %>%
-    ggparcoord(
-        columns = 2:3,
-        scale = "globalminmax"
-    )
-
-sim_data %>%
-    filter(
-        organism == "h1n1" |
-        organism == "sars-cov-2" |
-        organism == "shigella"
-    ) %>%
-    select(resolution, replicate, organism, reproductiveNumber_BDSKY_Serial) %>%
-    group_by(replicate, resolution, organism) %>%
-    summarise(meanR0 = mean(reproductiveNumber_BDSKY_Serial)) %>%
-    pivot_wider(
-        names_from = resolution,
-        values_from = c(meanR0)) %>%
-    ggparcoord(
-        columns = 3:4,
-        scale = "globalminmax",
-        groupColumn = "organism"
-    )
-
-
-sim_data %>%
-    filter(organism == "shigella" | organism == "tb") %>%
-    select(resolution, replicate, organism, reproductiveNumber_BDSKY_Serial.1) %>%
-    group_by(replicate, resolution, organism) %>%
-    summarise(meanR0 = mean(reproductiveNumber_BDSKY_Serial.1)) %>%
-    pivot_wider(
-        names_from = resolution,
-        values_from = c(meanR0)) %>%
-    ggparcoord(
-        columns = 3:5,
-        scale = "globalminmax",
-        groupColumn = "organism"
-    )
-
-sim_data %>%
-    filter(organism == "shigella" | organism == "tb") %>%
-    select(resolution, replicate, organism, reproductiveNumber_BDSKY_Serial.2) %>%
-    group_by(replicate, resolution, organism) %>%
-    summarise(logMeanR0 = log10(mean(reproductiveNumber_BDSKY_Serial.2))) %>%
-    pivot_wider(
-        names_from = resolution,
-        values_from = c(logMeanR0)) %>%
-    ggparcoord(
-        columns = 3:5,
-        scale = "globalminmax",
-        groupColumn = "organism"
-    )
-
+### sim plots
 
 ## clock rate
 # define true value df
@@ -210,14 +147,6 @@ rate_true <- data.frame(
     organism = c("h1n1", "sars-cov-2", "shigella", "tb"),
     rate = c(0.004, 0.001, 0.0000006, 0.00000001)
 )
-
-clock_data <- sim_data %>%
-    select(resolution, replicate, organism, clockRate) %>%
-    group_by(replicate, resolution, organism) %>%
-    summarise(mean_clock_rate = ((mean(clockRate)))) %>%
-    pivot_wider(
-        names_from = resolution,
-        values_from = c(mean_clock_rate))
 
 pdf(file = "sim_clock_trajectory.pdf", useDingbats = TRUE)
     sim_data %>%
@@ -229,7 +158,12 @@ pdf(file = "sim_clock_trajectory.pdf", useDingbats = TRUE)
             aes(x = resolution, y = mean_clock_rate, col = organism)
         ) +
         geom_line(
-            aes(x = resolution, y = mean_clock_rate, group = replicate, col = organism),
+            aes(
+                x = resolution,
+                y = mean_clock_rate,
+                group = replicate,
+                col = organism
+            ),
             alpha = 0.5
         ) +
         geom_segment(
@@ -244,6 +178,103 @@ pdf(file = "sim_clock_trajectory.pdf", useDingbats = TRUE)
         ) +
         facet_wrap(~organism, scales = "free_y") +
         ylab("Posterior mean  substitution rate") +
+        xlab("Date resolution") +
+        theme_minimal()
+dev.off()
+
+# R0/e plots
+
+## clock rate
+# define true value df
+re_true <- data.frame(
+    organism = c("h1n1", "sars-cov-2", "shigella", "tb"),
+    R0 = c(1.3, 2.5, NA, NA),
+    Re1 = c(NA, NA, 1.5, 2),
+    Re2 = c(NA, NA, 1, 1.1)
+) %>%
+pivot_longer(
+            matches("R0|Re1|Re2"),
+            names_to = "interval",
+            values_to = "Reff",
+            values_drop_na = TRUE
+        )
+
+pdf(file = "sim_Re_trajectory.pdf", useDingbats = TRUE)
+    sim_data %>%
+        select(resolution, replicate, organism, R0, Re1, Re2) %>%
+        pivot_longer(
+            matches("R0|Re1|Re2"),
+            names_to = "interval",
+            values_to = "Reff",
+            values_drop_na = TRUE
+        ) %>%
+        group_by(replicate, resolution, organism, interval) %>%
+        summarise(meanR = ((mean(Reff)))) %>%
+        ggplot() +
+        geom_boxplot(
+            aes(
+                x = resolution,
+                y = meanR,
+                col = organism
+            )
+        ) +
+        geom_line(
+            aes(
+                x = resolution,
+                y = meanR,
+                group = replicate,
+                col = organism
+            ),
+            alpha = 0.5
+        ) +
+        geom_segment(
+            data = re_true,
+            aes(y = Reff, yend = Reff, x = -Inf, xend = Inf),
+            col = "black"
+         ) +
+        scale_y_continuous(
+            trans = "log10",
+            breaks = scales::trans_breaks("log10", function(x) 10^x),
+            labels = scales::trans_format("log10", scales::math_format(10^.x))
+        ) +
+        facet_wrap(~organism * interval, scales = "free_y") +
+        ylab("Posterior mean  Reff") +
+        xlab("Date resolution") +
+        theme_minimal()
+dev.off()
+
+## origin
+# define true value df
+origin_true <- data.frame(
+    organism = c("h1n1", "sars-cov-2", "shigella", "tb"),
+    rate = c(0.25, 0.16, 0.5, 25)
+)
+
+pdf(file = "sim_origin_trajectory.pdf", useDingbats = TRUE)
+    sim_data %>%
+        select(resolution, replicate, organism, origin) %>%
+        group_by(replicate, resolution, organism) %>%
+        summarise(mean_origin = ((mean(origin)))) %>%
+        ggplot() +
+        geom_boxplot(
+            aes(x = resolution, y = mean_origin, col = organism)
+        ) +
+        geom_line(
+            aes(
+                x = resolution,
+                y = mean_origin,
+                group = replicate,
+                col = organism
+            ),
+            alpha = 0.5
+        ) +
+        geom_segment(
+            data = origin_true,
+            aes(y = rate, yend = rate, x = -Inf, xend = Inf),
+            col = "black"
+        ) +
+        facet_wrap(~organism, scales = "free_y") +
+        ylab("Posterior mean  origin") +
         xlab("Date resolution") +
         theme_minimal()
 dev.off()
@@ -312,10 +343,6 @@ sim_table <- sim_data %>%
         )
     ) %>%
     distinct()
-
-
-
-
 
 # brilliant table to tex writer!
 print(xtable(sim_table, type = "latex"), file = "sim_data_table.tex")

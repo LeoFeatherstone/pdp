@@ -4,6 +4,7 @@
 
 library(tidyverse)
 library(coda)
+library(xtable)
 
 ## function applies burnin
 # df is data frame
@@ -59,6 +60,50 @@ lapply(
     }
 )
 
+# format variables names
+rename_cols <- function(vec) {
+    vec <- gsub(
+        vec,
+        pattern = "reproductiveNumber_BDSKY_Serial[.]",
+        replacement = "Re"
+    )
+    vec <- gsub(
+        vec,
+        pattern = "reproductiveNumber_BDSKY_Serial$",
+        replacement = "R0"
+    )
+    vec <- gsub(
+        vec,
+        pattern = "becomeUninfectiousRate_BDSKY_Serial",
+        replacement = "delta"
+    )
+    vec <- gsub(
+        vec,
+        pattern = "samplingProportion_BDSKY_Serial",
+        replacement = "p"
+    )
+    vec <- gsub(
+        vec,
+        pattern = "clockRate[.]c",
+        replacement = "clockRate"
+    )
+    vec <- gsub(
+        vec,
+        pattern = "origin.+",
+        replacement = "origin"
+    )
+
+    return(vec)
+}
+
+emp_data <- lapply(
+    emp_data,
+    function(x) {
+        colnames(x) <- rename_cols(colnames(x))
+        return(x)
+    }
+)
+
 # get parms of interest
 emp_data <- lapply(
     emp_data,
@@ -67,7 +112,7 @@ emp_data <- lapply(
             x[,
             grep(
                 colnames(x),
-                pattern = "reproductive|become|origin|clock"
+                pattern = "R.|delta|origin|clock|p"
             )]
         )
     }
@@ -82,7 +127,63 @@ emp_data <-
         names = c("organism", "clock", "treePrior", "resolution")
     )
 
-# emp plots
+## plots
+# clock rate plot
+pdf(file = "empirical_clock_trajectory.pdf", useDingbats = TRUE)
+    emp_data %>%
+        select(resolution, organism, clockRate) %>%
+        group_by(resolution, organism) %>%
+        ggplot() +
+        geom_violin(
+            aes(x = resolution, y = clockRate, fill = organism),
+            alpha = 0.5,
+            draw_paste(quantiles = c(0.025, 0.5, 0.975),
+        ) +
+        scale_y_continuous(
+            trans = "log10",
+            breaks = scales::trans_breaks("log10", function(x) 10^x),
+            labels = scales::trans_format("log10", scales::math_format(10^.x))
+        ) +
+        facet_wrap(~organism, scales = "free_y") +
+        ylab("Posterior substitution rate") +
+        xlab("Date resolution") +
+        theme_minimal()
+dev.off()
+
+# summary table with mean and 95% HPD for each parameter
+emp_table <- emp_data %>%
+    select(
+        resolution,
+        organism,
+        clockRate,
+        p,
+        delta,
+        R0,
+        Re1,
+        Re2,
+        origin
+    ) %>%
+    group_by(organism, resolution) %>%
+    summarise(
+        meanR0 = mean(R0),
+        R0HPD = paste0("[", paste(quantile(R0, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        meanRe1 = mean(Re1),
+        Re1HPD = paste0("[", paste(quantile(Re1, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        meanRe2 = mean(Re2),
+        Re2HPD = paste0("[", paste(quantile(Re2, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        meanP = mean(p),
+        pHPD = paste0("[", paste(quantile(p, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        meanDelta = mean(delta),
+        deltaHPD = paste0("[", paste(quantile(delta, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        meanOrigin = mean(origin),
+        originHPD = paste0("[", paste(quantile(origin, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        .groups = "drop"
+    )
+print(xtable(emp_table, type = "latex"), file = "empirical_data_table.tex")
+
+
+
+# emp plots - NB below was done before formatting emp_data col names. Temporary!
 cols <- c("coralred", "dodgerblue")
 # samp dates for rug
 emp_aln <- paste0(
@@ -131,7 +232,7 @@ h1n1 <- emp_data %>%
         ),
         scale = "width",
         position = "dodge",
-        draw_quantiles = c(0.5),
+        draw_paste(quantiles = c(0.5),
         alpha = 0.5,
         width = 0.25
     ) +
@@ -168,7 +269,7 @@ covid <- emp_data %>%
         ),
         scale = "width",
         position = "dodge",
-        draw_quantiles = c(0.5),
+        draw_paste(quantiles = c(0.5),
         alpha = 0.5,
         width = 0.1
     ) +
@@ -205,7 +306,7 @@ tb <- emp_data %>%
         ),
         scale = "area",
         position = "dodge",
-        draw_quantiles = c(0.5),
+        draw_paste(quantiles = c(0.5),
         alpha = 0.5,
         width = 10
     ) +
@@ -217,7 +318,7 @@ tb <- emp_data %>%
         ),
         scale = "area",
         position = "dodge",
-        draw_quantiles = c(0.5),
+        draw_paste(quantiles = c(0.5),
         alpha = 0.5,
         width = 10
      ) +
@@ -249,7 +350,7 @@ shigella <- emp_data %>%
         ),
         scale = "width",
         position = "dodge",
-        draw_quantiles = c(0.5),
+        draw_paste(quantiles = c(0.5),
         alpha = 0.5,
         width = 2
     ) +
@@ -261,7 +362,7 @@ shigella <- emp_data %>%
         ),
         scale = "width",
         position = "dodge",
-        draw_quantiles = c(0.5),
+        draw_paste(quantiles = c(0.5),
         alpha = 0.5,
         width = 2
      ) +
