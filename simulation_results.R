@@ -34,7 +34,7 @@ load("raw_sim_posteriors.RData")
 # burnin
 sim_data <- lapply(
     sim_data,
-    function(x) apply_burnin(x, 25)
+    function(x) apply_burnin(x, 10)
 )
 
 # patch names with clock until rerun. # UPTO - remove _SC_ from tb names
@@ -106,7 +106,7 @@ sim_ess <- lapply(
 
 # Find which treatments had ess < 200
 lapply(
-    seq_along(sim_ess),
+    seq_along(sim_ess[299:300]),
     function(x) {
         if (any(sim_ess[[x]] < 200)) {
             print(names(sim_ess)[x])

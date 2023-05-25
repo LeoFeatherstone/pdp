@@ -23,7 +23,7 @@ emp_data <- lapply(
 )
 emp_data <- lapply(
     emp_data,
-    function(x) apply_burnin(x, 25)
+    function(x) apply_burnin(x, 10)
 )
 names(emp_data) <- gsub(
     emp_log,
@@ -55,7 +55,8 @@ lapply(
     seq_along(emp_ess),
     function(x) {
         if (any(emp_ess[[x]] < 200)) {
-            return(names(emp_ess)[x])
+            #return(names(emp_ess)[x])
+            return(names(which(emp_ess[[x]] < 200)))
         }
     }
 )
