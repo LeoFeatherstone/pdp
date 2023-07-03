@@ -16,10 +16,18 @@ $^{1}$ Peter Doherty Institute for Infection and Immunity, University of Melbour
 
 \section*{Abstract}
 \textbf{Serving as a guideline for the message of the paper for now.}
-Phylodynamic and genomic epidemiology frequently rely on the sampling times from pathogen isolates to make inference about the development of disease outbreaks over time. By calibrating a rate of substitution against epidemiological timescales, sampling times, in combination with genome sequence, allow for inferences such as the time of onset of an outbreak and intensity of transmission. However, for patient confidentiality, the sampling times for many sequences are not given, or rounded to a less specific amount of time such as month or year. Here, we show for the first time how and when such 'date-rounding' induces bias in epidemiological estimates. Broadly, this bias is often substantial, increases with the uncertainty in provided sampling dates, and affect inference of all parameters including of time of onset and reproductive number. Finally, we close by proposing a solution that prioritises both patient confidentiality and accuracy of inference in genomic epidemiology, by proposing a basic form of encryption of dates in absolute time by translating them by an unknown number.
+Phylodynamic and genomic epidemiology frequently rely on the sampling times from pathogen isolates to make inference about the development of disease outbreaks over time. By calibrating a rate of substitution against epidemiological timescales, sampling times, in combination with genome sequence, allow for inferences such as the time of onset of an outbreak and intensity of transmission. However, for patient confidentiality, the exact sampling times for many sequences are not given, or rounded to a less precise amount of time such as month or year. Here, we show for the first time how and when such 'date-rounding' induces bias in epidemiological estimates. Broadly, this bias is often substantial, increases with the degree of rounding in provided sampling dates, and affect inference of all parameters including of time of onset and reproductive number. Finally, we close by proposing a solution that prioritises both patient confidentiality and accuracy of inference in genomic epidemiology, by proposing a basic form of encryption of dates in absolute time by translating them by an unknown number.
 
 \begin{spacing}{1.5}
 \section*{Introduction}
+\begin{itemize}
+    \item How and why rounding of dates occurs
+    \item Types of rounding and presumed problems, including distorting clock signal (e.g. `stress' in the rtt?)
+    \item Consider a figure to show the distortion in the phylogram and in an rtt?
+    \item `effective number of mutations' do we still need this concept?
+    \item That it might matter for the clock and what downstream parameters
+\end{itemize}
+
 Increased sharing of pathogen genome sequences has been a feature of responses to recent infectious disease threats. This is also the culmination of a broader trend that has build with advances in WGS. 
 
 \section*{Results}
@@ -84,7 +92,7 @@ Increased sharing of pathogen genome sequences has been a feature of responses t
 \textbf{Brakdown of points to hit}
 \begin{itemize}
     \item Why was each parameter biased the way it was?
-    \item Overall, samples get clutered to the same time, but still have differencs in sequence
+    \item Overall, samples get clustered to the same time, but still have differences in sequence
     \item Suggests a higher mutation rate and transmission rate
     \item Hence spuriously large results for when we condense to year for H1N1
     \item Obviously, we would never rely on such results. For example, and $R_e$ of $10^8$ for H1N1 suggested the globe's population would be infected in one transmission event. Such is the blindness of our models. More tangibly though, we can always expect bias from what the full dates are suggesting, so the best thing to do is use the full date.
