@@ -418,21 +418,33 @@ emp_data %>%
     summarise_if(is.numeric, var, na.rm = TRUE)
 
 ## parallel plot
-emp_data %>%
-    group_by(organism, resolution) %>%
-    pivot_longer(
-        matches("R0|Re1|Re2|origin|clockRate"),
-        names_to = "parameter",
-        values_to = "value",
-        values_drop_na = TRUE
-    ) %>%
-    ggplot() +
-    geom_violin(
-        aes(x = parameter, y = value, fill = resolution)
-    ) +
-    scale_y_continuous(
-        trans = "log10",
-        breaks = scales::trans_breaks("log10", function(x) 10^x),
-        labels = scales::trans_format("log10", scales::math_format(10^.x))
-    )
-    facet_wrap(~organism, scales = "free")
+norm <- function(x) {
+    return((x - mean(x)) / sd(x))
+}
+
+pdf("empirical_normalised_parallel.pdf", useDingbats = FALSE)
+    emp_data %>%
+        filter(clock == "SC") %>%
+        filter(resolution == "Day" | resolution == "Month") %>%
+        group_by(organism) %>%
+        mutate(
+            R0 = norm(R0),
+            Re1 = norm(Re1),
+            Re2 = norm(Re2),
+            origin = norm(origin),
+            clockRate = norm(clockRate),
+        ) %>%
+        group_by(organism, resolution) %>%
+        pivot_longer(
+            matches("R0|Re1|Re2|origin|clockRate"),
+            names_to = "parameter",
+            values_to = "value",
+            values_drop_na = TRUE
+        ) %>%
+        ggplot() +
+        geom_violin(
+            aes(x = parameter, y = value, fill = resolution),
+            position = "dodge"
+        ) +
+        facet_wrap(~organism, scales = "free")
+dev.off()
