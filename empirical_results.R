@@ -14,7 +14,6 @@ apply_burnin <- function(df, pc) {
 }
 
 ##### Empirical Data #####
-
 emp_log <- dir(path = "./empirical_data", pattern = ".+[.]log")
 
 emp_data <- lapply(
@@ -30,17 +29,19 @@ names(emp_data) <- gsub(
     pattern = "[.]log",
     replacement = ""
 )
-# patch names with clock until rerun
-names(emp_data) <- c(
-    gsub(
-    names(emp_data[1:9]),
-    pattern = "_BD",
-    replacement = "_SC_BD"
-    ),
-    names(emp_data)[10:15]
-)
-# burnin
 
+# patch names with clock until rerun
+names(emp_data) <- sapply(
+    names(emp_data),
+    function(x) {
+        if (!grepl("_SC_BD", x) && !grepl("_RC_BD", x)) {
+            return(gsub(x, pattern = "_BD", replacement = "_SC_BD"))
+        }
+        return(x)
+    }
+)
+
+# burnin
 emp_ess <- lapply(
     emp_data,
     function(x) {
@@ -51,21 +52,26 @@ emp_ess <- lapply(
 )
 
 # Find which treatments had ess < 200
-lapply(
+low_ess <- lapply(
     seq_along(emp_ess),
     function(x) {
         if (any(emp_ess[[x]] < 200)) {
-            #return(names(emp_ess)[x])
-            return(names(which(emp_ess[[x]] < 200)))
+            return(
+                paste(
+                    names(which(emp_ess[[x]] < 200)),
+                    emp_ess[[x]][which(emp_ess[[x]] < 200)]
+                )
+            )
         }
     }
 )
+names(low_ess) <- names(emp_data)
 
 # format variables names
 rename_cols <- function(vec) {
     vec <- gsub(
         vec,
-        pattern = "reproductiveNumber_BDSKY_Serial[.]",
+        pattern = "reproductiveNumber_BDSKY_Serial[.]|reproductiveNumber[.]",
         replacement = "Re"
     )
     vec <- gsub(
@@ -127,6 +133,14 @@ emp_data <-
         delim = "_",
         names = c("organism", "clock", "treePrior", "resolution")
     )
+# capitalise names
+emp_data <- emp_data %>%
+    mutate(organism = case_when(
+        organism == "h1n1" ~ "H1N1",
+        organism == "sars-cov-2" ~ "SARS-CoV-2",
+        organism == "shigella" ~ "Shigella",
+        organism == "tb" ~ "TB"
+    ))
 
 ## plots
 # clock rate plot
@@ -138,14 +152,14 @@ pdf(file = "empirical_clock_trajectory.pdf", useDingbats = TRUE)
         geom_violin(
             aes(x = resolution, y = clockRate, fill = organism),
             alpha = 0.5,
-            draw_paste(quantiles = c(0.025, 0.5, 0.975),
+            draw_quantiles = c(0.025, 0.5, 0.975),
         ) +
         scale_y_continuous(
             trans = "log10",
             breaks = scales::trans_breaks("log10", function(x) 10^x),
             labels = scales::trans_format("log10", scales::math_format(10^.x))
         ) +
-        facet_wrap(~organism, scales = "free_y") +
+        facet_wrap(~organism, scales = "freH1N1e_y") +
         ylab("Posterior substitution rate") +
         xlab("Date resolution") +
         theme_minimal()
@@ -220,26 +234,26 @@ samp_times <- bind_rows(samp_times)
 #h1n1
 h1n1 <- emp_data %>%
     filter(
-        organism == "h1n1"
+        organism == "H1N1"
         &
         resolution != "Year"
     ) %>%
     ggplot() +
     geom_violin(
         aes(
-            x = mean(max_samp_times["h1n1"] - (origin_BDSKY_Serial * 0.5)),
-            y = reproductiveNumber_BDSKY_Serial,
+            x = mean(max_samp_times["h1n1"] - (origin * 0.5)),
+            y = R0,
             fill = resolution
         ),
         scale = "width",
-        position = "dodge",
-        draw_paste(quantiles = c(0.5),
+        position = "identity",
+        draw_quantiles = c(0.5),
         alpha = 0.5,
         width = 0.25
     ) +
     geom_histogram(
         aes(
-            x = max_samp_times["h1n1"] - origin_BDSKY_Serial,
+            x = max_samp_times["h1n1"] - origin,
             y = (..count.. / 5000) + 1,
             fill = resolution),
         bins = 100,
@@ -253,30 +267,31 @@ h1n1 <- emp_data %>%
        expand = c(0, 0),
        oob = scales::censor
     ) +
+    xlab("Date") + ylab("Reproductive Number") +
     theme_minimal()
 
 
 # sars-cov-2 data
 covid <- emp_data %>%
     filter(
-        organism == "sars-cov-2"
+        organism == "SARS-CoV-2"
     ) %>%
     ggplot() +
     geom_violin(
         aes(
-            x = mean(max_samp_times["sars_cov_2"] - (origin_BDSKY_Serial * 0.5)),
-            y = reproductiveNumber_BDSKY_Serial,
+            x = mean(max_samp_times["sars_cov_2"] - (origin * 0.5)),
+            y = R0,
             fill = resolution
         ),
         scale = "width",
-        position = "dodge",
-        draw_paste(quantiles = c(0.5),
+        position = "identity",
+        draw_quantiles = c(0.5),
         alpha = 0.5,
-        width = 0.1
+        width = 0.05
     ) +
     geom_histogram(
         aes(
-            x = max_samp_times["sars_cov_2"] - origin_BDSKY_Serial,
+            x = max_samp_times["sars_cov_2"] - origin,
             y = (..count.. / 100),
             fill = resolution),
         bins = 100,
@@ -285,47 +300,42 @@ covid <- emp_data %>%
     ) +
     geom_rug(data = samp_times, aes(x = sars_cov_2)) + 
     coord_cartesian(clip = "off") +
-
-    # coord_cartesian(ylim=c(0.8, 1.25)) +
-    # scale_y_continuous(
-    #     expand = c(0, 0),
-    #     oob = scales::censor
-    # ) +
+    xlab("Date") + ylab("Reproductive Number") +
     theme_minimal()
 
 # tb data
 tb <- emp_data %>%
     filter(
-        organism == "tb"
+        organism == "TB"
     ) %>%
     ggplot() +
     geom_violin(
         aes(
-            x = mean(max_samp_times["tb"] - (origin_BDSKY_Serial * 0.75)),
-            y = reproductiveNumber_BDSKY_Serial.1,
+            x = mean(max_samp_times["tb"] - (origin * 0.75)),
+            y = Re1,
             fill = resolution
         ),
         scale = "area",
         position = "dodge",
-        draw_paste(quantiles = c(0.5),
+        draw_quantiles = c(0.5),
         alpha = 0.5,
-        width = 10
+        width = 8
     ) +
     geom_violin(
         aes(
-            x = mean(max_samp_times["tb"] - (origin_BDSKY_Serial * 0.25)),
-            y = reproductiveNumber_BDSKY_Serial.2,
+            x = mean(max_samp_times["tb"] - (origin * 0.25)),
+            y = Re2,
             fill = resolution
         ),
         scale = "area",
         position = "dodge",
-        draw_paste(quantiles = c(0.5),
+        draw_quantiles = c(0.5),
         alpha = 0.5,
-        width = 10
+        width = 8
      ) +
     geom_histogram(
         aes(
-            x = max_samp_times["tb"] - origin_BDSKY_Serial,
+            x = max_samp_times["tb"] - origin,
             y = (..count.. / 200),
             fill = resolution),
         bins = 100,
@@ -335,54 +345,56 @@ tb <- emp_data %>%
     geom_rug(data = samp_times, aes(x = tb)) + 
     coord_cartesian(clip = "off") +
     xlim(1980, 2010) + ylim(0, 5) +
+    xlab("Date") + ylab("Reproductive Number") + 
     theme_minimal()
 
 # shigella
 shigella <- emp_data %>%
     filter(
-        organism == "shigella"
+        organism == "Shigella"
     ) %>%
     ggplot() +
     geom_violin(
         aes(
-            x = mean(max_samp_times["shigella"] - (origin_BDSKY_Serial * 0.75)),
-            y = reproductiveNumber_BDSKY_Serial.1,
+            x = mean(max_samp_times["shigella"] - (origin * 0.75)),
+            y = reproductiveNumber.1,
             fill = resolution
         ),
         scale = "width",
         position = "dodge",
-        draw_paste(quantiles = c(0.5),
+        draw_quantiles = c(0.5),
         alpha = 0.5,
         width = 2
     ) +
     geom_violin(
         aes(
-            x = mean(max_samp_times["shigella"] - (origin_BDSKY_Serial * 0.25)),
-            y = reproductiveNumber_BDSKY_Serial.2,
+            x = mean(max_samp_times["shigella"] - (origin * 0.25)),
+            y = reproductiveNumber.2,
             fill = resolution
         ),
         scale = "width",
         position = "dodge",
-        draw_paste(quantiles = c(0.5),
+        draw_quantiles = c(0.5),
         alpha = 0.5,
         width = 2
      ) +
     geom_histogram(
         aes(
-            x = max_samp_times["shigella"] - origin_BDSKY_Serial,
+            x = max_samp_times["shigella"] - origin,
             y = (..count.. / sum(..count..)) + 0.8,
             fill = resolution),
         bins = 100,
         alpha = 0.5,
         position = "identity"
     ) +
-    geom_rug(data = samp_times, aes(x = shigella)) + 
+    geom_rug(data = samp_times, aes(x = shigella)) +
     coord_cartesian(clip = "off") +
-    coord_cartesian(ylim=c(0.8, 1.25)) +
+    coord_cartesian(ylim = c(0.8, 1.25)) +
     scale_y_continuous(
         expand = c(0, 0),
         oob = scales::censor
     ) +
+    xlab("Date") + ylab("Reproductive Number") +
     theme_minimal()
 
 empirical_plot <- cowplot::plot_grid(
@@ -393,7 +405,6 @@ empirical_plot <- cowplot::plot_grid(
 pdf("empirical_plot.pdf", useDingbats = FALSE)
     empirical_plot
 dev.off()
-## TODO: neaten up axes etc once figure commited to paper
 
 
 ## Tabular results
@@ -405,3 +416,23 @@ emp_data %>%
 emp_data %>%
     group_by(organism, resolution) %>%
     summarise_if(is.numeric, var, na.rm = TRUE)
+
+## parallel plot
+emp_data %>%
+    group_by(organism, resolution) %>%
+    pivot_longer(
+        matches("R0|Re1|Re2|origin|clockRate"),
+        names_to = "parameter",
+        values_to = "value",
+        values_drop_na = TRUE
+    ) %>%
+    ggplot() +
+    geom_violin(
+        aes(x = parameter, y = value, fill = resolution)
+    ) +
+    scale_y_continuous(
+        trans = "log10",
+        breaks = scales::trans_breaks("log10", function(x) 10^x),
+        labels = scales::trans_format("log10", scales::math_format(10^.x))
+    )
+    facet_wrap(~organism, scales = "free")
