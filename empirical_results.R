@@ -442,9 +442,11 @@ pdf("empirical_normalised_parallel.pdf", useDingbats = FALSE)
             values_drop_na = TRUE
         ) %>%
         ggplot() +
-        geom_violin(
-            aes(x = parameter, y = value, fill = resolution),
-            position = "dodge"
+        geom_line(
+            aes(x = parameter, y = value, col = resolution, group = Sample),
+            alpha = 0.1
         ) +
-        facet_wrap(~organism, scales = "free")
+        scale_x_discrete(limits = c("origin", "clockRate", "R0", "Re1", "Re2")) +
+        facet_wrap(~organism * resolution, scales = "free_x", nrow = 2)
 dev.off()
+
