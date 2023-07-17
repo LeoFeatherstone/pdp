@@ -3,6 +3,7 @@
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{setspace}
 \usepackage{lineno}
+\usepackage{graphicx}
 
 \title{Understanding the effects of date rounding in phylodynamics}
 \author{Leo A. Featherstone$^{\ast,1}$, [Order TBA], Sebastian Duchene$^{\dagger,1}$}
@@ -31,6 +32,7 @@ Phylodynamic and genomic epidemiology frequently rely on the sampling times from
 Increased sharing of pathogen genome sequences has been a feature of responses to recent infectious disease threats. This is also the culmination of a broader trend that has build with advances in WGS. 
 
 \section*{Results}
+\subsection*{Results Overview}
 \textbf{Points to hit}
 \begin{itemize}
     \item Bias in all parameters
@@ -41,6 +43,37 @@ Increased sharing of pathogen genome sequences has been a feature of responses t
     \item By contrast TB is affected less, but we need the specificity for emergent outbreaks most
     \item Show that severity seems to correlate with relationship between error and timing, if I can motivate one in introduction
 \end{itemize}
+
+\subsection*{Simulation Study}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 1\linewidth]{sim_Re_trajectory}
+\caption{Mean posterior $R_0$ or $R_e$ for simulated datasets across each level of date resultion, separated over simulation conditions emulating each pathogen (n=100). I.e. One line connects mean posterior estimates for a single simulated datasets analyses under each data resultuiton codition. For H1N1 and SARS-CoV-2 conditions, reducing date resolution (left to right) corresponds to upwards bias mean posterior $R_0$ and $R_e$. For year, having idnetical dates corresponds to complete model mispecification and wholly implausible mean posterior $R_{\bullet}$ values. }
+\label{simRe}
+\end{figure}
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 1\linewidth]{sim_clock_trajectory}
+\caption{Mean posterior evolutionary rate for simulated datasets across each level of date resultion, separated over simulation conditions emulating each pathogen (n=100). I.e. One line connects mean posterior estimates for a single simulated datasets analyses under each data resultuiton codition. For H1N1 and SARS-CoV-2 conditions, reducing date resolution (left to right) corresponds to upwards bias mean posterior evolutionary rate. For Shigella this effect still present, wlthough diminshed, and estimates for TB appear relatively stable.}
+\label{simClock}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 1\linewidth]{sim_origin_trajectory}
+\caption{Mean posterior origin for simulated datasets across each level of date resultion, separated over simulation conditions emulating each pathogen (n=100). I.e. One line connects mean posterior estimates for a single simulated datasets analyses under each data resultuiton codition. TO FINISh}
+\label{simOrigin}
+\end{figure}
+
+
+\subsection*{Empirical Results}
+\begin{itemize}
+	\item Here, do I want to group viruses or do each individually? Depends how much I say in the general results overview part.
+\end{itemize}
+
 
 \begin{table}[ht]
 \centering
