@@ -1,20 +1,24 @@
 <beast version='2.0'
   namespace='master:master.model:master.steppers:master.conditions:master.postprocessors:master.outputs'>
 
-  <!-- duration of infection is supposed to be 2 years. 
+  <!-- duration of infection is supposed to be 8 years. 
        The become uninfectious rate is 0.125 years^-1, and 
        this is the sum of Death and Sampling. Sampling proportion
        is 0.08:
+
        sampling_prop = 0.08
        become_uninfectious_rate = 0.125
        reproductive_number = 2, 1.1
 
-       sampling_rate = 0.125 * 0.09
-       sampling_rate = 0.01
-       death_rate = 0.125 - 0.01 = 0.115
+       sampling_rate = 0.08 * 0.125
+                     = 0.01
+       death_rate = 0.125 - 0.01 
+                  = 0.115
        
-       birth_rate_1 = 2 * 0.125 = 0.25
-       birth_rate_2 = 1.1 * 0.125 = 0.1375
+       birth_rate_1 = 2 * 0.125 
+                    = 0.25
+       birth_rate_2 = 1.1 * 0.125 
+                    = 0.1375
        
        outbreak_time= 25 years hange_time = 12.5 years
       -->
@@ -31,10 +35,10 @@
       <reaction spec='Reaction' reactionName="Birth" rate="0.25:0,0.1375:12.5"> 
         I -> I + I 
       </reaction>
-      <reaction spec='Reaction' reactionName="Death" rate="0.124"> 
+      <reaction spec='Reaction' reactionName="Death" rate="0.115"> 
         I -> R
       </reaction>
-      <reaction spec="Reaction" reactionName="Sampling" rate="0.115">
+      <reaction spec="Reaction" reactionName="Sampling" rate="0.01">
         I -> I_sampled
       </reaction>
     </model>

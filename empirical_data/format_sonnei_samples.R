@@ -3,7 +3,7 @@ library(ape)
 library(tidyverse)
 
 aln <- read.dna(
-    "empirical_data/Sson_NC_007384_BAPS3_CIDall.fasta",
+    "empirical_data/Sson_NC_007384_BAPS3_CIDall__updated27062023.aln",
     format = "fasta"
 )
 
@@ -37,7 +37,6 @@ ordered_new_tips <- unlist(
 rownames(aln) <- ordered_new_tips
 
 # write new aln
-# Consult Danielle on whether this needs aligning since its a SNP alignment
 write.dna(
     aln,
     format = "fasta",

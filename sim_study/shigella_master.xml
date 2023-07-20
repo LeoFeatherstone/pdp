@@ -1,20 +1,24 @@
 <beast version='2.0'
   namespace='master:master.model:master.steppers:master.conditions:master.postprocessors:master.outputs'>
 
-  <!-- duration of infection is supposed to be 5 days. 
+  <!-- duration of infection is supposed to be 7 days. 
        The become uninfectious rate is 365.25 / 7ma years^-1, and 
        this is the sum of Death and Sampling. Sampling proportion
-       is 0.29:
+       is 0.4:
        sampling_prop = 0.4
        become_uninfectious_rate = 52.18
-       reproductive_number = 1.5, 1
+       reproductive_number = 1.5, 1.01
 
-       sampling_rate = 52.18 * 0.29
-       sampling_rate = 15.1322
-       death_rate =  52.18 - 15.1322 = 37.0478
+       sampling_rate  = 52.18 * 0.4 
+                      = 20.872
+
+       death_rate =  52.18 - 20.872 
+                  = 31.308
        
-       birth_rate_1 = 1.5 * 52.18 = 62.616
-       birth_rate_2 = 1.01 * 52.18 = 52.7018 
+       birth_rate_1 = 1.5 * 52.18 
+                    = 78.72
+       birth_rate_2 = 1.01 * 52.18 
+                    = 52.7018 
        
        outbreak_time= 1 years change_time = 0.16 years
       -->
@@ -28,13 +32,13 @@
       <population spec='Population' populationName='I' id='I' />
       <population spec='Population' populationName='R' id='R' />
       <population spec="Population" populationName="I_sampled" id="I_sampled" />
-      <reaction spec='Reaction' reactionName="Birth" rate="62.616:0,52.7018:0.04"> 
+      <reaction spec='Reaction' reactionName="Birth" rate="78.72:0,52.7018:0.04"> 
         I -> I + I 
       </reaction>
-      <reaction spec='Reaction' reactionName="Death" rate="37.0478"> 
+      <reaction spec='Reaction' reactionName="Death" rate="31.308"> 
         I -> R
       </reaction>
-      <reaction spec="Reaction" reactionName="Sampling" rate="15.1322">
+      <reaction spec="Reaction" reactionName="Sampling" rate="20.872">
         I -> I_sampled
       </reaction>
     </model>
@@ -66,6 +70,6 @@
 
     <output spec='NewickOutput' fileName="shigella_$(ID).newick.tree" />
     <!-- <output spec="NexusOutput" fileName="BD_h1n1.nexus.tree"/> -->
-    <output spec='JsonOutput' fileName="shigella_$(ID).json" />
+    <!-- <output spec='JsonOutput' fileName="shigella_$(ID).json" /> -->
   </run>
 </beast>
