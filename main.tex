@@ -34,13 +34,12 @@ Increased sharing of pathogen genome sequences has been a feature of responses t
 
 \section*{Methods}
 \subsection*{Overview}
-Our study is based around 4 core empirical datasets of H1N1 influenza, SARS-CoV-2, \textit{Shigella sonnei}, and \textit{Mycobacterium tuberculosis} and a corresponding simulation study. For both the empirical and simulated datasets, we perform phylodynamic analysis with sampling dates rounded to the day, month, year, and measure the resulting bias critical parameters - $R_0$ / $R_e$ and the age of the outbreak (a.k.a. origin). For example, two samples from 2000/05/14 and 2000/05/02 would become 2000/05/01 if rounded to the month.
+Our study is based around 4 empirical datasets of H1N1 influenza, SARS-CoV-2, \textit{Shigella sonnei}, and \textit{Mycobacterium tuberculosis} and a corresponding simulation study. For both the empirical and simulated datasets, we perform phylodynamic analysis with sampling dates rounded to the day, month, year, and measure the resulting bias critical parameters - $R_0$ / $R_e$ and the age of the outbreak (origin hereafter). For example, two samples from 2000/05/14 and 2000/05/02 would become 2000/05/01 if rounded to the month.
 
 The two viral datasets consist of samples from the 2009 H1N1 pandemic (n=161) from \citet{hedge_2013_real-time}, and a cluster of early SARS-CoV-2 cases from  Australia in 2020 (n = 112) \citep{lane2021genomics}. The bacterial datasets consist of Australian \textit{S. sonnei} samples from an outbreak studied by \citet{ingle_co-circulation_2019}, and 36 \textit{M. tuberculosis} samples from a ~25 year outbreak studied by \citet{kuhnert_tuberculosis_2018}. These data were chosen because they encompass a diversity of epidemiological dynamics and scales with variable rates of substitution.
 
-
 \subsection*{Simulation Study}
-We simulated outbreaks as Birth-Death with sampling processes using the Master package in BEAST v2.6.6 \citep{vaughan_stochastic_2013,bouckaert_beast_2019}. This was comprised of 100 replicates over 4 parameter sets corresponding each of the empirical datasets . All parameter sets include a proportion of cases sequenced ($p$), duration ($T$), and a "becoming un-infectious" rate ($\delta$ = reciprocal of the duration of infection). For simulations corresponding the viral datasets, transmision is modelled via $R_0$, the average number of secondary infections. For those corresponding to the bacterial datasets, we use two effective reproductive numbers, $R_{e_1}$ and $R_{e_2}$, with a change time at $0.5T$. This resulted in a total of 400 outbreak datasets which we then used to simulate sequence data under a Jukes-Cantor model using Seq-Gen v1.3.4 \citep{rambaut_seq-gen_1997}. Substitution rates, genome lengths, and the above outbreak parameters are summarised in tables \ref{tab:sim_parms} and \ref{tab:seq_parms}.
+We simulated outbreaks as Birth-Death sampling processes using the Master package in BEAST v2.6.6 \citep{vaughan_stochastic_2013,bouckaert_beast_2019}. These consisted of 100 replicates over 4 parameter sets corresponding each of the empirical datasets . All parameter sets include a proportion of cases sequenced ($p$), duration ($T$), and a "becoming un-infectious" rate ($\delta$ = reciprocal of the duration of infection). For simulations corresponding the viral datasets, transmision is modelled via $R_0$, the average number of secondary infections. For those corresponding to the bacterial datasets, we use two effective reproductive numbers, $R_{e_1}$ and $R_{e_2}$, with a change time at $0.5T$. This resulted in a total of 400 outbreak datasets which we then used to simulate sequence data under a Jukes-Cantor model using Seq-Gen v1.3.4 \citep{rambaut_seq-gen_1997}. Substitution rates, genome lengths, and the above outbreak parameters are summarised in tables \ref{tab:sim_parms} and \ref{tab:seq_parms}.
 
 \begin{table}[ht]
     \centering
@@ -75,12 +74,30 @@ We simulated outbreaks as Birth-Death with sampling processes using the Master p
 \end{table}
 
 \subsection*{Empirical Data}
-All phylodynamic analyses were conducted using a Birth-Death sampling tree prior in BEAST v2.6.6 \citep{bouckaert_beast_2019}. 
+All phylodynamic analyses were conducted using a Birth-Death sampling tree prior in BEAST v2.6.6 \citep{bouckaert_beast_2019}. MCMC chains were run for $5\times10^{8}$ steps, with the initial 10\% discarded as burin to achieve $ESS > 200$ for all parameters considered in the results.
 
 \subsubsection*{H1N1}
-The H1N1 data consist of 161 samples from North America during the 2009 H1N1 pandemic. This  dataset provides an example of a quickly evolving pathogen sparsely sampled over a longer epidemiological timescale. 
+The H1N1 data consist of 161 samples from North America during the 2009 H1N1 pandemic, first analysed by \citet{hedge_2013_real-time}. This  dataset provides an example of a quickly evolving pathogen sparsely sampled over a longer epidemiological timescale. 
 
-We placed a lognormal prior on......
+We placed a $\textnormal{Lognormal}(\mu=0,\sigma=1)$ prior on $R_0$, $\beta(1,1)$ prior on $p$, and fixed the becoming-uninfectious ($\delta = 91$), corresponding to a 4 day duration of infection. We also placed an improper ($U(0,\infty)$) prior on the origin and a $U(10^{-4},10^{-2})$ prior on the substitution rate. This prior corresponds to analysis of these data in \citet{featherstone_decoding_2023}.
+
+\subsubsection*{SARS-CoV-2}
+The SARS-CoV-2 data are 112 samples from a densely sequenced transmission cluster in Victoria, Australia in 2020, first analysed by \citet{lane2021genomics}. These data are similar to the H1N1 datasets in presenting a quickly evolving viral pathogen, but contrast in that virtually all cases in the cluster were sequenced. 
+
+Prior configurations are identical to those used in \citet{featherstone_decoding_2023} to analyse the same data. Briefly, we placed a 
+
+$\textrm{Lognormal}(\textrm{mean}=1, \textrm{sd}=1.25)$ prior on $R_0$ and an $\textrm{Inv-Gamma}(\alpha=5.807, \beta=346.020)$ prior on the becoming-uninfectious rate ($\delta$).  The sampling proportion was fixed to $p=0.8$ since every known Victorian SARS-CoV-2 case was sequenced at this stage of the pandemic, with a roughly 20\% sequencing failure rate. We also placed an $\textrm{Exp}(\textrm{mean}=0.019)$ prior on the origin, corresponding to a lag of up to one week  between the index case and the first putative transmission event. The substitution rate was fixed a $10^{-3}$ following \citep{duchene_temporal_2020}.
+
+\subsubsection*{\textit{Shigella sonnei}}
+The \textit{S. Sonnei} dataset originates from \citet{ingle_co-circulation_2019} and consists of a single nucleotide polymorphism (SNP) alignment of 146 sequenced isolates from infected men who have sex with men in Australia. These data provide an example of densely sequenced transmission of a bacterial pathogen. 
+
+To accommodate changing transmission dynamics, we included two intervals for $R_e$ with a $\textnormal{Lognormal}(\mu=0,\sigma=1)$ prior on each. We also placed a $\beta(1,1)$ prior on the sampling proportion, a $U(0,1000)$ prior on the origin, and fixed the becoming un-infectious rate at $\delta=73.05$ corresponding to a 5 day duration of infection.
+
+To generate the SNP alignment, we (Enter Danielle...)
+
+\subsubsection*{\textit{Mycobacterium tuberculosis}}
+The \textit{M. tuberculisis} dataset consists of 36 sequenced isolates taken from a retrospectively recognised outbreak in California, USA, and originating in the Wat Tham Krabok refugee camp in Thailand. We applied the same similar prior configuration to \citet{kuhnert_tuberculosis_2018}, with the exception of including 2 intervals for $R_e$ and fitting a strict molecular clock with a $\Gamma(\alpha=0.001,\beta=1000.0)$ prior.
+
 
 \section*{Results}
 \subsection*{Results Overview}
@@ -95,9 +112,21 @@ We placed a lognormal prior on......
     \item Show that severity seems to correlate with relationship between error and timing, if I can motivate one in introduction
 \end{itemize}
 
+\subsection*{Simulation study}
+- report trend in R0, origin, and clock
+- increase in R0 and rate when losing resolution. decreasing origin.
+- Comment on nature of bias
+- include tables
+
+\subsection*{Empirical Results}
+- Requires a table about bias percentages, or maybe a plot
+- Observe similar movement $R_0$ as for the simulation study.
+- Ie. Viral datasets move more, bacterial ones less. TB essentially inert, but shigella experiences bias up and down especially at year.
+
 \section*{Discussion}
 \textbf{Brakdown of points to hit}
 \begin{itemize}
+    \item Bias doesn't move in one direction - depends on compression
     \item Why was each parameter biased the way it was?
     \item Overall, samples get clustered to the same time, but still have differences in sequence
     \item Suggests a higher mutation rate and transmission rate
