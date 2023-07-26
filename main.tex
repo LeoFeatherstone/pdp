@@ -124,22 +124,26 @@ The \textit{M. tuberculosis} simulation condition effectvely acts as a control c
 \end{figure}
 
 \subsection*{Empirical Results}
-- Requires a table about bias percentages, or maybe a plot
-- Observe similar movement $R_0$ as for the simulation study.
-- Ie. Viral datasets move more, bacterial ones less. TB essentially inert, but shigella experiences bias up and down especially at year.
+Broadly, analyses of the empirical datasets reproduce the trends of bias in reproductive number, substitution rate, and origin from the simulation study (figures \ref{fig:empR},\ref{fig:empClock}). That is, biases in the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the origin. There are a few exceptions to this trend that we consider below.
 
-\begin{figure}
+\subsubsection*{H1N1}
+\subsubsection*{SARS-CoV-2}
+The SARS-CoV-2 datasets behaves as expected from the simulation study, except for the origin under month resolution which is placed deeper in time. This is surprising given that the evolutionary rate is elevated at month resolution. (I need to check if this is a bug - are we rescaling with the true oldest sample or with the new date. Perhaps need to move these to a new plot.)
+\subsubsection*{\textit{S. sonnei}}
+\subsubsection*{\textit{M. tuberculosis}}
+
+\begin{figure}[h!]
     \centering
     \includegraphics{empirical_plot.pdf}
-    \caption{Caption}
-    \label{fig:enter-label}
+    \caption{Posterior reproductive number and origin for each empirical dataset coloured by level of date resolution. Posterior origin times are represented as rescaled posterior frequencies along the Date axis and posterior reproductive numbers are given in violin plots on the vertical axis. For the H1N1 and SARS-CoV-2 datasets, posterior $R_0$ across date resolution is overlayed and overlaps minimally. For the \textit{S. sonnei} and \textit{M. tuberculosis}, posterior $R_{e_1}$ and $R_{e_2}$ (left to right) are displayed in adjacent groups. The change time between them is itself variable as half of the origin time. Samplng times are given as black mark son each date axis.}
+    \label{fig:empR}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \includegraphics{empirical_clock_trajectory.pdf}
-    \caption{Caption}
-    \label{fig:enter-label}
+    \caption{Posterior substitution rate for each empirical dataset across analyses with decreasing date resolution.}
+    \label{fig:empClock}
 \end{figure}
 
 \section*{Discussion}
