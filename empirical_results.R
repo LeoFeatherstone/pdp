@@ -181,20 +181,20 @@ emp_table <- emp_data %>%
     group_by(organism, resolution) %>%
     summarise(
         meanR0 = mean(R0),
-        R0HPD = paste0("[", paste(quantile(R0, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        R0HPD = paste0("[", paste(signif(quantile(R0, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
         meanRe1 = mean(Re1),
-        Re1HPD = paste0("[", paste(quantile(Re1, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        Re1HPD = paste0("[", paste(signif(quantile(Re1, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
         meanRe2 = mean(Re2),
-        Re2HPD = paste0("[", paste(quantile(Re2, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        Re2HPD = paste0("[", paste(signif(quantile(Re2, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
         meanP = mean(p),
-        pHPD = paste0("[", paste(quantile(p, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        pHPD = paste0("[", paste(signif(quantile(p, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
         meanDelta = mean(delta),
-        deltaHPD = paste0("[", paste(quantile(delta, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        deltaHPD = paste0("[", paste(signif(quantile(delta, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
         meanOrigin = mean(origin),
-        originHPD = paste0("[", paste(quantile(origin, na.rm  = TRUE, probs = c(0.025, 0.975)), sep="", collapse=", "), "]"),
+        originHPD = paste0("[", paste(signif(quantile(origin, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
         .groups = "drop"
     )
-print(xtable(emp_table, type = "latex"), file = "empirical_data_table.tex")
+print(xtable(emp_table, type = "latex", digits = 3), file = "empirical_data_table.tex")
 
 
 
@@ -241,9 +241,10 @@ h1n1 <- emp_data %>%
     ggplot() +
     geom_violin(
         aes(
-            x = mean(max_samp_times["h1n1"] - (origin * 0.5)),
+            x = (mean(as.Date(date_decimal(max_samp_times["h1n1"] - (origin * 0.5))))),
             y = R0,
-            fill = resolution
+            fill = resolution,
+            group = resolution
         ),
         scale = "width",
         position = "identity",
@@ -260,7 +261,7 @@ h1n1 <- emp_data %>%
     #     alpha = 0.5,
     #     position = "identity"
     # ) +
-    geom_rug(data = samp_times, aes(x = h1n1)) + 
+    geom_rug(data = samp_times, aes(x = as.Date(date_decimal(h1n1)))) + 
     coord_cartesian(clip = "off") +
     coord_cartesian(ylim = c(1, 1.21)) +
     scale_y_continuous(
