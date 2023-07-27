@@ -251,15 +251,15 @@ h1n1 <- emp_data %>%
         alpha = 0.5,
         width = 0.25
     ) +
-    geom_histogram(
-        aes(
-            x = max_samp_times["h1n1"] - origin,
-            y = (..count.. / 5000) + 1,
-            fill = resolution),
-        bins = 100,
-        alpha = 0.5,
-        position = "identity"
-    ) +
+    # geom_histogram(
+    #     aes(
+    #         x = max_samp_times["h1n1"] - origin,
+    #         y = (..count.. / 5000) + 1,
+    #         fill = resolution),
+    #     bins = 100,
+    #     alpha = 0.5,
+    #     position = "identity"
+    # ) +
     geom_rug(data = samp_times, aes(x = h1n1)) + 
     coord_cartesian(clip = "off") +
     coord_cartesian(ylim = c(1, 1.21)) +
@@ -289,15 +289,15 @@ covid <- emp_data %>%
         alpha = 0.5,
         width = 0.05
     ) +
-    geom_histogram(
-        aes(
-            x = max_samp_times["sars_cov_2"] - origin,
-            y = (..count.. / 100),
-            fill = resolution),
-        bins = 100,
-        alpha = 0.5,
-        position = "identity"
-    ) +
+    # geom_histogram(
+    #     aes(
+    #         x = max_samp_times["sars_cov_2"] - origin,
+    #         y = (..count.. / 100),
+    #         fill = resolution),
+    #     bins = 100,
+    #     alpha = 0.5,
+    #     position = "identity"
+    # ) +
     geom_rug(data = samp_times, aes(x = sars_cov_2)) + 
     coord_cartesian(clip = "off") +
     xlab("Date") + ylab("Reproductive Number") +
@@ -333,15 +333,15 @@ tb <- emp_data %>%
         alpha = 0.5,
         width = 8
      ) +
-    geom_histogram(
-        aes(
-            x = max_samp_times["tb"] - origin,
-            y = (..count.. / 200),
-            fill = resolution),
-        bins = 100,
-        alpha = 0.5,
-        position = "identity"
-    ) +
+    # geom_histogram(
+    #     aes(
+    #         x = max_samp_times["tb"] - origin,
+    #         y = (..count.. / 200),
+    #         fill = resolution),
+    #     bins = 100,
+    #     alpha = 0.5,
+    #     position = "identity"
+    # ) +
     geom_rug(data = samp_times, aes(x = tb)) + 
     coord_cartesian(clip = "off") +
     xlim(1980, 2010) + ylim(0, 5) +
@@ -357,7 +357,7 @@ shigella <- emp_data %>%
     geom_violin(
         aes(
             x = mean(max_samp_times["shigella"] - (origin * 0.75)),
-            y = reproductiveNumber.1,
+            y = Re1,
             fill = resolution
         ),
         scale = "width",
@@ -369,7 +369,7 @@ shigella <- emp_data %>%
     geom_violin(
         aes(
             x = mean(max_samp_times["shigella"] - (origin * 0.25)),
-            y = reproductiveNumber.2,
+            y = Re2,
             fill = resolution
         ),
         scale = "width",
@@ -378,15 +378,15 @@ shigella <- emp_data %>%
         alpha = 0.5,
         width = 2
      ) +
-    geom_histogram(
-        aes(
-            x = max_samp_times["shigella"] - origin,
-            y = (..count.. / sum(..count..)) + 0.8,
-            fill = resolution),
-        bins = 100,
-        alpha = 0.5,
-        position = "identity"
-    ) +
+    # geom_histogram(
+    #     aes(
+    #         x = max_samp_times["shigella"] - origin,
+    #         y = (..count.. / sum(..count..)) + 0.8,
+    #         fill = resolution),
+    #     bins = 100,
+    #     alpha = 0.5,
+    #     position = "identity"
+    # ) +
     geom_rug(data = samp_times, aes(x = shigella)) +
     coord_cartesian(clip = "off") +
     coord_cartesian(ylim = c(0.8, 1.25)) +
@@ -406,6 +406,26 @@ pdf("empirical_plot.pdf", useDingbats = FALSE)
     empirical_plot
 dev.off()
 
+pdf("empirical_origin.pdf", useDingbats = FALSE)
+    emp_data %>%
+    ggplot() +
+    geom_histogram(
+        aes(
+            x = origin,
+            fill = resolution
+    ),
+        bins = 100,
+        alpha = 0.5,
+        position = "identity"
+    ) +
+    scale_y_continuous(
+        expand = c(0, 0),
+        oob = scales::censor
+    ) +
+    facet_wrap(~organism, scales = "free") +
+    xlab("Origin") + ylab("Posterior Frequency") +
+    theme_minimal()
+dev.off()
 
 ## Tabular results
 # mean
