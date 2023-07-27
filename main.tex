@@ -18,20 +18,22 @@ $^{1}$ Peter Doherty Institute for Infection and Immunity, University of Melbour
 *email: leo.featherstone@unimelb.edu.au
 
 \section*{Abstract}
-\textbf{Serving as a guideline for the message of the paper for now.}
-Phylodynamic and genomic epidemiology frequently rely on the sampling times from pathogen isolates to make inference about the development of disease outbreaks over time. By calibrating a rate of substitution against epidemiological timescales, sampling times, in combination with genome sequence, allow for inferences such as the time of onset of an outbreak and intensity of transmission. However, for patient confidentiality, the exact sampling times for many sequences are not given, or rounded to a less precise amount of time such as month or year. Here, we show for the first time how and when such 'date-rounding' induces bias in epidemiological estimates. Broadly, this bias is often substantial, increases with the degree of rounding in provided sampling dates, and affect inference of all parameters including of time of onset and reproductive number. Finally, we close by proposing a solution that prioritises both patient confidentiality and accuracy of inference in genomic epidemiology, by proposing a basic form of encryption of dates in absolute time by translating them by an unknown number.
+\textbf{Do at end, need to be Public-Healthy-y}
 
 \begin{spacing}{1.5}
 \section*{Introduction}
 \begin{itemize}
-    \item How and why rounding of dates occurs
-    \item Types of rounding and presumed problems, including distorting clock signal (e.g. `stress' in the rtt?)
-    \item Consider a figure to show the distortion in the phylogram and in an rtt?
-    \item `effective number of mutations' do we still need this concept?
-    \item That it might matter for the clock and what downstream parameters
+    \item Increased sharing of pathogen genome sequences has been a feature of responses to recent infectious disease threats. This is also the culmination of a broader trend that has build with advances in WGS. 
+    \item Examples of GISAID and other ID databases
+    \item Patient confidentiality remains a key priority 
+    \item Define date rounding practice, provide citations to the extensiveness of the practice (HELP!!)
+    \item Introduce how we tackle the problem
+    \item Explain hypothesised and shown axis in the data between temporal clustering and inflated rates
+    \item May introduce effective mutation time here?
+    \item Mention that real-world data features blur the trends we expect, so mention that we conclude with the proposed encryption algorithm
 \end{itemize}
 
-Increased sharing of pathogen genome sequences has been a feature of responses to recent infectious disease threats. This is also the culmination of a broader trend that has build with advances in WGS. 
+
 
 \section*{Methods}
 \subsection*{Overview}
@@ -85,18 +87,6 @@ The \textit{M. tuberculisis} dataset consists of 36 sequenced isolates taken fro
 
 
 \section*{Results}
-\subsection*{Results Overview}
-\textbf{Points to hit}
-\begin{itemize}
-    \item Bias in all parameters
-    \item $R_e$ / $R_0$ is biased upwards
-    \item origin ispushed deeper in time, implicating a more severe longstanding outbreak
-    \item Clock rate is increased, suggesting a faster rate of mutation
-    \item This trend is worst for smaller datasets, where the duration of infection is shorter relative to the error induced in rounding
-    \item By contrast TB is affected less, but we need the specificity for emergent outbreaks most
-    \item Show that severity seems to correlate with relationship between error and timing, if I can motivate one in introduction
-\end{itemize}
-
 \subsection*{Simulation study}
 Broadly, the bias in posterior mean reproductive number increases with decreasing date resolution. This effect is most pronounced for the viral simulation conditions, where one month or year is greater than the amount of time expected for one mutation to arise. In this case, date rounding condenses divergent sequences temporally, driving a signal for higher rates of evolution and transmission (Supplementary material). Conversely, bias is least pronounced where the date resolution lost is a small fraction of the effective mutation time. In this case, temporally clustered sequences are less likely to be divergent, thus not inflating posterior evolutionary rate. Moreover, the sampling timespans for these datasets is longer (table \ref{tab:sim_parms}), meaning that clustering to month or year leads to a less pronounced inflation of the reproductive number as samples still remain temporally distributed.
 
@@ -127,10 +117,16 @@ The \textit{M. tuberculosis} simulation condition effectvely acts as a control c
 Broadly, analyses of the empirical datasets reproduce the trends of bias in reproductive number, substitution rate, and origin from the simulation study (figures \ref{fig:empR},\ref{fig:empClock}). That is, biases in the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the origin. There are a few exceptions to this trend that we consider below.
 
 \subsubsection*{H1N1}
+Posterior $R_0$ moves upwards with decreasing date resolution in an identical way to the simulation study. However, the posterior substitution rate and origin time depart from the trend in that estimates remain essentially the same for day and month resolution X and X (ADD TABLE),  before moving upwards at year resolution as expected from the simulation study. This can be explained by the sampling time distribution, since the earlier samples came later in their month (FIX fig3), such that rouding them down to the first of the month served to temproally stretch the dataset, hence drivigna signal for a lower evolutionary rate and older origin time.
 \subsubsection*{SARS-CoV-2}
-The SARS-CoV-2 datasets behaves as expected from the simulation study, except for the origin under month resolution which is placed deeper in time. This is surprising given that the evolutionary rate is elevated at month resolution. (I need to check if this is a bug - are we rescaling with the true oldest sample or with the new date. Perhaps need to move these to a new plot.)
+The SARS-CoV-2 datasets behaves as expected with respect to posterior $R_0$. In particular, rounding to the month results in an unlikely, but plausible value of $R_0$ around 5 (ADD TABLE). Rounding to the year inflates $R_0$ further as expected.
+
+The SARS-CoV-2 data diverge from expectation in that the posterior substitution rate remains essentially stable when rounding to the month or year, with a mean value of $10^{-3.5}$ (subs/site/time) for both (ADD TABLE). In addition, the origin time at month resolution moves deeper in time, rather than the expectation of shallower. We attribute these diffeences to the distribution of the empirical sampling times, where are not as consistently distributed as for the simulated outbreaks. In particular, there appears to be on early sample (Fig \ref{fig:empR} A) that likely drives the signal for an older outbreak when rounding to the month as it is pushed back in time. At the same time, the clock rate increases with decreasing date resolution as expected.
 \subsubsection*{\textit{S. sonnei}}
+For $R_{e_1}$, the \textit{S. sonnei} dataset matchec expectation from the simulation study with month rounding having minimal effect, but year rounding inducing upwards bias with minimal overlap of posterior probability. $R_{e_2}$ departs from expectation in that it decreases when rounding to the year. We expect that this is to compensate for the elevated $R_{e_1}$, serves to explain most of the transmission. This is supported by the extreme shallowing of the outbreak age that we observe for the origin time (value), such that the outbreak appears as an intensified early burst. The clock rate remains stable across date resolutions, which is expected given the low rate of mutation and in the dataset (around $10^{-6}$).
 \subsubsection*{\textit{M. tuberculosis}}
+The \textit{M. tuberculosis} data recapitulate the outcome of the simulation study - posterior origin times and evolutionary rate remaim consistent across decreasing date resolution at 20 years and $10^{-7}$ (subs/site/time) respectively. We observe minimal upwards bias in posterior $R_{e_1}$ and $R_{e_2}$, and the expectation that $R_{e_1} > R_{e_s}$ is met, coninciding with an earlier burst of transmission. This reaffirms that if the effective mutation time sufficiently large compared to the date resolution lost, then date rounding has a lesser effect.
+
 
 \begin{figure}[h!]
     \centering
@@ -147,17 +143,17 @@ The SARS-CoV-2 datasets behaves as expected from the simulation study, except fo
 \end{figure}
 
 \section*{Discussion}
-\textbf{Brakdown of points to hit}
-\begin{itemize}
-    \item Bias doesn't move in one direction - depends on compression
-    \item Why was each parameter biased the way it was?
-    \item Overall, samples get clustered to the same time, but still have differences in sequence
-    \item Suggests a higher mutation rate and transmission rate
-    \item Hence spuriously large results for when we condense to year for H1N1
-    \item Obviously, we would never rely on such results. For example, and $R_e$ of $10^8$ for H1N1 suggested the globe's population would be infected in one transmission event. Such is the blindness of our models. More tangibly though, we can always expect bias from what the full dates are suggesting, so the best thing to do is use the full date.
-\end{itemize}
-\subsection*{A simple solution}
-The only information that matters, is the \emph{difference} between sequences and dates, rather than their absolute values. After all, our methods are comparative within a sample. Thus we can prioritise exact information and protect patient identity at the same time. We propose that authorities can provide dates that are all shifted in time by an unknown seed number, and reinterpret results by factoring this in. For example, if the sampling times of a dataset of 3 samples are (2000, 2001, 2002), then public health authorities may randomly draw a seed of 1000 with which to shift and dates and pass onto scientists: (2000, 2001, 2002) $\rightarrow$ (3000, 3001, 3002). Then results can be reinterpreted with regard to the random seed. If, for example the estimated time of onset was 3 years before the most recent sample, then those receiving the data will not be able to place this in time, while those on the data generation end can interpret this correctly (estimated time of onset = 2002-3 = 1999). In the same vein, transmission parameters such as $R_e$ can be understood to pertain to the true sampling time.
+
+The results of the simulation study can by summarised as showing that date rounding inflates estimates of evolutionary and epidemiological rates by temporally clustering differentiated genome sequences. This manifested in upwards bias of the effective reproductive number, evolutionary rate, and decreased age of the outbreak in turn. The extent of the bias increased with more diverged sequences and decreased date resolution. In other words, it increased with the assertion that more evolution occurred in less time. This is why bias increased for simulation conditions with the highest amount of mutation per unit time - the H1N1 condition followed SARS-CoV-2 and \textit{S. sonnei}. \textit{M. tuberculosis} simulations in their inertness to date rounding also support this explanation since they were unlikely to generate any mutation over the month or even year mutation timescales.
+
+Empirical analyses broadly recapitulated the results of the simulation study, but also introduced notable exceptions which emphasised the unpredictability of bias when rounding dates. For example, the posterior evolutionary rate of the H1N1 dataset did not bias upwards when rounding to the month. The SARS-CoV evolutionary rate did not increase when moving from month to year rounding, and posterior $R_{e_2}$ decreased when rounding to the year for the \textit{S. sonnei} dataset. In each case, we attribute these differences to the way in which the distribution of empirical sampling times differed from the consistency in simulated datasets. This meant that date rounding did not always result in temporal clustering of divergent sequences. In the example of the SARS-CoV-2 dataset where samples originated from the end of mone month and start of the next, rounding down to the start of eahc month serves to spread out the sample over time, overriding the effect of clustering samples from the same month.
+
+Taken together, the results form the simulation study and empirical data show that although date rounding biases empidemiloigcal estimates in an understandable way, the intensity of the bias is difficult to predict and varies with the parameter space the data notionally inhabit. Moreover, features of real-world sampling such as fine-scale clustering of samplig times over longer sampling efforts can unpredictably dampen or reverse expected bias due to date rounding. Put succintly, date rounding indices bias unpredicable bias due to the interaction of theoretical aspects of phylodynamic models real-world data features.
+
+Based on this, we conclude that accurate sampling time information is essential where phylodynamic insight is needed to understand a disease threat. However, as acknowedged from the beginning of this article, it may impose an unacceptable level of risk to release isolate sampling times as can theoretically be used to identify individual patients in smaller samples. To circumvenr this and deliver timely phylodynamic results, we propose an extremely simple form of encrption that may lower the level of risk in sharing sampling time to the day to acceptible levels.
+
+\subsection*{The simplest encryption of dates}
+The functional component of phylodynamic data is the \emph{difference} between sequences and dates, rather than their absolute values. After all, our methods are comparative within a sample. Thus we can prioritise exact information and protect patient identity at the same time. We propose that authorities can provide dates that are all shifted in time by an unknown seed number, and reinterpret results by factoring this in. For example, if the sampling times of a dataset of 3 samples are (2000, 2001, 2002), then public health authorities may randomly draw a seed of 1000 with which to shift and dates and pass onto scientists: (2000, 2001, 2002) $\rightarrow$ (3000, 3001, 3002). Then results can be reinterpreted with regard to the random seed. If, for example the estimated time of onset was 3 years before the most recent sample, then those receiving the data will not be able to place this in time, while those on the data generation end can interpret this correctly (estimated time of onset = 2002-3 = 1999). In the same vein, transmission parameters such as $R_e$ can be understood to pertain to the true sampling time.
 
 \end{spacing}
 
@@ -190,6 +186,13 @@ The only information that matters, is the \emph{difference} between sequences an
     \includegraphics{sim_origin_trajectory.pdf}
     \caption{Meas posterior origin for each simulation condition over decreasing date resolution. Lines connect individual simulated datasets across analyses with decreasing date resolution and horizontal black lines mark the true evolutionary rate. Mean posterior origin decreases  where date roundeding clusters more divergent sequences, such as in the case of the viral datasets. The effect is less pronounced for the slower evolving simulation conditions - (\textit{S. sonnei} and \textit{M. tuberculosis}).}
     \label{fig:simOrigin}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics{empirical_origin.pdf}
+    \caption{Posterior origin time across date resolution and simulation conditions.}
+    \label{fig:empOrigin}
 \end{figure}
 
 \end{document}
