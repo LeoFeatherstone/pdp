@@ -42,7 +42,7 @@ Our study is based around 4 empirical datasets of H1N1 influenza, SARS-CoV-2, \t
 The two viral datasets consist of samples from the 2009 H1N1 pandemic (n=161) from \citet{hedge_2013_real-time}, and a cluster of early SARS-CoV-2 cases from  Australia in 2020 (n = 112) \citep{lane2021genomics}. The bacterial datasets consist of Australian \textit{S. sonnei} samples from an outbreak studied by \citet{ingle_co-circulation_2019}, and 36 \textit{M. tuberculosis} samples from a ~25 year outbreak studied by \citet{kuhnert_tuberculosis_2018}. These data were chosen because they encompass a diversity of epidemiological dynamics and scales with variable rates of substitution.
 
 \subsection*{Simulation Study}
-We simulated outbreaks as Birth-Death sampling processes using the Master package in BEAST v2.6.6 \citep{vaughan_stochastic_2013,bouckaert_beast_2019}. These consisted of 100 replicates over 4 parameter sets corresponding each of the empirical datasets . All parameter sets include a proportion of cases sequenced ($p$), duration ($T$), and a "becoming un-infectious" rate ($\delta$ = reciprocal of the duration of infection). For simulations corresponding the viral datasets, transmision is modelled via $R_0$, the average number of secondary infections. For those corresponding to the bacterial datasets, we use two effective reproductive numbers, $R_{e_1}$ and $R_{e_2}$, with a change time at $0.5T$. This resulted in a total of 400 outbreak datasets which we then used to simulate sequence data under a Jukes-Cantor model using Seq-Gen v1.3.4 \citep{rambaut_seq-gen_1997}. Substitution rates, genome lengths, and the above outbreak parameters are summarised in tables \ref{tab:sim_parms} and \ref{tab:seq_parms}.
+We simulated outbreaks as Birth-Death sampling processes using the Master package in BEAST v2.6.6 \citep{vaughan_stochastic_2013,bouckaert_beast_2019}. These consisted of 100 replicates over 4 parameter sets corresponding each of the empirical datasets . All parameter sets include a proportion of cases sequenced ($p$), duration ($T$), and a "becoming un-infectious" rate ($\delta$ = reciprocal of the duration of infection). For simulations corresponding the viral datasets, transmission is modelled via $R_0$, the average number of secondary infections. For those corresponding to the bacterial datasets, we use two effective reproductive numbers, $R_{e_1}$ and $R_{e_2}$, with a change time at $0.5T$. This resulted in a total of 400 outbreak datasets which we then used to simulate sequence data under a Jukes-Cantor model using Seq-Gen v1.3.4 \citep{rambaut_seq-gen_1997}. Substitution rates, genome lengths, and the above outbreak parameters are summarised in tables \ref{tab:sim_parms} and \ref{tab:seq_parms}.
 
 \begin{table}[ht]
     \centering
@@ -58,6 +58,22 @@ We simulated outbreaks as Birth-Death sampling processes using the Master packag
     \hline
     \end{tabular}
     \label{tab:sim_parms}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \caption{Substitution rates and genome length for sequence simulation.}
+    \begin{tabular}{l|c|l|r}
+    \hline
+    Microbe                     &   Substitution Rate (subs/site/yr) & Genome Length & Time/Sub/Genome (yrs)  \\
+    \hline
+    H1N1                        & $4\times10^{-3}$ & 13158 & 0.0190\\
+    SARS-CoV-2                  & $1\times10^{-3}$ & 29903 & 0.0334\\
+    \textit{S. sonnei}    & $6\times10^{-7}$ & 4825265  & 0.3454\\
+    \textit{M. tuberculosis}    &   $1\times10^{-8}$ & 4300000 & 23.256\\
+    \hline
+    \end{tabular}
+    \label{tab:seq_parms}
 \end{table}
 
 \subsection*{Empirical Data}
@@ -88,15 +104,15 @@ The \textit{M. tuberculisis} dataset consists of 36 sequenced isolates taken fro
 
 \section*{Results}
 \subsection*{Simulation study}
-Broadly, the bias in posterior mean reproductive number increases with decreasing date resolution. This effect is most pronounced for the viral simulation conditions, where one month or year is greater than the amount of time expected for one mutation to arise. In this case, date rounding condenses divergent sequences temporally, driving a signal for higher rates of evolution and transmission (Supplementary material). Conversely, bias is least pronounced where the date resolution lost is a small fraction of the effective mutation time. In this case, temporally clustered sequences are less likely to be divergent, thus not inflating posterior evolutionary rate. Moreover, the sampling timespans for these datasets is longer (table \ref{tab:sim_parms}), meaning that clustering to month or year leads to a less pronounced inflation of the reproductive number as samples still remain temporally distributed.
+Broadly, the bias in posterior mean reproductive number increases with decreasing date resolution. This effect is most pronounced for the viral simulation conditions, where one month or year is greater than the amount of time expected for one mutation to arise. In this case, date rounding condenses divergent sequences in time, driving a signal for higher rates of evolution and transmission. Conversely, the effect is less pronounced in the bacterial conditions where the date resolution lost is a smaller fraction of the effective mutation time, such as for the . In this case, sequences are less divergent such that temporal clustering does not inflate posterior evolutionary rate. Moreover, the sampling timespans for these datasets is longer (table \ref{tab:sim_parms}), meaning that clustering to month or year leads to a less pronounced inflation of the reproductive number as samples still remain temporally distributed.
 
-In correspondence with the above trends, the mean posterior biases upwards, representing a signal for a younger outbreak in other terms (ref \ref{fig:simOrigin}). This is the result of a well understood axis among phylodynamic models where higher rates of evolution suggest shorter periods of evolution corresponding to younger outbreaks \citep{featherstone_decoding_2023}.
+Corresponding with the above trend in evolutionary rate, the mean posterior origin time biases upwards, representing a signal for a shorter (ref \ref{fig:simOrigin}). This is the result of a well understood axis among phylodynamic models where higher rates of evolution suggest shorter periods of evolution \citep{featherstone_decoding_2023}. In the epidemiological view, this translates into placing more on lower estimates for the duration of the outbreak before sampling.
 
-The H1N1 simulation condition demonstrates this relationship to the greatest extent. It can be thought of as the simulation condition with the highest divergence among sequences relative to time, owing to this combination of a higher mutation and transmission rate alongside a lower mutation rate (table \ref{tab:sim_parms}). For the date rounding to the year, we see impossibly high values of $R_0$ and substitution around $10^{8}$ and $10^{6}$ respectively. Such values are clearly implausible, but they demonstrate a key point that bias in posterior estimates compounds with decreasing date resolution. The compounding is nonlinear, but also exacerbated by suitably diverged sequences, which would otherwise make for an idea phylodynamic dataset \citep{featherstone_decoding_2023}. Rounding to the month demonstrates intermedite effects with erroneously high bias. The SARS-Cov-2 simulation condition presents a similar trend, albeit with less ludicrous bias. 
+The H1N1 simulation condition demonstrates this relationship to the greatest extent. It can be thought of as the simulation condition with the highest divergence among sequences relative to simulation time, owing to a combination of a higher mutation and transmission rate alongside a lower mutation rate (table \ref{tab:sim_parms}). For the date rounding to the year, we see impossibly high values of $R_0$ and substitution around $10^{8}$ and $10^{6}$ respectively. Such values, although implausible, demonstrate a key point that bias in posterior estimates compounds with decreasing date resolution. The effect is nonlinear, but also exacerbated by more divergent sequences, which would otherwise make for an idea phylodynamic dataset \citep{featherstone_decoding_2023}. Rounding to the month demonstrates intermediate effects with erroneously high bias. The SARS-Cov-2 simulation condition presents a similar trend, albeit with less ludicrous bias. 
 
-The two bacterial simulation conditions also demonstrate a trend in bias that agrees with the above explanation. The \textit{S. sonnei} dataset demonstrates intermediate effects, which is expected given its effective mutation time is somewhere between the order of months and years. Thus we see a lesser degree of bias in $R_{e}$, with rounding to month in the evolutionary rate and origin, which transforms again into implauaible bias once rounding to the year. This effect is also markedly increased for $R_{e_2}$ in comparison to $R_{e_1}$ at the year level,  suggesting that (LOOK at number of samples, Re in second interval to explain here). 
+The two bacterial simulation conditions demonstrate the same trends in $R_e$, evolutionary rate, and origin. The \textit{S. sonnei} dataset shows intermediate effects with minimal bias when moving to month resolution and larger effects at year levels for all the above parameters. This is expected given its effective mutation time is somewhere between the order of months and years (table \ref{tab:sim_parms}). This effect is also markedly increased for $R_{e_2}$ in comparison to $R_{e_1}$ at the year level, suggesting that bias also increases where more distinct samples appear to arise at the same time (we expect more samples in the second window of the \textit{S. sonnei} simulations)
 
-The \textit{M. tuberculosis} simulation condition effectvely acts as a control condition since it basically inter to date rounding. Again this is expected, because this dataset reflects both longer simulation, meaning temproal clusting is less likely to inflate $R_e$, but also the effective mutation time is above the order of 1 year, meaning even rounding to the year is unlikely to drive a signal for increased substituiton or shallower origin.
+The \textit{M. tuberculosis} condition effectively acts as a control condition since it appears inter to date rounding. Again this is expected given, because this dataset reflects both longer simulation, meaning temporal clustering is less likely to inflate $R_e$, but also the effective mutation time is above the order of 1 year, meaning even rounding to the year is unlikely to drive a signal for increased evolutionary rate or shallower origin.
 
 
 \begin{figure}
@@ -114,18 +130,45 @@ The \textit{M. tuberculosis} simulation condition effectvely acts as a control c
 \end{figure}
 
 \subsection*{Empirical Results}
-Broadly, analyses of the empirical datasets reproduce the trends of bias in reproductive number, substitution rate, and origin from the simulation study (figures \ref{fig:empR},\ref{fig:empClock}). That is, biases in the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the origin. There are a few exceptions to this trend that we consider below.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rllrlrlrlrlrlrl}
+  \hline
+ & organism & resolution & meanR0 & R0HPD & meanRe1 & Re1HPD & meanRe2 & Re2HPD & meanP & pHPD & meanDelta & deltaHPD & meanOrigin & originHPD \\ 
+  \hline
+1 & H1N1 & Day & 1.083 & [1.05, 1.11] &  & [NA, NA] &  & [NA, NA] & 0.011 & [0.00656, 0.0158] &  & [NA, NA] & 0.417 & [0.344, 0.554] \\ 
+  2 & H1N1 & Month & 1.144 & [1.11, 1.17] &  & [NA, NA] &  & [NA, NA] & 0.007 & [0.00362, 0.0104] &  & [NA, NA] & 0.419 & [0.338, 0.556] \\ 
+  3 & H1N1 & Year & 1.154$\times 10^8$ & [$8.98\times10^7$, 1.45e+08] &  & [NA, NA] &  & [NA, NA] & 0.250 & [0.00203, 0.932] &  & [NA, NA] & 0.000 & [2.41e-09, 3.72e-09] \\ 
+  4 & SARS-CoV-2 & Day & 1.207 & [0.919, 1.57] &  & [NA, NA] &  & [NA, NA] &  & [NA, NA] & 81.463 & [51.3, 122] & 0.150 & [0.143, 0.164] \\ 
+  5 & SARS-CoV-2 & Month & 5.972 & [3.84, 9.21] &  & [NA, NA] &  & [NA, NA] &  & [NA, NA] & 97.499 & [62.3, 142] & 0.172 & [0.17, 0.176] \\ 
+  6 & SARS-CoV-2 & Year & 18.689 & [10.5, 29.8] &  & [NA, NA] &  & [NA, NA] &  & [NA, NA] & 43.862 & [25.9, 70.8] & 0.143 & [0.142, 0.147] \\ 
+  7 & Shigella & Day &  & [NA, NA] & 1.072 & [1.03, 1.11] & 0.982 & [0.968, 0.997] &  & [NA, NA] &  & [NA, NA] & 3.405 & [2.85, 3.62] \\ 
+  8 & Shigella & Month &  & [NA, NA] & 1.073 & [1.03, 1.11] & 0.983 & [0.969, 0.997] &  & [NA, NA] &  & [NA, NA] & 3.408 & [3.14, 3.62] \\ 
+  9 & Shigella & Year &  & [NA, NA] & 1.174 & [1.13, 1.22] & 0.949 & [0.933, 0.963] &  & [NA, NA] &  & [NA, NA] & 4.004 & [4, 4.02] \\ 
+  10 & TB & Day &  & [NA, NA] & 2.492 & [0.688, 4.88] & 1.292 & [0.704, 2.4] & 0.089 & [0.043, 0.148] & 0.290 & [0.106, 0.614] & 22.984 & [16.3, 49.1] \\ 
+  11 & TB & Month &  & [NA, NA] & 2.789 & [0.576, 5.15] & 1.390 & [0.735, 2.56] & 0.087 & [0.0417, 0.149] & 0.229 & [0.0993, 0.416] & 24.505 & [17.9, 52.1] \\ 
+  12 & TB & Year &  & [NA, NA] & 2.751 & [0.5, 5.27] & 1.484 & [0.774, 2.84] & 0.086 & [0.04, 0.147] & 0.222 & [0.0949, 0.401] & 25.551 & [18, 55.2] \\ 
+   \hline
+\end{tabular}
+\label{table:empData}
+\end{table}
+
+Broadly, analyses of the empirical datasets reproduce the trends of bias in reproductive number, substitution rate, and origin from the simulation study (figures \ref{fig:empR},\ref{fig:empClock}). That is, the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the origin. There are a few exceptions to this trend that we consider below and attribute to the difference between simulated and empirical sampling time distributions.
 
 \subsubsection*{H1N1}
-Posterior $R_0$ moves upwards with decreasing date resolution in an identical way to the simulation study. However, the posterior substitution rate and origin time depart from the trend in that estimates remain essentially the same for day and month resolution X and X (ADD TABLE),  before moving upwards at year resolution as expected from the simulation study. This can be explained by the sampling time distribution, since the earlier samples came later in their month (FIX fig3), such that rouding them down to the first of the month served to temproally stretch the dataset, hence drivigna signal for a lower evolutionary rate and older origin time.
-\subsubsection*{SARS-CoV-2}
-The SARS-CoV-2 datasets behaves as expected with respect to posterior $R_0$. In particular, rounding to the month results in an unlikely, but plausible value of $R_0$ around 5 (ADD TABLE). Rounding to the year inflates $R_0$ further as expected.
+Posterior $R_0$ moves upwards with decreasing date resolution in an identical way to the simulation study. However, the posterior substitution rate and origin time estimates remain essentially the same for day and month resolution (1.083, 1.44 and $10^{-2}$, $10^{-2}$ respectively)(table \ref{table:empData}),  before moving upwards at year resolution as expected from the simulation study. This can be explained by the sampling time distribution, since the earlier samples came later in their month (chnge fig3 to date axis proper), such that rounding them down to the first of the month served to expand timespan of sampling, hence driving signal for a lower evolutionary rate and older origin time.
 
-The SARS-CoV-2 data diverge from expectation in that the posterior substitution rate remains essentially stable when rounding to the month or year, with a mean value of $10^{-3.5}$ (subs/site/time) for both (ADD TABLE). In addition, the origin time at month resolution moves deeper in time, rather than the expectation of shallower. We attribute these diffeences to the distribution of the empirical sampling times, where are not as consistently distributed as for the simulated outbreaks. In particular, there appears to be on early sample (Fig \ref{fig:empR} A) that likely drives the signal for an older outbreak when rounding to the month as it is pushed back in time. At the same time, the clock rate increases with decreasing date resolution as expected.
+\subsubsection*{SARS-CoV-2}
+The SARS-CoV-2 datasets behaves as expected with respect to posterior $R_0$. In particular, rounding to the month results in an unlikely, but plausible value of $R_0 = 5.972$ (table \ref{table:empData}). Rounding to the year inflates $R_0$ further as expected.
+
+The SARS-CoV-2 data depart from expectation in that the posterior substitution rate remains essentially stable when rounding to the month or year, with a mean value of $10^{-3.5}$ (subs/site/time) for both (table \ref{table:empData}). In addition, the origin time at month resolution moves deeper in time, rather than the expectation of shallower. We again attribute these differences to the distribution of the empirical sampling times, which are not as consistently distributed as for the simulated outbreaks. In particular, there appears to be on early sample (Fig \ref{fig:empR} A) that likely drives the signal for an older outbreak when rounding to the month because it is pushed back in time. At the same time, the clock rate increases with decreasing date resolution as expected, likely due to the clustering of the the rest of the samples after the earliest.
+
 \subsubsection*{\textit{S. sonnei}}
-For $R_{e_1}$, the \textit{S. sonnei} dataset matchec expectation from the simulation study with month rounding having minimal effect, but year rounding inducing upwards bias with minimal overlap of posterior probability. $R_{e_2}$ departs from expectation in that it decreases when rounding to the year. We expect that this is to compensate for the elevated $R_{e_1}$, serves to explain most of the transmission. This is supported by the extreme shallowing of the outbreak age that we observe for the origin time (value), such that the outbreak appears as an intensified early burst. The clock rate remains stable across date resolutions, which is expected given the low rate of mutation and in the dataset (around $10^{-6}$).
+For $R_{e_1}$, the \textit{S. sonnei} dataset matched the simulation study with month rounding having minimal effect, but year rounding inducing upwards bias with minimal overlap of posterior probability (1.072, 1.073 respectively, figure \ref{fig:empR}). $R_{e_2}$ departs from expectation by decreasing when rounding to the year. We expect that this is to compensate for elevated $R_{e_1}$, which serves to capture most of the transmission earlier in the outbreak. This is supported by a markedly lower origin value (4.004, table \ref{table:empData}), such that the outbreak appears as an intensified early burst. The clock rate remains stable across date resolutions, which is expected given the low rate of mutation and in the dataset (around $10^{-6}$).
+
 \subsubsection*{\textit{M. tuberculosis}}
-The \textit{M. tuberculosis} data recapitulate the outcome of the simulation study - posterior origin times and evolutionary rate remaim consistent across decreasing date resolution at 20 years and $10^{-7}$ (subs/site/time) respectively. We observe minimal upwards bias in posterior $R_{e_1}$ and $R_{e_2}$, and the expectation that $R_{e_1} > R_{e_s}$ is met, coninciding with an earlier burst of transmission. This reaffirms that if the effective mutation time sufficiently large compared to the date resolution lost, then date rounding has a lesser effect.
+The \textit{M. tuberculosis} data recapitulate the outcome of the simulation study. Posterior origin times and evolutionary rate remain consistent across decreasing date resolution at 20 years and $10^{-7}$ (subs/site/time) respectively. We observe minimal upwards bias in posterior $R_{e_1}$ and $R_{e_2}$, and the expectation that $R_{e_1} > R_{e_s}$ is met, coinciding with an earlier burst of transmission in agreement with \citet{kuhnert_tuberculosis_2018}. This reaffirms that if the effective mutation time sufficiently large compared to the date resolution lost, then date rounding has a lesser effect.
 
 
 \begin{figure}[h!]
@@ -144,13 +187,13 @@ The \textit{M. tuberculosis} data recapitulate the outcome of the simulation stu
 
 \section*{Discussion}
 
-The results of the simulation study can by summarised as showing that date rounding inflates estimates of evolutionary and epidemiological rates by temporally clustering differentiated genome sequences. This manifested in upwards bias of the effective reproductive number, evolutionary rate, and decreased age of the outbreak in turn. The extent of the bias increased with more diverged sequences and decreased date resolution. In other words, it increased with the assertion that more evolution occurred in less time. This is why bias increased for simulation conditions with the highest amount of mutation per unit time - the H1N1 condition followed SARS-CoV-2 and \textit{S. sonnei}. \textit{M. tuberculosis} simulations in their inertness to date rounding also support this explanation since they were unlikely to generate any mutation over the month or even year mutation timescales.
+The results of the simulation study can by summarised as showing that date rounding inflates estimates of evolutionary and epidemiological rates by temporally clustering differentiated genome sequences. This manifested as upwards bias of the effective reproductive number, evolutionary rate, and decreased age of the outbreak in turn. The extent of the bias increased with more diverged sequences and decreased date resolution. In other words, it increases with the assertion that more evolution occurred in less time. This is why bias increased for simulation conditions with the highest amount of mutation per unit time - the H1N1 condition followed SARS-CoV-2 and \textit{S. sonnei}. \textit{M. tuberculosis} simulations, in their inertness to date rounding, also support this explanation since they were unlikely to generate any mutation over the month or even year mutation timescales.
 
-Empirical analyses broadly recapitulated the results of the simulation study, but also introduced notable exceptions which emphasised the unpredictability of bias when rounding dates. For example, the posterior evolutionary rate of the H1N1 dataset did not bias upwards when rounding to the month. The SARS-CoV evolutionary rate did not increase when moving from month to year rounding, and posterior $R_{e_2}$ decreased when rounding to the year for the \textit{S. sonnei} dataset. In each case, we attribute these differences to the way in which the distribution of empirical sampling times differed from the consistency in simulated datasets. This meant that date rounding did not always result in temporal clustering of divergent sequences. In the example of the SARS-CoV-2 dataset where samples originated from the end of mone month and start of the next, rounding down to the start of eahc month serves to spread out the sample over time, overriding the effect of clustering samples from the same month.
+Empirical analyses broadly recapitulated the results of the simulation study, but also introduced notable exceptions which emphasised the unpredictability of bias when rounding dates. For example, the posterior evolutionary rate of the H1N1 dataset did not bias upwards when rounding to the month. The SARS-CoV evolutionary rate did not increase when moving from month to year rounding, and posterior $R_{e_2}$ decreased when rounding to the year for the \textit{S. sonnei} dataset. In each case, we attribute these differences to the way in which the distribution of empirical sampling times differed from the consistency in simulated datasets. This meant that date rounding did not always result in temporal clustering of divergent sequences. In the example of the SARS-CoV-2 dataset where samples originated from the end of mone month and start of the next, rounding down to the start of each month serves to spread out the sample over time, overriding the effect of clustering samples from the same month.
 
-Taken together, the results form the simulation study and empirical data show that although date rounding biases empidemiloigcal estimates in an understandable way, the intensity of the bias is difficult to predict and varies with the parameter space the data notionally inhabit. Moreover, features of real-world sampling such as fine-scale clustering of samplig times over longer sampling efforts can unpredictably dampen or reverse expected bias due to date rounding. Put succintly, date rounding indices bias unpredicable bias due to the interaction of theoretical aspects of phylodynamic models real-world data features.
+Taken together, the results form the simulation study and empirical data show that although date rounding biases empidemiloigcal estimates in a theoretically predictable direction, the intensity of the bias is difficult to predict and varies with the parameter space the data notionally inhabit. Moreover, features of real-world sampling such as fine-scale clustering of samplig times over longer sampling efforts can unpredictably dampen or reverse expected bias due to date rounding. Put succinctly, date rounding induces bias unpredicable bias due to the interaction of theoretical aspects of phylodynamic models real-world data features.
 
-Based on this, we conclude that accurate sampling time information is essential where phylodynamic insight is needed to understand a disease threat. However, as acknowedged from the beginning of this article, it may impose an unacceptable level of risk to release isolate sampling times as can theoretically be used to identify individual patients in smaller samples. To circumvenr this and deliver timely phylodynamic results, we propose an extremely simple form of encrption that may lower the level of risk in sharing sampling time to the day to acceptible levels.
+Based on this, we conclude that accurate sampling time information is essential where phylodynamic insight is needed to understand a disease threat. There does not appear to be an clear way to adnust for the bias caused otherwise. However, as acknowledged from the beginning of this article, it may impose an unacceptable level of risk to release isolate sampling times as can theoretically be used to identify individual patients in smaller samples. To circumvent this and deliver timely phylodynamic results, we finish by proposing an extremely simple form of encryption that may lower the level of risk in sharing sampling time to the day to acceptable levels.
 
 \subsection*{The simplest encryption of dates}
 The functional component of phylodynamic data is the \emph{difference} between sequences and dates, rather than their absolute values. After all, our methods are comparative within a sample. Thus we can prioritise exact information and protect patient identity at the same time. We propose that authorities can provide dates that are all shifted in time by an unknown seed number, and reinterpret results by factoring this in. For example, if the sampling times of a dataset of 3 samples are (2000, 2001, 2002), then public health authorities may randomly draw a seed of 1000 with which to shift and dates and pass onto scientists: (2000, 2001, 2002) $\rightarrow$ (3000, 3001, 3002). Then results can be reinterpreted with regard to the random seed. If, for example the estimated time of onset was 3 years before the most recent sample, then those receiving the data will not be able to place this in time, while those on the data generation end can interpret this correctly (estimated time of onset = 2002-3 = 1999). In the same vein, transmission parameters such as $R_e$ can be understood to pertain to the true sampling time.
@@ -164,22 +207,6 @@ The functional component of phylodynamic data is the \emph{difference} between s
 
 \renewcommand{\thefigure}{S\arabic{figure}}
 \setcounter{figure}{0}
-
-\begin{table}[h!]
-    \centering
-    \caption{Substitution rates and genome length for sequence simulation.}
-    \begin{tabular}{l|c|l|r}
-    \hline
-    Microbe                     &   Substitution Rate (subs/site/yr) & Genome Length & Subs/Genome/Time  \\
-    \hline
-    H1N1                        & $4\times10^{-3}$ & 13158 & 52.632\\
-    SARS-CoV-2                  & $1\times10^{-3}$ & 29903 & 29.903\\
-    \textit{S. sonnei}    & $6\times10^{-7}$ & 4825265  & 2.895\\
-    \textit{M. tuberculosis}    &   $1\times10^{-8}$ & 4300000 & 0.043\\
-    \hline
-    \end{tabular}
-    \label{tab:seq_parms}
-\end{table}
 
 \begin{figure}[h!]
     \centering
