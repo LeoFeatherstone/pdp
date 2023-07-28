@@ -12,80 +12,41 @@ apply_burnin <- function(df, pc) {
     return(df[-c(0:ceiling((pc / 100) * dim(df)[1])), ])
 }
 
-##### Empirical Data #####
-
-sim_log <- dir(path = "./sim_study", pattern = ".+[.]log")
-
-sim_data <- lapply(
-    sim_log,
-    function(x) {
-        print(paste0("Read ", x))
-        return(read.table(paste0("./sim_study/", x), header = TRUE))
-    }
-)
-names(sim_data) <- gsub(
-    sim_log,
-    pattern = "[.]log",
-    replacement = ""
-)
-# save for speed later
-#save(sim_data, file = "raw_sim_posteriors.RData")
-load("raw_sim_posteriors.RData")
-# burnin
-sim_data <- lapply(
-    sim_data,
-    function(x) apply_burnin(x, 10)
+# Get data
+load("sim_study/posteriors.RData")
+data <- lapply(
+    data,
+    function(x) apply_burnin(x, 30)
 )
 
-# patch names with clock until rerun. # UPTO - remove _SC_ from tb names
-for (i in seq_along(names(sim_data))){
-    if (grepl(pattern = "tb_", names(sim_data)[i])) {
-        names(sim_data)[i] <- gsub(
-            names(sim_data)[i],
-            pattern = "_SC_BD",
-            replacement = "_BD"
-        )
-    }
-}
 
 # format variables names
 rename_cols <- function(vec) {
     vec <- gsub(
         vec,
-        pattern = "reproductiveNumber_BDSKY_Serial[.]",
+        pattern = "reproductiveNumber[.]",
         replacement = "Re"
     )
     vec <- gsub(
         vec,
-        pattern = "reproductiveNumber_BDSKY_Serial$",
+        pattern = "^reproductiveNumber$",
         replacement = "R0"
     )
     vec <- gsub(
         vec,
-        pattern = "becomeUninfectiousRate_BDSKY_Serial",
+        pattern = "becomeUninfectiousRate",
         replacement = "delta"
     )
     vec <- gsub(
         vec,
-        pattern = "samplingProportion_BDSKY_Serial",
+        pattern = "samplingProportion",
         replacement = "p"
     )
-    vec <- gsub(
-        vec,
-        pattern = "clockRate.+",
-        replacement = "clockRate"
-    )
-    vec <- gsub(
-        vec,
-        pattern = "origin.+",
-        replacement = "origin"
-    )
-
     return(vec)
 }
 
-sim_data <- lapply(
-    sim_data,
+data <- lapply(
+    data,
     function(x) {
         colnames(x) <- rename_cols(colnames(x))
         return(x)
@@ -93,21 +54,21 @@ sim_data <- lapply(
 )
 
 # get parms of interest
-sim_data <- lapply(
-    sim_data,
+data <- lapply(
+    data,
     function(x) {
         return(
             x[,
             grep(
                 colnames(x),
-                pattern = "^R0$|^Re1$|^Re2$|delta|origin|clock|^p$"
+                pattern = "^R.+|delta|origin|clock|^p$"
             )]
         )
     }
 )
 
-sim_ess <- lapply(
-    sim_data,
+ess <- lapply(
+    data,
     function(x) {
         effectiveSize(
             as.mcmc(x)
@@ -115,11 +76,11 @@ sim_ess <- lapply(
     }
 )
 
-ess <- bind_rows(sim_ess, .id = "id") %>%
+ess <- bind_rows(ess, .id = "id") %>%
     separate_wider_delim(
         id,
         delim = "_",
-        names = c("organism", "treePrior", "resolution", "id")
+        names = c("organism", "clock", "treePrior", "resolution", "id")
     ) %>%
     group_by(organism, resolution)
 
@@ -132,12 +93,13 @@ ess_summary <- ess %>%
         originCount = sum(origin < 200),
         pCount = sum(p < 200),
         deltaCount = sum(delta < 200),
-    )
+    ) %>%
+    filter()
 
 # visualise to see where work needs to be done
 ggplot(ess) +
     geom_histogram(
-        aes(x = delta, fill = resolution),
+        aes(x = clockRate, fill = resolution),
         alpha = 0.45,
         bins = 20,
         position = "identity"
@@ -148,7 +110,7 @@ ggplot(ess) +
         scales = "free"
     )
 
-sim_data %>%
+data %>%
     filter(organism == "SARS-CoV-2" & resolution != "Year") %>%
     ggplot() +
     geom_histogram(
