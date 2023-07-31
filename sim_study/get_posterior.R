@@ -3,16 +3,17 @@
 ###########################################################
 
 log <- dir(path = ".", pattern = ".+[.]log")
+log <- log[which(file.size(log) > 0)]
 
 data <- lapply(
-    sim_log,
+    log,
     function(x) {
         print(paste0("Read ", x))
         return(read.table(paste0(x), header = TRUE))
     }
 )
 names(data) <- gsub(
-    sim_log,
+    log,
     pattern = "[.]log",
     replacement = ""
 )
