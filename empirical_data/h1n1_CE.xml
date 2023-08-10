@@ -34,7 +34,7 @@
             <parameter id="clockRate" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
             <parameter id="gammaShape" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
             <parameter id="ePopSize" spec="parameter.RealParameter" name="stateNode">0.3</parameter>
-            <parameter id="growthRate" spec="parameter.RealParameter" dimension="2" name="stateNode">3.0E-4</parameter>
+            <parameter id="growthRate" spec="parameter.RealParameter" name="stateNode">3.0E-4</parameter>
             <parameter id="kappa" spec="parameter.RealParameter" lower="0.0" name="stateNode">2.0</parameter>
         </state>
         <init id="RandomTree" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree" taxa="@alignment">
