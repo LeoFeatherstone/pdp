@@ -29,7 +29,7 @@
     <map name="prior" >beast.math.distributions.Prior</map>
     <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
     <map name="OneOnX" >beast.math.distributions.OneOnX</map>
-    <run id="mcmc" spec="MCMC" chainLength="10000000">
+    <run id="mcmc" spec="MCMC" chainLength="50000000">
         <state id="state" spec="State" storeEvery="10000">
         
             <tree id="Tree" spec="beast.evolution.tree.Tree" name="stateNode">
@@ -51,9 +51,9 @@
             <!--parameter id="ucldMean" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
             <parameter id="ucldStdev" spec="parameter.RealParameter" lower="0.0" name="stateNode">0.1</parameter>
             <stateNode id="rateCategories" spec="parameter.IntegerParameter" dimension="612">1</stateNode-->
-            <parameter id="origin_BDSKY_Serial" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="Infinity">3.0</parameter>
-            <parameter id="reproductiveNumber_BDSKY_Serial" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="Infinity">2.0</parameter>
-            <parameter id="samplingProportion_BDSKY_Serial" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0">0.01</parameter>
+            <parameter id="origin" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="Infinity">3.0</parameter>
+            <parameter id="reproductiveNumber" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="Infinity">2.0</parameter>
+            <parameter id="samplingProportion" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0">0.01</parameter>
         </state>
         <init id="RandomTree" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree" taxa="@alignment">
             <populationModel id="ConstantPopulation0" spec="ConstantPopulation">
@@ -69,18 +69,18 @@
 
                 <!--finalSampleOffset idref="finalSampleOffset"/--> 
 
-                <!--TODO check if swapping ORIGIN*_BDSKY to processLength is ok!/--> 
+                <!--TODO check if swapping ORIGIN*_SC_BDSKY to processLength is ok!/--> 
                 <parameterization spec="EpiParameterization"
-                                  processLength="@origin_BDSKY_Serial">
+                                  processLength="@origin">
                   <R0 spec="SkylineVectorParameter">
-                    <skylineValues idref="reproductiveNumber_BDSKY_Serial"/>
+                    <skylineValues idref="reproductiveNumber"/>
                   </R0>
                   <becomeUninfectiousRate spec="SkylineVectorParameter">
-                    <skylineValues spec="parameter.RealParameter" id="becomeUninfectiousRate_BDSKY_Serial" value="91"/>  <!-- I.e. 4 Day infection duration -->
+                    <skylineValues spec="parameter.RealParameter" id="becomeUninfectiousRate" value="91"/>  <!-- I.e. 4 Day infection duration -->
                   </becomeUninfectiousRate>
 
                   <samplingProportion spec="SkylineVectorParameter">
-                    <skylineValues idref="samplingProportion_BDSKY_Serial"
+                    <skylineValues idref="samplingProportion"
                                    spec="parameter.RealParameter"/>
                   </samplingProportion>
                   
@@ -106,16 +106,16 @@
                         <parameter id="RealParameter.6" spec="parameter.RealParameter" estimate="false" name="S">1.25</parameter>
                     </LogNormal>
                 </prior>
-                <prior id="originPrior_BDSKY_Serial" name="distribution" x="@origin_BDSKY_Serial">
+                <prior id="originPrior" name="distribution" x="@origin">
                     <Uniform id="Uniform.5" name="distr" upper="Infinity"/>
                 </prior>
-                <prior id="reproductiveNumberPrior_BDSKY_Serial" name="distribution" x="@reproductiveNumber_BDSKY_Serial">
+                <prior id="reproductiveNumberPrior" name="distribution" x="@reproductiveNumber">
                     <LogNormal id="LogNormalDistributionModel.4" name="distr">
                         <parameter id="RealParameter.14" spec="parameter.RealParameter" estimate="false" name="M">0.0</parameter>
                         <parameter id="RealParameter.15" spec="parameter.RealParameter" estimate="false" name="S">1.0</parameter>
                     </LogNormal>
                 </prior>
-                <prior id="samplingProportionPrior_BDSKY_Serial" name="distribution" x="@samplingProportion_BDSKY_Serial">
+                <prior id="samplingProportionPrior" name="distribution" x="@samplingProportion">
                     <Beta id="Beta.1" name="distr">
                         <parameter id="RealParameter.16" spec="parameter.RealParameter" estimate="false" name="alpha">1.0</parameter>
                         <parameter id="RealParameter.17" spec="parameter.RealParameter" estimate="false" name="beta">1.0</parameter>
@@ -149,11 +149,11 @@
         <operator id="BDSKY_SerialNarrow" spec="Exchange" tree="@Tree" weight="15.0"/>
         <operator id="BDSKY_SerialWide" spec="Exchange" isNarrow="false" tree="@Tree" weight="3.0"/>
         <operator id="BDSKY_SerialWilsonBalding" spec="WilsonBalding" tree="@Tree" weight="3.0"/>
-        <operator id="reproductiveNumberScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@reproductiveNumber_BDSKY_Serial" weight="10.0"/>
-        <operator id="samplingProportionScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@samplingProportion_BDSKY_Serial" weight="10.0"/>
-        <operator id="origScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@origin_BDSKY_Serial" weight="1.0"/>
+        <operator id="reproductiveNumberScaler" spec="ScaleOperator" parameter="@reproductiveNumber" weight="10.0"/>
+        <operator id="samplingProportionScaler" spec="ScaleOperator" parameter="@samplingProportion" weight="10.0"/>
+        <operator id="origScaler" spec="ScaleOperator" parameter="@origin" weight="1.0"/>
 
-        <logger id="tracelog" spec="Logger" fileName="h1n1_BD_$(date-resolution).log" logEvery="10000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <logger id="tracelog" spec="Logger" fileName="h1n1_SC_BD_$(date-resolution).log" logEvery="10000" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
@@ -163,9 +163,9 @@
             <log idref="gammaShape"/>
             <log idref="clockRate"/>
             <log idref="BDSKY_Serial"/>
-            <log idref="origin_BDSKY_Serial"/>
-            <log idref="reproductiveNumber_BDSKY_Serial"/>
-            <log idref="samplingProportion_BDSKY_Serial"/>
+            <log idref="origin"/>
+            <log idref="reproductiveNumber"/>
+            <log idref="samplingProportion"/>
         </logger>
 
         <logger id="screenlog" spec="Logger" logEvery="10000">
@@ -173,7 +173,7 @@
             <log idref="likelihood"/>
             <log idref="prior"/>
         </logger>
-        <logger id="treelog" spec="Logger" fileName="h1n1_BD_$(date-resolution).trees" logEvery="10000" mode="tree">
+        <logger id="treelog" spec="Logger" fileName="h1n1_SC_BD_$(date-resolution).trees" logEvery="10000" mode="tree">
             <log id="TreeWithMetaDataLogger" spec="beast.evolution.tree.TreeWithMetaDataLogger" branchratemodel="@StrictClock" tree="@Tree"/>
         </logger>
         <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>

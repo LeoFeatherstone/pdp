@@ -5,40 +5,22 @@
 library(tidyverse)
 library(coda)
 library(xtable)
+library(latex2exp)
+library(scales)
 
 ## function applies burnin
 # df is data frame
 # pc is percent burnin
-apply_burnin <- function(df, pc) {
-    return(df[-c(0:ceiling((pc / 100) * dim(df)[1])), ])
+apply_burnin <- function(df, states) {
+    return(df[-which(df$Sample <= states), ])
 }
 
 ##### Empirical Data #####
-emp_log <- dir(path = "./empirical_data", pattern = ".+[.]log")
+load("./empirical_data/posteriors.RData")
 
 emp_data <- lapply(
-    emp_log,
-    function(x) read.table(paste0("./empirical_data/", x), header = TRUE)
-)
-emp_data <- lapply(
-    emp_data,
-    function(x) apply_burnin(x, 10)
-)
-names(emp_data) <- gsub(
-    emp_log,
-    pattern = "[.]log",
-    replacement = ""
-)
-
-# patch names with clock until rerun
-names(emp_data) <- sapply(
-    names(emp_data),
-    function(x) {
-        if (!grepl("_SC_BD", x) && !grepl("_RC_BD", x)) {
-            return(gsub(x, pattern = "_BD", replacement = "_SC_BD"))
-        }
-        return(x)
-    }
+    data,
+    function(x) apply_burnin(x, 1e7)
 )
 
 # burnin
@@ -66,6 +48,8 @@ low_ess <- lapply(
     }
 )
 names(low_ess) <- names(emp_data)
+# ESS < 200 only for Tb with relaxed clock and h1n1 with year resolution.
+# We don't report on both, so no issue.
 
 # format variables names
 rename_cols <- function(vec) {
@@ -81,7 +65,7 @@ rename_cols <- function(vec) {
     )
     vec <- gsub(
         vec,
-        pattern = "becomeUninfectiousRate_BDSKY_Serial",
+        pattern = "becomeUninfectiousRate_BDSKY_Serial|becomeUninfectiousRate",
         replacement = "delta"
     )
     vec <- gsub(
@@ -98,6 +82,11 @@ rename_cols <- function(vec) {
         vec,
         pattern = "origin.+",
         replacement = "origin"
+    )
+    vec <- gsub(
+        vec,
+        pattern = "TreeHeight|Tree.height",
+        replacement = "age"
     )
 
     return(vec)
@@ -119,7 +108,7 @@ emp_data <- lapply(
             x[,
             grep(
                 colnames(x),
-                pattern = "R.|delta|origin|clock|p"
+                pattern = "R.|delta|origin|clock|p|age"
             )]
         )
     }
@@ -133,24 +122,25 @@ emp_data <-
         delim = "_",
         names = c("organism", "clock", "treePrior", "resolution")
     )
-# capitalise names
-emp_data <- emp_data %>%
-    mutate(organism = case_when(
-        organism == "h1n1" ~ "H1N1",
-        organism == "sars-cov-2" ~ "SARS-CoV-2",
-        organism == "shigella" ~ "Shigella",
-        organism == "tb" ~ "TB"
-    ))
 
 ## plots
+emp_data$organism <- factor(emp_data$organism, labels = c(
+    h1n1 = "H1N1",
+    `sars-cov-2` = "SARS-CoV-2",
+    shigella = TeX("\\textit{S. sonnei}"),
+    tb = TeX("\\textit{M. tuberculosis}"))
+)
+
+
 # clock rate plot
-pdf(file = "empirical_clock_trajectory.pdf", useDingbats = TRUE)
+pdf(file = "empirical_clock.pdf", useDingbats = TRUE)
     emp_data %>%
+        subset(treePrior == "BD") %>%
+        subset(!(organism == "h1n1" & resolution == "Year")) %>%
         select(resolution, organism, clockRate) %>%
         group_by(resolution, organism) %>%
-        ggplot() +
+        ggplot(aes(x = resolution, y = clockRate, fill = organism)) +
         geom_violin(
-            aes(x = resolution, y = clockRate, fill = organism),
             alpha = 0.5,
             draw_quantiles = c(0.025, 0.5, 0.975),
         ) +
@@ -159,14 +149,74 @@ pdf(file = "empirical_clock_trajectory.pdf", useDingbats = TRUE)
             breaks = scales::trans_breaks("log10", function(x) 10^x),
             labels = scales::trans_format("log10", scales::math_format(10^.x))
         ) +
-        facet_wrap(~organism, scales = "freH1N1e_y") +
+        scale_fill_manual(
+            values = ggsci::pal_lancet("lanonc", alpha = 0.6)(4),
+            labels = parse_format(),
+            name = "",
+
+        ) +
+        facet_wrap(
+            ~organism,
+            scales = "free_y",
+            labeller = label_parsed
+        ) +
         ylab("Posterior substitution rate") +
         xlab("Date resolution") +
-        theme_minimal()
+        theme_minimal() +
+        theme(
+            legend.text.align = 0,
+            legend.position = "botton"
+        )
+dev.off()
+
+# age of outbreak
+pdf("empirical_age.pdf", useDingbats = FALSE)
+    emp_data %>%
+    subset(treePrior == "BD") %>%
+    #subset(!(organism == "H1N1" & resolution == "Year")) %>%
+    #subset(!(organism == "SARS-CoV-2" & resolution == "Year")) %>%
+    select(resolution, organism, age) %>%
+    group_by(resolution, organism) %>%
+    ggplot(aes(x = 365.25 * age, fill = resolution)) +
+    geom_histogram(
+        bins = 100,
+        alpha = 0.5,
+        position = "identity"
+    ) +
+    scale_y_continuous(
+        expand = c(0, 0),
+        oob = scales::censor
+    ) +
+    scale_fill_manual(
+        values = ggsci::pal_lancet("lanonc", alpha = 0.6)(3),
+        labels = parse_format(),
+        name = ""
+    ) +
+    scale_x_continuous(
+        breaks = c(1, 7, 30, 60, 90, 180, 365.25, 913.125, 1095.75, 3652.5, 9131.25, 18262.5),
+        labels = c("Day", "Week", "Month", "2 Months", "3 Months", "6 Months", "Year", "2.5 Years", "3 Years", "10 Years", "25 years", "50 Years")
+    ) +
+    facet_wrap(
+            ~organism,
+            scales = "free",
+            labeller = label_parsed
+    ) +
+    ylab("Posterior Frequency outbreak duration") +
+    xlab("Time ") +
+    theme_minimal() +
+    theme(
+        legend.text.align = 0,
+        legend.position = "right",
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        panel.grid.minor = element_blank()
+    )
+
 dev.off()
 
 # summary table with mean and 95% HPD for each parameter
 emp_table <- emp_data %>%
+    subset(treePrior == "BD") %>%
+    #mutate_if(is.numeric, round) %>%
     select(
         resolution,
         organism,
@@ -176,7 +226,7 @@ emp_table <- emp_data %>%
         R0,
         Re1,
         Re2,
-        origin
+        age
     ) %>%
     group_by(organism, resolution) %>%
     summarise(
@@ -191,10 +241,14 @@ emp_table <- emp_data %>%
         meanDelta = mean(delta),
         deltaHPD = paste0("[", paste(signif(quantile(delta, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
         meanOrigin = mean(origin),
-        originHPD = paste0("[", paste(signif(quantile(origin, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
+        ageHPD = paste0("[", paste(signif(quantile(age, na.rm  = TRUE, probs = c(0.025, 0.975)),3), sep="", collapse=", "), "]"),
         .groups = "drop"
     )
-print(xtable(emp_table, type = "latex", digits = 3), file = "empirical_data_table.tex")
+print(
+    xtable(emp_table, type = "latex", digits = 3),
+    file = "empirical_data_table.tex",
+    include.rownames = FALSE
+)
 
 
 
@@ -407,26 +461,7 @@ pdf("empirical_plot.pdf", useDingbats = FALSE)
     empirical_plot
 dev.off()
 
-pdf("empirical_origin.pdf", useDingbats = FALSE)
-    emp_data %>%
-    ggplot() +
-    geom_histogram(
-        aes(
-            x = origin,
-            fill = resolution
-    ),
-        bins = 100,
-        alpha = 0.5,
-        position = "identity"
-    ) +
-    scale_y_continuous(
-        expand = c(0, 0),
-        oob = scales::censor
-    ) +
-    facet_wrap(~organism, scales = "free") +
-    xlab("Origin") + ylab("Posterior Frequency") +
-    theme_minimal()
-dev.off()
+
 
 ## Tabular results
 # mean
