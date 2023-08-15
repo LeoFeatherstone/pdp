@@ -3,6 +3,7 @@
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{setspace}
 \usepackage{lineno}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{graphicx}
 \usepackage[square,sort,comma,numbers]{natbib}
 \setcitestyle{authoryear,open={(},close={)}}
@@ -22,11 +23,34 @@ $^{1}$ Peter Doherty Institute for Infection and Immunity, University of Melbour
 
 \begin{spacing}{1.5}
 \section*{Introduction}
+\textcolor{red}{Sharing pathogen sequence data ...}
+Pathogen genomics has played an increasingly important role in our understanding of infectious outbreaks, including major pandemics, such as those of SARS-CoV-2, Ebola virus, \textit{Mycobacterium tuberculosis} (the bacterium responsible for tuberculosis, abbreviated as TB), and drug resistant bacteria \citep{lancet2021genomic}. Phylodynamic tools that have seen a surge in adoption, particularly since the 2013-2016 West African Ebola outbreak. This outbreak was the first instance in which genome sequence data were generated as the outbreak unfolded, and thus phylodynamic inferences could be used to inform public health responses \citep{mbala2019medical}.
+
+Phylodynamic methods can draw a range of inferences from pathogen sequence data, including transmission parameters, the direction and rate of geographic movement, and the time and location of origin of infectious outbreaks \citep{featherstone2022epidemiological, attwood2022phylogenetic, du2015getting}. The basis of phylodynamic analyses is that epidemiological spread leaves a trace in the genomes of pathogen populations, in the form of substitutions or other molecular information. Such pathogen population are also known as `measurably evolving populations' \citep{drummond2003measurably, biek_measurably_2015}.
+
+Phylodynamic models that estimate epidemiological parameters such as the effective reproductive number $R_e$ exploit substitutions and sequence sampling times \citep{featherstone_decoding_2023}. As a consequence, pathogens for which the timescale of transmission coincides with the timescale over which they acquire substitutions are particularly well suited for phylodynamic analyses. As a case in point, H1N1 influenza virus accumulates substitutions at a rate of about 4 $\times10^{-3}$ subs/site/year \citep{hedge_2013_real-time}. Because its genome length is around 13,158 bp, we would expect 0.06 substitutions over the course of an infection ($\sim$ 4 days) and one substitution to appear every 90 days. Clearly, providing sampling times with a precision of a year would remove valuable information about the molecular and epidemiological dynamics, which occur over a timescale shorter than the unit of rounding and thus potentially introduce bias to phylodynamic estimates. In contrast, the evolutionary rate for TB has been estimated to be of the order of $10^{-8}$ subs/site/year \citep{menardo2019molecular}, resulting in about 0.043 substitutions per year (for a genome length of 4.3 Mbp), one substitution every 23 years, and an expected 0.34 substitutions over the course of an infection (8 years) \citep{kuhnert_tuberculosis_2018}. For this bacterium, providing the sampling year or month may be sufficiently precise to correctly inform phylodynamic analyses.
+
+Ideally empirical sequence data sets should include precise sampling time information for all samples, with the day, month, and year of collection \citep{black2020ten}. Nevertheless sequence sampling dates are often considered part of the associated metadata and may be unavailable or imprecise for different reasons, including patient or organisation confidentiality or a lack of a consistent platform for storing these data \citep{raza2016big}. The amount of genome sequences for SARS-CoV-2 in the GISAID database is about 15.8M \citep{shu2017gisaid}, with about 2.4\% (382K) having `incomplete' date information, where no sampling time may be reported, or its precision may only include the year (verified early August 2023). 
+
+Including these sequences with imprecise sampling times in phylodynamic analyses requires the researcher to assume that they have been sampled at an arbitrary day. Selecting the arbitrary day can be motivated by convenience, for instance with all samples from 2020 being assigned 1st January 2020 or 15 June 2020, or by sampling a random day within 2020 using a statistical distribution. In any case, this practice introduces a degree of error. Indeed,sequences sampled 11 months apart may be assigned the exact same day. 
+
+\textcolor{blue}{Importantly, although phylodyanmic analyses benefit from using precise sampling times, they are agnostic to the actual calendar date. An exponentially growing population sampled at a constant rate in the year 1997 will have the same distribution of sequence sampling times and coalescent events as one from the year 2020. Thus, a straight-forward approach to encrypt sampling dates is to provide their the number of days between sampling times, and not the actual calendar dates. - Not sure if this should be mentioned here.}
+
+Here, we investigated the impact of different degrees of precision in sampling times on phylodyanmic estimates of key parameters, including $R_e$, the molecular clock rate, and the time of origin of the outbreak. We considered a range of pathogens, H1N1 influenza, SARS-CoV-2, \textit{Shigella sonnei}, and TB. These organisms have undergone substantial genome surveillance and have different infectious periods and molecular evolutionary dynamics. To quantify the impact of date precision in phylodynamics, we conducted extensive simulations, where we are able to assess precision and accuracy in estimates of key parameters.
+
+
+
+
+\textcolor{red}{Do we need short para on the phylodynamic threshold? It is kind of related but not quite the same. Maybe leave to the Discussion...}
+
+\textcolor{red}{We we care about rounding? Here add about GISAID and other data bases and then the remaining items below. }
+
+
 \begin{itemize}
     \item Increased sharing of pathogen genome sequences has been a feature of responses to recent infectious disease threats. This is also the culmination of a broader trend that has build with advances in WGS. 
     \item Examples of GISAID and other ID databases
     \item Patient confidentiality remains a key priority 
-    \item Define date rounding practice, provide citations to the extensiveness of the practice (HELP!!)
+    \item Define date rounding practice, provide citations to the extensiveness of the practice (HELP!!) - get some sentences from Courtney
     \item Introduce how we tackle the problem
     \item Explain hypothesised and shown axis in the data between temporal clustering and inflated rates
     \item May introduce effective mutation time here?
@@ -37,12 +61,12 @@ $^{1}$ Peter Doherty Institute for Infection and Immunity, University of Melbour
 
 \section*{Methods}
 \subsection*{Overview}
-Our study is based around 4 empirical datasets of H1N1 influenza, SARS-CoV-2, \textit{Shigella sonnei}, and \textit{Mycobacterium tuberculosis} and a corresponding simulation study. For both the empirical and simulated datasets, we perform phylodynamic analysis with sampling dates rounded to the day, month, year, and measure the resulting bias critical parameters - $R_0$ / $R_e$ and the age of the outbreak (origin hereafter). For example, two samples from 2000/05/14 and 2000/05/02 would become 2000/05/01 if rounded to the month.
+Our study is based around 4 empirical datasets of H1N1 influenza virus, SARS-CoV-2, \textit{Shigella sonnei}, and \textit{Mycobacterium tuberculosis} and a corresponding simulation study. For both the empirical and simulated datasets, we performed phylodynamic analysis with sampling dates rounded to the day, month, year, and measure the resulting bias critical parameters - $R_0$ / $R_e$ and the age of the outbreak (origin hereafter). For example, two samples from 2000/05/14 and 2000/05/02 would become 2000/05/01, if rounded to the month.
 
 The two viral datasets consist of samples from the 2009 H1N1 pandemic (n=161) from \citet{hedge_2013_real-time}, and a cluster of early SARS-CoV-2 cases from  Australia in 2020 (n = 112) \citep{lane2021genomics}. The bacterial datasets consist of Australian \textit{S. sonnei} samples from an outbreak studied by \citet{ingle_co-circulation_2019}, and 36 \textit{M. tuberculosis} samples from a ~25 year outbreak studied by \citet{kuhnert_tuberculosis_2018}. These data were chosen because they encompass a diversity of epidemiological dynamics and scales with variable rates of substitution.
 
 \subsection*{Simulation Study}
-We simulated outbreaks as Birth-Death sampling processes using the Master package in BEAST v2.6.6 \citep{vaughan_stochastic_2013,bouckaert_beast_2019}. These consisted of 100 replicates over 4 parameter sets corresponding each of the empirical datasets . All parameter sets include a proportion of cases sequenced ($p$), duration ($T$), and a "becoming un-infectious" rate ($\delta$ = reciprocal of the duration of infection). For simulations corresponding the viral datasets, transmission is modelled via $R_0$, the average number of secondary infections. For those corresponding to the bacterial datasets, we use two effective reproductive numbers, $R_{e_1}$ and $R_{e_2}$, with a change time at $0.5T$. This resulted in a total of 400 outbreak datasets which we then used to simulate sequence data under a Jukes-Cantor model using Seq-Gen v1.3.4 \citep{rambaut_seq-gen_1997}. Substitution rates, genome lengths, and the above outbreak parameters are summarised in tables \ref{tab:sim_parms} and \ref{tab:seq_parms}.
+We simulated outbreaks as Birth-Death sampling processes using the Master package in BEAST v2.6.6 \citep{vaughan_stochastic_2013,bouckaert_beast_2019}. These simulations consisted of 100 replicates over 4 parameter sets the represent values for each of the empirical datasets. All parameter sets include a proportion of cases sequenced ($p$), duration ($T$), and a "becoming un-infectious" rate ($\delta$ = reciprocal of the duration of infection). For simulations corresponding the viral datasets, transmission is modelled via $R_0$, the average number of secondary infections. For those corresponding to the bacterial datasets, we allow the effective reproductive numbers to change after an interval of time, $R_{e_1}$ and $R_{e_2}$, with a change time at $0.5T$. This resulted in a total of 400 outbreak datasets which we then used to simulate sequence data under a Jukes-Cantor model using Seq-Gen v1.3.4 \citep{rambaut_seq-gen_1997}. Substitution rates, genome lengths, and the above outbreak parameters are summarised in tables \ref{tab:sim_parms} and \ref{tab:seq_parms}.
 
 \begin{table}[ht]
     \centering
@@ -69,18 +93,18 @@ We simulated outbreaks as Birth-Death sampling processes using the Master packag
     \hline
     H1N1                        & $4\times10^{-3}$ & 13158 & 0.0190\\
     SARS-CoV-2                  & $1\times10^{-3}$ & 29903 & 0.0334\\
-    \textit{S. sonnei}    & $6\times10^{-7}$ & 4825265  & 0.3454\\
-    \textit{M. tuberculosis}    &   $1\times10^{-8}$ & 4300000 & 23.256\\
+    \textit{S. sonnei}    & $9\times10^{-7}$ & 4825265  & 0.3454\\
+    \textit{M. tuberculosis}    &   $1\times10^{-7}$ & 4300000 & 23.256\\
     \hline
     \end{tabular}
     \label{tab:seq_parms}
 \end{table}
 
 \subsection*{Empirical Data}
-All phylodynamic analyses were conducted using a Birth-Death sampling tree prior in BEAST v2.6.6 \citep{bouckaert_beast_2019}. MCMC chains were run for $5\times10^{8}$ steps, with the initial 10\% discarded as burin to achieve $ESS > 200$ for all parameters considered in the results.
+We conducted Bayesian phylodynamic analyses were conducted using a Birth-Death skyline tree prior in BEAST v2.6.6 \citep{bouckaert_beast_2019}. We sampled from the posterior distribution using Markov chain Monte Carlo (MCMC), with length of $5\times10^{8}$ steps, with the initial 10\% discarded as burin. To determine sufficient sampling from the stationary distribution we verified that the effective sample size (ESS) of key parameters was at least 200.
 
 \subsubsection*{H1N1}
-The H1N1 data consist of 161 samples from North America during the 2009 H1N1 pandemic, first analysed by \citet{hedge_2013_real-time}. This  dataset provides an example of a quickly evolving pathogen sparsely sampled over a longer epidemiological timescale. 
+The H1N1 data consist of 161 samples from North America during the 2009 H1N1 pandemic, first analysed by \citet{hedge_2013_real-time}. This  dataset provides an example of a rapidly evolving pathogen sparsely sampled over a longer epidemiological timescale. 
 
 We placed a $\textnormal{Lognormal}(\mu=0,\sigma=1)$ prior on $R_0$, $\beta(1,1)$ prior on $p$, and fixed the becoming-uninfectious ($\delta = 91$), corresponding to a 4 day duration of infection. We also placed an improper ($U(0,\infty)$) prior on the origin and a $U(10^{-4},10^{-2})$ prior on the substitution rate. This prior corresponds to analysis of these data in \citet{featherstone_decoding_2023}.
 
