@@ -4,6 +4,7 @@
 
 library(tidyverse)
 library(coda)
+library(tracerer)
 
 ## function applies burnin
 # df is data frame
@@ -61,7 +62,7 @@ data <- lapply(
             x[,
             grep(
                 colnames(x),
-                pattern = "^R.+|delta|origin|clock|^p$"
+                pattern = "^R.+|delta|origin|clock|^p$|Sample"
             )]
         )
     }
@@ -70,9 +71,10 @@ data <- lapply(
 ess <- lapply(
     data,
     function(x) {
-        effectiveSize(
-            as.mcmc(x)
-        )
+        # effectiveSize(
+        #     as.mcmc(x)
+        # )
+        calc_esses(x, 10000)
     }
 )
 
@@ -95,6 +97,21 @@ ess_summary <- ess %>%
         deltaCount = sum(delta < 200),
     ) %>%
     filter()
+
+ess %>%
+    filter(
+        clockRate < 200
+        | origin < 200
+        | R0 < 200
+        | Re1 < 200
+        | Re2 < 200
+    ) %>%
+    select(organism, resolution, id, clockRate, origin, R0, Re1, Re2) %>%
+    print(n = 1000)
+
+ess %>% filter(organism == "shigella" & id == "1")
+
+
 
 # visualise to see where work needs to be done
 ggplot(ess) +
