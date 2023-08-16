@@ -18,4 +18,5 @@ names(data) <- gsub(
     replacement = ""
 )
 
+#save(data, file = "./empirical_data/posteriors.RData")
 save(data, file = "posteriors.RData")
