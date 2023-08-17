@@ -71,10 +71,7 @@ data <- lapply(
 ess <- lapply(
     data,
     function(x) {
-        # effectiveSize(
-        #     as.mcmc(x)
-        # )
-        calc_esses(x, 10000)
+        calc_esses(x, 20000)
     }
 )
 
@@ -106,11 +103,10 @@ ess %>%
         | Re1 < 200
         | Re2 < 200
     ) %>%
-    select(organism, resolution, id, clockRate, origin, R0, Re1, Re2) %>%
-    print(n = 1000)
-
-ess %>% filter(organism == "shigella" & id == "1")
-
+    select(
+        organism, clock, treePrior, resolution, id
+    ) %>%
+    write_tsv(col_names = FALSE, "continue_sim.txt")
 
 
 # visualise to see where work needs to be done
