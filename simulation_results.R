@@ -19,8 +19,6 @@ data <- lapply(
     data,
     function(x) apply_burnin(x, 30)
 )
-
-
 # format variables names
 rename_cols <- function(vec) {
     vec <- gsub(

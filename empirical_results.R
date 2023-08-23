@@ -430,7 +430,9 @@ print(
 
 pdf("empirical_ce.pdf", useDingbats = FALSE)
     emp_data %>%
-        subset(treePrior == "CE" & organism == "h1n1" & !(resolution == "Year")) %>%
+        subset(
+            treePrior == "CE" & organism == "h1n1" & !(resolution == "Year")
+        ) %>%
         select(growthRate, age, clockRate, resolution) %>%
         mutate(
             R0 = 1 + ((4 / 365.25) * growthRate)
