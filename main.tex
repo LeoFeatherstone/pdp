@@ -25,11 +25,15 @@ $^{1}$ Peter Doherty Institute for Infection and Immunity, University of Melbour
 \section*{Introduction}
 
 \textcolor{red}{value of phylodynamics: Insight where epi falls short. Important role in the ebola, sars-cov-2.  Transitioned to more at the forefront with finding VOCs etc. (cite volz)}\\
-Pathogen genomics has played an increasingly important role in our understanding of infectious outbreaks, including major pandemics, such as those of SARS-CoV-2, Ebola virus, \textit{Mycobacterium tuberculosis} (the bacterium responsible for tuberculosis, abbreviated as TB), and drug resistant bacteria \citep{lancet2021genomic}. Phylodynamic tools that have seen a surge in adoption, particularly since the 2013-2016 West African Ebola outbreak. This outbreak was the first instance in which genome sequence data were generated as the outbreak unfolded, and thus phylodynamic inferences could be used to inform public health responses \citep{mbala2019medical}.
+Pathogen genomics plays an increasingly important role in our understanding of infectious outbreaks in recent decades. It offers insight across many scales of transmission, from the pandemic and epidemimec scales, such as for SARS-CoV-2 and Ebola virususes, to more localised transmission or bacterial pathogens \citep{lancet2021genomic}. Phylodynamic analysis has concurrently beed adopted as a key method to make temporal and spatial inference from pathogen genomes, particularly since the 2013-2016 West African Ebola outbreak \citep{mbala2019medical}. It is most useful where temporal and spatial records of transmission are sparse, because it allows genomc information to be converted into each.
 
-\textcolor{red}{Amid growth, two informational ingredianets remain as sampling times and pathogen genomes. Central idea is that evolutionary differences occur at some rate informative about epi dynamics}
-\textcolor{red}{However, sampling times pose a risk where it is possible to identify patients. In one case - Washington. Another study found, it is frequently easy to track patients, suggested release of data is on a case-by case basis}
-Phylodynamic methods can draw a range of inferences from pathogen sequence data, including transmission parameters, the direction and rate of geographic movement, and the time and location of origin of infectious outbreaks \citep{featherstone2022epidemiological, attwood2022phylogenetic, du2015getting}. The basis of phylodynamic analyses is that epidemiological spread leaves a trace in the genomes of pathogen populations, in the form of substitutions or other molecular information. Such pathogen population are also known as `measurably evolving populations' \citep{drummond2003measurably, biek_measurably_2015}.
+Phylodynamic methods draw a range of inferences from pathogen sequence data, including epidemioloigcal rates, spatial dynamics, and the time and location of origin \citep{featherstone2022epidemiological, attwood2022phylogenetic, du2015getting}. The basis of all such inferences is that epidemiological spread leaves a trace in the form of substitutions or other molecular information that can be used to reconstruct transmission processes. Pathogen populaions that meet this assumption known as `measurably evolving populations' \citep{drummond2003measurably, biek_measurably_2015}. In accordance, phylodynamics always relies on a combination of genome sequence and associated sampling times to infer parameters of transmission in a temporally explicit way.
+
+Ideal phylodynamic datasets should include precise sampling dates alongside genome sequences \citep{black2020ten}, but sampling times necessary carry over information about times of symptom onset, sampling, or otherwise accessing healthcare for individual patients. This can pose an unacceptable risk for patient confidentiality where sampling times can be used to identify individual patients. In some cases, sampling times or dates of admission that are available for purchase have allowed identification for a majority of patients on record \citep{sweeney_matching_2013,shean_private_2018}. In acknlowdgement of this risk, \citet{shean_private_2018} suggest that Expert Determination govern whether sampling times be released alingside genome sequences, and the resolution to which thay are disclosed (day, month, year). Essentially, This process involves an expert determining whether information is safe to release on a case-by-case basis.
+
+From a phylodynamic point of view, sampling times with reduced resolution are usable. We consider sampling times with specificty less than to the day as having reduced date resolution. There are many examples of phylodynamic analysis conducted for a diverse array of viral and bacterial pathogens with reduced date resolution. These include viral pathogens such as Rabies Virus, Enterovirus, SARS-CoV-2, Dengue virus, and bacterial pathogens such as \textit{Klebsiella pneumoniae}, \textit{Streptococcus pneumoniae}, and \textit{Mycobacterium tuberculosis} \citep{talbi_phylodynamics_2010,xiao_genomic_2022,wolf_temporal_2022,bennett_epidemic_2010,cella_multi-drug_2017,azarian_impact_2018,merker_evolutionary_2015}. However, theoretical and applied results show sampling times can substantially direct inference \citep{featherstone_decoding_2023,featherstone_infectious_2021,volz_sampling_2014}, raising the concern of whether reduced date resolution biases inference.
+
+In this work, we seek to characterise when and where biases arise due to reduced date resolution. We also propose a simple form of encryption where date resolution is required, but poses an unacceptable risk to patient confidentiality. We show that redued date induces bias expecially where temporal resolution lost coincides with the averge time required for a mutation to arise in a given pathogen. We visualise the relationship between date resolution and average mutation time in Fig \ref{fig:plane}.
 
 \textcolor{red}{ something about what workarounds exist already? Intervals satch sequence information? - Commonest workaround is to round dates: - examples}
 Ideally empirical sequence data sets should include precise sampling time information for all samples, with the day, month, and year of collection \citep{black2020ten}. Nevertheless sequence sampling dates are often considered part of the associated metadata and may be unavailable or imprecise for different reasons, including patient or organisation confidentiality or a lack of a consistent platform for storing these data \citep{raza2016big}. The amount of genome sequences for SARS-CoV-2 in the GISAID database is about 15.8M \citep{shu2017gisaid}, with about 2.4\% (382K) having `incomplete' date information, where no sampling time may be reported, or its precision may only include the year (verified early August 2023). 
@@ -37,9 +41,9 @@ Ideally empirical sequence data sets should include precise sampling time inform
 Including these sequences with imprecise sampling times in phylodynamic analyses requires the researcher to assume that they have been sampled at an arbitrary day. Selecting the arbitrary day can be motivated by convenience, for instance with all samples from 2020 being assigned 1st January 2020 or 15 June 2020, or by sampling a random day within 2020 using a statistical distribution. In any case, this practice introduces a degree of error. Indeed,sequences sampled 11 months apart may be assigned the exact same day. 
 
 \textcolor{red}{In this work, we seek to chaaracterise where and whn bias arises, insign for how to deal with sensitive dates. The central hypothesis }
-\begin{figure}[ht]
+\begin{figure}[h!]
     \centering
-    \includegraphics{plane.pdf}
+    \includegraphics[width = 1\textwidth]{plane.pdf}
     \caption{Add Hypothesis...}
     \label{fig:plane}
 \end{figure}
@@ -197,7 +201,7 @@ The \textit{M. tuberculosis} data recapitulate the outcome of the simulation stu
 
 \begin{figure}[h!]
     \centering
-    \includegraphics{empirical_clock_trajectory.pdf}
+    \includegraphics{empirical_clock.pdf}
     \caption{Posterior substitution rate for each empirical dataset across analyses with decreasing date resolution.}
     \label{fig:empClock}
 \end{figure}
@@ -234,7 +238,7 @@ The functional component of phylodynamic data is the \emph{difference} between s
 
 \begin{figure}
     \centering
-    \includegraphics{empirical_origin.pdf}
+    \includegraphics{empirical_age.pdf}
     \caption{Posterior origin time across date resolution and simulation conditions.}
     \label{fig:empOrigin}
 \end{figure}

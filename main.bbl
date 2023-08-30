@@ -11,7 +11,7 @@ Attwood, S.~W.  {\em et~al.} (2022).
   Didelot]{biek_measurably_2015}
 Biek, R.  {\em et~al.} (2015).
 \newblock Measurably evolving pathogens in the genomic era.
-\newblock {\bf 30}(6), 306--313.
+\newblock {\em Trends in Ecology \& Evolution\/}, {\bf 30}(6), 306--313.
 \newblock Publisher: Elsevier.
 
 \bibitem[Black {\em et~al.}(2020)Black, MacCannell, Sibley, and
@@ -28,7 +28,7 @@ Black, A.  {\em et~al.} (2020).
 Bouckaert, R.  {\em et~al.} (2019).
 \newblock {BEAST} 2.5: An advanced software platform for bayesian evolutionary
   analysis.
-\newblock {\bf 15}(4), e1006650.
+\newblock {\em {PLOS} Computational Biology\/}, {\bf 15}(4), e1006650.
 \newblock Publisher: Public Library of Science.
 
 \bibitem[Drummond {\em et~al.}(2003)Drummond, Pybus, Rambaut, Forsberg, and
@@ -48,6 +48,14 @@ du~Plessis, L. and Stadler, T. (2015).
 Duchene, S.  {\em et~al.} (2020).
 \newblock Temporal signal and the phylodynamic threshold of {SARS}-{CoV}-2.
 \newblock {\em Virus Evolution\/}, {\bf 6}(2), veaa061.
+
+\bibitem[Featherstone {\em et~al.}(2021)Featherstone, Di~Giallonardo, Holmes,
+  Vaughan, and Duchêne]{featherstone_infectious_2021}
+Featherstone, L.~A.  {\em et~al.} (2021).
+\newblock Infectious disease phylodynamics with occurrence data.
+\newblock {\em Methods in Ecology and Evolution\/}, {\bf 12}(8), 1498--1507.
+\newblock \_eprint:
+  https://onlinelibrary.wiley.com/doi/pdf/10.1111/2041-210X.13620.
 
 \bibitem[Featherstone {\em et~al.}(2022)Featherstone, Zhang, Vaughan, and
   Duchene]{featherstone2022epidemiological}
@@ -76,6 +84,13 @@ Ingle, D.~J.  {\em et~al.} (2019).
 \newblock Co-circulation of {Multidrug}-resistant {Shigella} {Among} {Men}
   {Who} {Have} {Sex} {With} {Men} in {Australia}.
 \newblock {\em Clinical Infectious Diseases\/}, {\bf 69}(9), 1535--1544.
+
+\bibitem[K{\"u}hnert {\em et~al.}(2011)K{\"u}hnert, Wu, and
+  Drummond]{kuhnert2011phylogenetic}
+K{\"u}hnert, D.  {\em et~al.} (2011).
+\newblock Phylogenetic and epidemic modeling of rapidly evolving infectious
+  diseases.
+\newblock {\em Infection, genetics and evolution\/}, {\bf 11}(8), 1825--1841.
 
 \bibitem[Kühnert {\em et~al.}(2018)Kühnert, Coscolla, Brites, Stucki,
   Metcalfe, Fenner, Gagneux, and Stadler]{kuhnert_tuberculosis_2018}
@@ -114,12 +129,19 @@ Menardo, F.  {\em et~al.} (2019).
 Rambaut, A. and Grass, N.~C. (1997).
 \newblock Seq-gen: an application for the monte carlo simulation of {DNA}
   sequence evolution along phylogenetic trees.
-\newblock {\bf 13}(3), 235--238.
+\newblock {\em Bioinformatics\/}, {\bf 13}(3), 235--238.
 
 \bibitem[Raza and Luheshi(2016)Raza and Luheshi]{raza2016big}
 Raza, S. and Luheshi, L. (2016).
 \newblock Big data or bust: realizing the microbial genomics revolution.
 \newblock {\em Microbial Genomics\/}, {\bf 2}(2).
+
+\bibitem[Shean and Greninger(2018)Shean and Greninger]{shean_private_2018}
+Shean, R.~C. and Greninger, A.~L. (2018).
+\newblock Private collection: high correlation of sample collection and patient
+  admission date in clinical microbiological testing complicates sharing of
+  phylodynamic metadata.
+\newblock {\em Virus Evolution\/}, {\bf 4}(1), vey005.
 
 \bibitem[Shu and McCauley(2017)Shu and McCauley]{shu2017gisaid}
 Shu, Y. and McCauley, J. (2017).
@@ -127,11 +149,31 @@ Shu, Y. and McCauley, J. (2017).
   to reality.
 \newblock {\em Eurosurveillance\/}, {\bf 22}(13), 30494.
 
+\bibitem[Stadler {\em et~al.}(2012)Stadler, Kouyos, von Wyl, Yerly, B{\"o}ni,
+  B{\"u}rgisser, Klimkait, Joos, Rieder, Xie, {\em
+  et~al.}]{stadler2012estimating}
+Stadler, T.  {\em et~al.} (2012).
+\newblock Estimating the basic reproductive number from viral sequence data.
+\newblock {\em Molecular biology and evolution\/}, {\bf 29}(1), 347--357.
+
+\bibitem[Sweeney(2013)Sweeney]{sweeney_matching_2013}
+Sweeney, L. (2013).
+\newblock Matching {Known} {Patients} to {Health} {Records} in {Washington}
+  {State} {Data}.
+\newblock {\em SSRN Electronic Journal\/}.
+
 \bibitem[Vaughan and Drummond(2013)Vaughan and
   Drummond]{vaughan_stochastic_2013}
 Vaughan, T.~G. and Drummond, A.~J. (2013).
 \newblock A stochastic simulator of birth–death master equations with
   application to phylodynamics.
-\newblock {\bf 30}(6), 1480--1493.
+\newblock {\em Molecular Biology and Evolution\/}, {\bf 30}(6), 1480--1493.
+
+\bibitem[Volz and Frost(2014)Volz and Frost]{volz_sampling_2014}
+Volz, E.~M. and Frost, S. D.~W. (2014).
+\newblock Sampling through time and phylodynamic inference with coalescent and
+  birth-death models.
+\newblock {\em Journal of the Royal Society, Interface\/}, {\bf 11}(101),
+  20140945.
 
 \end{thebibliography}
