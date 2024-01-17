@@ -13,7 +13,7 @@
     <map name="prior" >beast.math.distributions.Prior</map>
     <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
     <map name="OneOnX" >beast.math.distributions.OneOnX</map>
-    <run id="mcmc" spec="MCMC" chainLength="10000000">
+    <run id="mcmc" spec="MCMC" chainLength="50000000">
         <state id="state" spec="State" storeEvery="10000">
            <tree id="Tree" spec="beast.evolution.tree.Tree" name="stateNode">
 
@@ -33,10 +33,10 @@
             <parameter id="rateAT" spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
             <parameter id="rateCG" spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
             <parameter id="rateGT" spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
-            <parameter id="origin_BDSKY_Serial" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="Infinity">30.0</parameter>
-            <parameter id="becomeUninfectiousRate_BDSKY_Serial" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="Infinity">1.0</parameter>
-            <parameter id="reproductiveNumber_BDSKY_Serial" spec="parameter.RealParameter" dimension="2" lower="0.0" name="stateNode" upper="Infinity">2.0</parameter>
-            <parameter id="samplingProportion_BDSKY_Serial" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0">0.01</parameter>
+            <parameter id="origin" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="Infinity">30.0</parameter>
+            <parameter id="becomeUninfectiousRate" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="Infinity">1.0</parameter>
+            <parameter id="reproductiveNumber" spec="parameter.RealParameter" dimension="2" lower="0.0" name="stateNode" upper="Infinity">2.0</parameter>
+            <parameter id="samplingProportion" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0">0.01</parameter>
             <parameter id="ucldMean" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
             <parameter id="ucldStdev" spec="parameter.RealParameter" lower="0.0" name="stateNode">0.1</parameter>
             <stateNode id="rateCategories" spec="parameter.IntegerParameter" dimension="58">1</stateNode>
@@ -48,8 +48,8 @@
         </init>
         <distribution id="posterior" spec="util.CompoundDistribution">
             <distribution id="prior" spec="util.CompoundDistribution">
-                <distribution id="BDSKY_Serial" spec="beast.evolution.speciation.BirthDeathSkylineModel" becomeUninfectiousRate="@becomeUninfectiousRate_BDSKY_Serial" origin="@origin_BDSKY_Serial" reproductiveNumber="@reproductiveNumber_BDSKY_Serial" samplingProportion="@samplingProportion_BDSKY_Serial" tree="@Tree"/>
-                <prior id="becomeUninfectiousRatePrior_BDSKY_Serial" name="distribution" x="@becomeUninfectiousRate_BDSKY_Serial">
+                <distribution id="BDSKY_Serial" spec="beast.evolution.speciation.BirthDeathSkylineModel" becomeUninfectiousRate="@becomeUninfectiousRate" origin="@origin" reproductiveNumber="@reproductiveNumber" samplingProportion="@samplingProportion" tree="@Tree"/>
+                <prior id="becomeUninfectiousRatePrior" name="distribution" x="@becomeUninfectiousRate">
                     <LogNormal id="LogNormalDistributionModel.0" name="distr">
                         <parameter id="RealParameter.20" spec="parameter.RealParameter" estimate="false" name="M">1.65</parameter>
                         <parameter id="RealParameter.21" spec="parameter.RealParameter" estimate="false" name="S">1.0</parameter>
@@ -60,7 +60,7 @@
                         <parameter id="RealParameter.0" spec="parameter.RealParameter" estimate="false" name="mean">1.0</parameter>
                     </Exponential>
                 </prior>
-                <prior id="originPrior_BDSKY_Serial" name="distribution" x="@origin_BDSKY_Serial">
+                <prior id="originPrior" name="distribution" x="@origin">
                     <Uniform id="Uniform.4" name="distr" upper="Infinity"/>
                 </prior>
                 <prior id="RateACPrior" name="distribution" x="@rateAC">
@@ -93,13 +93,13 @@
                         <parameter id="RealParameter.12" spec="parameter.RealParameter" estimate="false" name="beta">10.0</parameter>
                     </Gamma>
                 </prior>
-                <prior id="reproductiveNumberPrior_BDSKY_Serial" name="distribution" x="@reproductiveNumber_BDSKY_Serial">
+                <prior id="reproductiveNumberPrior" name="distribution" x="@reproductiveNumber">
                     <LogNormal id="LogNormalDistributionModel.1" name="distr">
                         <parameter id="RealParameter.22" spec="parameter.RealParameter" estimate="false" name="M">0.0</parameter>
                         <parameter id="RealParameter.23" spec="parameter.RealParameter" estimate="false" name="S">1.0</parameter>
                     </LogNormal>
                 </prior>
-                <prior id="samplingProportionPrior_BDSKY_Serial" name="distribution" x="@samplingProportion_BDSKY_Serial">
+                <prior id="samplingProportionPrior" name="distribution" x="@samplingProportion">
                     <Beta id="Beta.1" name="distr">
                         <parameter id="RealParameter.24" spec="parameter.RealParameter" estimate="false" name="alpha">10.0</parameter>
                         <parameter id="RealParameter.25" spec="parameter.RealParameter" estimate="false" name="beta">90.0</parameter>
@@ -116,7 +116,7 @@
                 </prior>
             </distribution>
             <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
-                <distribution id="treeLikelihood.tb" spec="ThreadedTreeLikelihood" data="@alignment" tree="@Tree">
+                <distribution id="treeLikelihood" spec="ThreadedTreeLikelihood" data="@alignment" tree="@Tree">
                     <siteModel id="SiteModel" spec="SiteModel" gammaCategoryCount="4" shape="@gammaShape">
                         <parameter id="mutationRate" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
                         <parameter id="proportionInvariant" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
@@ -146,14 +146,14 @@
         <operator id="BDSKY_SerialNarrow" spec="Exchange" tree="@Tree" weight="15.0"/>
         <operator id="BDSKY_SerialWide" spec="Exchange" isNarrow="false" tree="@Tree" weight="3.0"/>
         <operator id="BDSKY_SerialWilsonBalding" spec="WilsonBalding" tree="@Tree" weight="3.0"/>
-        <operator id="becomeUninfectiousRateScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@becomeUninfectiousRate_BDSKY_Serial" weight="2.0"/>
-        <operator id="reproductiveNumberScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@reproductiveNumber_BDSKY_Serial" weight="10.0"/>
-        <operator id="samplingProportionScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@samplingProportion_BDSKY_Serial" weight="10.0"/>
-        <operator id="updownBD_BDSKY_Serial" spec="UpDownOperator" scaleFactor="0.75" weight="2.0">
-            <up idref="reproductiveNumber_BDSKY_Serial"/>
-            <down idref="becomeUninfectiousRate_BDSKY_Serial"/>
+        <operator id="becomeUninfectiousRateScaler" spec="ScaleOperator" parameter="@becomeUninfectiousRate" weight="2.0"/>
+        <operator id="reproductiveNumberScaler" spec="ScaleOperator" parameter="@reproductiveNumber" weight="10.0"/>
+        <operator id="samplingProportionScaler" spec="ScaleOperator" parameter="@samplingProportion" weight="10.0"/>
+        <operator id="updownBD" spec="UpDownOperator" scaleFactor="0.75" weight="2.0">
+            <up idref="reproductiveNumber"/>
+            <down idref="becomeUninfectiousRate"/>
         </operator>
-        <operator id="origScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@origin_BDSKY_Serial" weight="1.0"/>
+        <operator id="origScaler" spec="ScaleOperator" parameter="@origin" weight="1.0"/>
         <operator id="ucldMeanScaler" spec="ScaleOperator" parameter="@ucldMean" scaleFactor="0.5" weight="1.0"/>
         <operator id="ucldStdevScaler" spec="ScaleOperator" parameter="@ucldStdev" scaleFactor="0.5" weight="3.0"/>
         <operator id="CategoriesRandomWalk" spec="IntRandomWalkOperator" parameter="@rateCategories" weight="10.0" windowSize="1"/>
@@ -167,7 +167,7 @@
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
-            <log idref="treeLikelihood.tb"/>
+            <log idref="treeLikelihood"/>
             <log id="TreeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree"/>
             <log idref="gammaShape"/>
             <log idref="rateAC"/>
@@ -176,10 +176,10 @@
             <log idref="rateCG"/>
             <log idref="rateGT"/>
             <log idref="BDSKY_Serial"/>
-            <log idref="origin_BDSKY_Serial"/>
-            <log idref="becomeUninfectiousRate_BDSKY_Serial"/>
-            <log idref="reproductiveNumber_BDSKY_Serial"/>
-            <log idref="samplingProportion_BDSKY_Serial"/>
+            <log idref="origin"/>
+            <log idref="becomeUninfectiousRate"/>
+            <log idref="reproductiveNumber"/>
+            <log idref="samplingProportion"/>
             <log idref="ucldMean"/>
             <log idref="ucldStdev"/>
             <log id="rate" spec="beast.evolution.branchratemodel.RateStatistic" branchratemodel="@RelaxedClock" tree="@Tree"/>
