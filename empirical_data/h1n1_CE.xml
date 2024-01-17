@@ -106,7 +106,7 @@
         <operator id="ePopSizeScaler" spec="ScaleOperator" parameter="@ePopSize" weight="3.0"/>
         <operator id="GrowthRateRandomWalk" spec="RealRandomWalkOperator" parameter="@growthRate" weight="3.0" windowSize="1.0"/>
         <operator id="KappaScaler" spec="ScaleOperator" parameter="@kappa" scaleFactor="0.5" weight="0.1"/>
-        <logger id="tracelog" spec="Logger" fileName="h1n1_CE_$(date-resolution).log" logEvery="10000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <logger id="tracelog" spec="Logger" fileName="h1n1_SC_CE_$(date-resolution).log" logEvery="10000" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
@@ -124,7 +124,7 @@
             <log idref="likelihood"/>
             <log idref="prior"/>
         </logger>
-        <logger id="treelog" spec="Logger" fileName="h1n1_CE_$(date-resolution).trees" logEvery="10000" mode="tree">
+        <logger id="treelog" spec="Logger" fileName="h1n1_SC_CE_$(date-resolution).trees" logEvery="10000" mode="tree">
             <log id="TreeWithMetaDataLogger" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree"/>
         </logger>
         <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>

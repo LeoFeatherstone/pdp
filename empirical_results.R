@@ -1,5 +1,5 @@
 #########################################
-### Wrangle and compare poterior date ###
+### Wrangle and compare poterior data ###
 #########################################
 
 library(tidyverse)

@@ -66,7 +66,7 @@
                 <distribution id="BDSKY_Serial"
                     spec="bdmmprime.distribution.BirthDeathMigrationDistribution"
                     tree="@Tree">
-                    
+
                 <parameterization spec="EpiParameterization"
                                   processLength="@origin_BDSKY_Serial">
                   <R0 spec="SkylineVectorParameter">
@@ -150,7 +150,7 @@
         <operator id="samplingProportionScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@samplingProportion_BDSKY_Serial" weight="10.0"/>
         <operator id="origScaler_BDSKY_Serial" spec="ScaleOperator" parameter="@origin_BDSKY_Serial" weight="1.0"/>
 
-        <logger id="tracelog" spec="Logger" fileName="h1n1_BD_$(date-resolution).log" logEvery="10000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <logger id="tracelog" spec="Logger" fileName="h1n1_SC_BD_$(date-resolution).log" logEvery="10000" model="@posterior" sanitiseHeaders="true" sort="smart">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
@@ -170,7 +170,7 @@
             <log idref="likelihood"/>
             <log idref="prior"/>
         </logger>
-        <logger id="treelog" spec="Logger" fileName="h1n1_BD_$(date-resolution).trees" logEvery="10000" mode="tree">
+        <logger id="treelog" spec="Logger" fileName="h1n1_SC_BD_$(date-resolution).trees" logEvery="10000" mode="tree">
             <log id="TreeWithMetaDataLogger" spec="beast.evolution.tree.TreeWithMetaDataLogger" branchratemodel="@StrictClock" tree="@Tree"/>
         </logger>
         <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>
