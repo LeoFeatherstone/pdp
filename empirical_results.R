@@ -8,6 +8,8 @@ library(xtable)
 library(latex2exp)
 library(scales)
 library(cowplot)
+library(ggExtra)
+library(ggridges)
 
 ## function applies burnin
 # df is data frame
@@ -110,7 +112,7 @@ emp_data <- lapply(
                 ,
                 grep(
                     colnames(x),
-                    pattern = "R.|delta|origin|clock|p|age|growthRate"
+                    pattern = "R.|delta|origin|clock|p|age|growthRate|BDSKY_Serial|CoalescentExponential|likelihood"
                 )
             ]
         )
@@ -125,6 +127,241 @@ emp_data <-
         delim = "_",
         names = c("organism", "clock", "treePrior", "resolution")
     )
+
+## Plotting
+# Likelihood plane
+p <- emp_data %>%
+    subset(treePrior == "BD") %>%
+    subset(!(organism == "h1n1" & resolution == "Year") & !(organism == "shigella")) %>%
+    select(resolution, organism, clockRate, BDSKY_Serial, likelihood) %>%
+    group_by(resolution, organism) %>%
+    ggplot(aes(x = likelihood, y = BDSKY_Serial, col = resolution)) +
+    geom_point(shape = 16, alpha = 0.2) +
+    facet_wrap(~organism, scales = "free", nrow = 3) +
+    scale_color_manual(
+        values = ggsci::pal_cosmic("signature_substitutions", alpha = 0.2)(4),
+        labels = parse_format(),
+        name = "",
+    ) +
+    ylab("Phylodynamic Likelihood") +
+    xlab("Phylogenetic Likelihood") +
+    theme_minimal()
+ggsave("likelihood_plane.pdf", dpi = 300)
+
+# Rate and origin
+emp_data %>%
+    subset(treePrior == "BD") %>%
+    subset(!(organism == "h1n1" & resolution == "Year") & !(organism == "shigella")) %>%
+    select(resolution, organism, clockRate, origin) %>%
+    group_by(resolution, organism) %>%
+    ggplot(aes(x = origin, y = clockRate, col = resolution)) +
+    geom_point(shape = 16, alpha = 0.2) +
+    facet_wrap(~organism, scales = "free", nrow = 3) +
+    scale_color_manual(
+        values = ggsci::pal_cosmic("signature_substitutions", alpha = 0.2)(4),
+        labels = parse_format(),
+        name = "",
+    ) +
+    #ylab("Phylodynamic Likelihood") +
+    #xlab("Phylogenetic Likelihood") +
+    theme_minimal()
+ggsave("empirical_rate_origin.pdf", dpi = 300)
+
+# Transmission and origin
+emp_data %>%
+    pivot_longer(
+        cols = c("R0", "Re1", "Re2"),
+        names_to = "reproductiveNumber",
+        values_to = "R",
+    ) %>%
+    subset(treePrior == "BD") %>%
+    subset(!(organism == "h1n1" & resolution == "Year") & !(organism == "shigella")) %>%
+    select(resolution, organism, R, reproductiveNumber, origin, clockRate) %>%
+    group_by(resolution, organism) %>%
+    ggplot(aes(x = clockRate, y = R, col = resolution, shape = reproductiveNumber)) +
+    geom_point() +
+    facet_wrap(~organism, scales = "free", nrow = 3) +
+    scale_color_manual(
+        values = ggsci::pal_cosmic("signature_substitutions", alpha = 0.2)(4),
+        labels = parse_format(),
+        name = "",
+    ) +
+    #ylab("Phylodynamic Likelihood") +
+    #xlab("Phylogenetic Likelihood") +
+    theme_minimal()
+ggsave("empirical_transmission_origin.pdf", dpi = 300)
+
+## Attempt panel
+# h1n1
+    # likelihood
+    p <- emp_data %>%
+    subset(treePrior == "BD" & organism == "h1n1" & resolution == "Year") %>%
+    select(resolution, organism, clockRate, BDSKY_Serial, likelihood) %>%
+    group_by(resolution) %>%
+    ggplot(aes(x = likelihood, y = BDSKY_Serial, col = resolution)) +
+    geom_point(shape = 16, alpha = 0.2) +
+    scale_color_manual(
+        values = ggsci::pal_cosmic("signature_substitutions", alpha = 0.2)(4),
+        labels = parse_format(),
+        name = "",
+    ) +
+    ylab("Phylodynamic Likelihood") +
+    xlab("Phylogenetic Likelihood") +
+    theme_minimal()
+    p <- ggMarginal(p, type = "histogram", groupColour = TRUE, groupFill = TRUE)
+
+pdf("h1n1_test_marginal.pdf", useDingbats = FALSE)
+    ggMarginal(p, type = "histogram", groupColour = TRUE, groupFill = TRUE)
+dev.off()
+
+    # rate and origin
+    h1n1_rate_marginal <- emp_data %>%
+    subset(treePrior == "BD" & organism == "h1n1" & !(resolution == "Year")) %>%
+    select(resolution, organism, clockRate, origin, likelihood) %>%
+    group_by(resolution) %>%
+    ggplot(aes(x = origin, y = clockRate, col = resolution)) +
+    geom_point(shape = 16, alpha = 0.2) +
+    scale_color_manual(
+        values = ggsci::pal_cosmic("signature_substitutions", alpha = 0.2)(4),
+        labels = parse_format(),
+        name = "",
+    ) +
+    #ylab("Phylodynamic Likelihood") +
+    #xlab("Phylogenetic Likelihood") +
+    theme_minimal()
+    h1n1_rate_marginal <- ggMarginal(h1n1_rate_marginal, type = "histogram", groupColour = TRUE, groupFill = TRUE)
+
+
+cowplot::plot_grid(p, h1n1_rate_marginal, nrow = 1)
+ggsave("test_panel.pdf", dpi = 300, width = 6, height = 4, units = "in")
+    # transmission and origin
+
+
+# sampling and origin plot
+emp_aln <- paste0(
+    "./empirical_data/",
+    c("h1n1", "sars-cov-2", "tb"),
+    ".fasta"
+)
+emp_aln <- lapply(
+    emp_aln,
+    function(x) ape::read.dna(x, format = "fasta")
+)
+names(emp_aln) <- c("h1n1", "sars-cov-2", "tb")
+
+samp_times <- lapply(
+    emp_aln,
+    function(x) {
+        rownames(x)
+    }
+)
+samp_times <- lapply(
+    seq_along(samp_times),
+    function(i) {
+        as.data.frame(cbind(
+            samp_times[[i]]
+        ))
+    }
+)
+names(samp_times) <- names(emp_aln)
+
+samp_times <- bind_rows(samp_times, .id = "id")
+colnames(samp_times) <- c("organism", "label")
+samp_times <- samp_times %>%
+    separate(
+        label,
+        sep = "_",
+        into = c("name", "Year", "Month", "Day")
+    ) %>%
+    mutate(
+        Year = (as.Date(Year)),
+        Month = (as.Date(Month)),
+        Day = (as.Date(Day))
+    ) %>%
+    pivot_longer(
+        c("Year", "Month", "Day"),
+        names_to = "resolution",
+        values_to = "date"
+    ) %>%
+    group_by(organism, resolution) %>%
+    mutate(
+        mrsd = max(date)
+    )
+# associate origin data
+max_dates <- samp_times %>%
+    select(organism, resolution, mrsd) %>%
+    distinct()
+
+origin_times <- emp_data %>%
+    select(origin, organism, resolution) %>%
+    left_join(
+        max_dates,
+        by = c("organism", "resolution")
+    ) %>%
+    group_by(organism, resolution) %>%
+    mutate(
+        hpd_upper = quantile(origin, 0.975, na.rm = TRUE),
+        hpd_lower = quantile(origin, 0.025, na.rm = TRUE)
+    ) %>%
+    filter(origin >= hpd_lower & origin <= hpd_upper) %>%
+    ungroup() %>%
+    group_by(organism) %>%
+    mutate(
+        adjusted_origin = as.Date(date_decimal((decimal_date(max(mrsd)) - origin)))
+    ) %>%
+    ungroup() %>%
+    group_by(organism, resolution) %>%
+    mutate(
+        abs_origin = as.Date(date_decimal((decimal_date(mrsd) - origin)))
+    )
+
+# filter
+samp_time_filtered <- samp_times %>%
+    subset(
+        !(organism == "h1n1" & resolution == "Year")
+        &
+        !(organism == "sars-cov-2" & resolution == "Year")
+    )
+origin_times_filtered <- origin_times %>%
+    subset(
+        !(organism == "h1n1" & resolution == "Year")
+        &
+        !(organism == "sars-cov-2" & resolution == "Year")
+    )
+
+ggplot() +
+    geom_density_ridges(
+        stat = "binline",
+        bins = 40,
+        draw_baseline = FALSE,
+        data = samp_time_filtered,
+        scale = 1,
+        jittered_points = TRUE,
+        position = position_points_jitter(width = 0.05, height = 0),
+        point_shape = "|", point_size = 3, point_alpha = 1,
+        aes(x = date, y = resolution, fill = resolution, group = resolution)
+    ) +
+    geom_density_ridges(
+        stat = "binline",
+        data = origin_times_filtered,
+        draw_baseline = FALSE,
+        scale = 1,
+        bins = 50,
+        fill = "grey",
+        aes(x = adjusted_origin, y = resolution, group = resolution)
+    ) +
+    scale_fill_manual(
+        values = ggsci::pal_cosmic("signature_substitutions", alpha = 0.6)(4),
+        labels = parse_format(),
+        name = ""
+    ) +
+    scale_x_date(date_labels = "%b-%y") +
+    facet_wrap(~organism, scales = "free", ncol = 1) +
+    theme_minimal()
+ggsave("adjusted_origin_sampling.pdf", dpi = 300, width = 4, height = 6, units = "in")
+########## Older Plots ##########
+
+
 
 ## plots
 emp_data$organism <- factor(emp_data$organism, labels = c(
