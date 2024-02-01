@@ -1,0 +1,39 @@
+<beast version="2.0" namespace="beast.base.inference.parameter:beast.base.inference:remaster">
+
+        <param id="R0" spec="RealParameter" value="1.3"/>
+        <param id="delta" spec="RealParameter" value="91.3125"/>
+        <param id="s" spec="RealParameter" value="0.015"/>
+    
+        <param id="lambda" spec="feast.expressions.ExpCalculator" value="R0*delta">
+            <arg idref="R0"/>
+            <arg idref="delta"/>
+        </param>
+    
+        <param id="mu" spec="feast.expressions.ExpCalculator" value="delta*(1-s)">
+            <arg idref="delta"/>
+            <arg idref="s"/>
+        </param>
+    
+        <param id="psi" spec="feast.expressions.ExpCalculator" value="delta*s">
+            <arg idref="delta"/>
+            <arg idref="s"/>
+        </param>
+    
+        <run spec="Simulator" nSims="1">
+            <simulate spec="SimulatedTree" id="SIRTree">
+                <trajectory spec="StochasticTrajectory" id="SIRTrajectory" maxTime="0.25" mustHave="sample>=20">   
+                    <population spec="RealParameter" id="X" value="1"/>
+                    <samplePopulation spec="RealParameter" id="sample" value="0"/>
+    
+                    <reaction spec="Reaction" rate="@lambda"> X -> 2X </reaction>
+                    <reaction spec="Reaction" rate="@mu"> X -> 0 </reaction>
+                    <reaction spec="Reaction" rate="@psi"> X -> sample </reaction>
+                </trajectory>
+            </simulate>
+    
+            <logger spec="Logger" mode="tree" fileName="h1n1_$(ID).tree">
+                <log spec="TypedTreeLogger" removeSingletonNodes="true" tree="@SIRTree"/>
+            </logger>
+    
+        </run>
+    </beast>

@@ -1,0 +1,45 @@
+configfile: "./config.yaml"
+
+MICROBES = ["h1n1", "sars-cov-2", "tb", "saureus"]
+REP =  range(1, 101)
+
+def gen_seed(wildcards):
+    return (int(wildcards.rep) * 100) + int(wildcards.rep)
+
+rule all:
+    # input: 
+    #     expand("beast/{microbe}_{rep}.trees", microbe=MICROBES, rep = REP),
+    #     expand("beast/{microbe}_{rep}.log", microbe=MICROBES, rep = REP)
+    input: expand("date_formatted_trees/{microbe}_{rep}.tree", microbe=MICROBES, rep = REP)
+
+rule beast_version:
+    conda: "envs/beast.yaml"
+    output: "logs/beast.version"
+    shell: "beast -version > {output}"
+
+rule simulate_trees:
+    conda: "envs/beast.yaml"
+    input: "tree_simulations/{microbe}.xml"
+    output: "tree_simulations/{microbe}_{rep}.tree"
+    params: seed=gen_seed
+    shell:
+        """
+        beast -overwrite -D "ID={wildcards.rep}" -working -seed {params.seed} {input} 
+        """
+
+rule format_tips:
+    input: "tree_simulations/{microbe}_{rep}.tree"
+    output: "date_formatted_trees/{microbe}_{rep}.tree"
+    script: "scripts/format_tips.R"
+
+rule analysis:
+    conda: "envs/beast.yaml"
+    input: "date_formatted_trees/{microbe}_{rep}.tree"
+    output: multiext("/{microbe}_{rep}.", "trees", "log")
+    params: seed=gen_seed
+    shell:
+        """
+        echo {output}
+        echo {params.seed} >> {output[0]}
+        echo {params.seed} >> {output[1]}
+        """

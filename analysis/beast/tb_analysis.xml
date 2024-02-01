@@ -1,0 +1,20 @@
+<run spec="Simulator" nSims="2">
+    <simulate spec="feast.simulation.SimulatedAlignment" outputFileName="tb.nexus" sequenceLength="4300000">
+
+        <siteModel spec="beast.base.evolution.sitemodel.SiteModel" mutationRate="1e-08">
+            <substModel spec="beast.base.evolution.substitutionmodel.JukesCantor" />
+        </siteModel>
+
+
+        <tree spec="SimulatedTree" id="SIRTree" maxRetries="100">
+            <trajectory spec="StochasticTrajectory" id="SIRTrajectory"
+                maxTime="25" mustHave="sample>=20">
+                <population spec="RealParameter" id="X" value="1" />
+                <samplePopulation spec="RealParameter" id="sample" value="0" />
+
+                <reaction spec="Reaction" rate="@lambda" changeTimes="12.5"> X -> 2X </reaction>
+                <reaction spec="Reaction" rate="@mu"> X -> 0 </reaction>
+                <reaction spec="Reaction" rate="@psi"> X -> sample </reaction>
+            </trajectory>
+        </tree>
+    </simulate>
