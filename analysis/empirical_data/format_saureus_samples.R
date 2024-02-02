@@ -23,7 +23,7 @@ dates <- dates %>%
     mutate(month = format(whole_date, "%Y-%m-15")) %>%
     mutate(day = format(whole_date, "%Y-%m-%d")) %>%
     mutate(new_name = paste0(
-       tip_name, "_", year, "_", month, "_", day
+       "t", seq_along(dates$tip_name), "_", year, "_", month, "_", day
     ))
 
 rownames(aln) <- dates$new_name
