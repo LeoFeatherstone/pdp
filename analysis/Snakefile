@@ -1,16 +1,27 @@
 configfile: "./config.yaml"
 
 MICROBES = ["h1n1", "sars-cov-2", "tb", "saureus"]
+VIRUS = ["h1n1", "sars-cov-2"]
 REP =  range(1, 101)
+RES = ["Day-Fixed", "Month-Fixed", "Year-Fixed"]
 
 def gen_seed(wildcards):
     return (int(wildcards.rep) * 100) + int(wildcards.rep)
 
+def gen_date_group(wildcards):
+    if wildcards.res == "Day-Fixed":
+        return 1
+    elif wildcards.res =="Month-Fixed":
+        return 2
+    else:
+        return 3
+
 rule all:
-    # input: 
-    #     expand("beast/{microbe}_{rep}.trees", microbe=MICROBES, rep = REP),
-    #     expand("beast/{microbe}_{rep}.log", microbe=MICROBES, rep = REP)
-    input: expand("date_formatted_trees/{microbe}_{rep}.tree", microbe=MICROBES, rep = REP)
+    input: 
+        expand("posterior_simulations/{microbe}_BD_SC_{res}_{rep}.trees", microbe=MICROBES, res=RES, rep = REP)
+        expand("posterior_simulations/{microbe}_BD_SC_{res}_{rep}.log", microbe=MICROBES, res=RES, rep = REP)
+        expand("posterior_simulations/{virus}_CE_SC_{res}_{rep}.trees", virus=VIRUS, res=RES, rep = REP)
+        expand("posterior_simulations/{virus}_CE_SC_{res}_{rep}.log", virus=VIRUS, res=RES, rep = REP)
 
 rule beast_version:
     conda: "envs/beast.yaml"
@@ -28,18 +39,38 @@ rule simulate_trees:
         """
 
 rule format_tips:
+    conda: "envs/r.yaml"
     input: "tree_simulations/{microbe}_{rep}.tree"
-    output: "date_formatted_trees/{microbe}_{rep}.tree"
+    output: "posterior_simulations/{microbe}_{rep}.tree"
     script: "scripts/format_tips.R"
 
-rule analysis:
+rule bd_fixed_date_analysis:
     conda: "envs/beast.yaml"
-    input: "date_formatted_trees/{microbe}_{rep}.tree"
-    output: multiext("/{microbe}_{rep}.", "trees", "log")
-    params: seed=gen_seed
+    input: "posterior_simulations/{microbe}_{rep}.tree"
+    output: multiext("{microbe}_BD_SC_{res}_{rep}.", "trees", "log")
+    params: 
+        seed=gen_seed
+        date_group=gen_date_group
     shell:
         """
-        echo {output}
-        echo {params.seed} >> {output[0]}
-        echo {params.seed} >> {output[1]}
+        beast\
+        -overwrite\
+        -D "microbe={microbe},rep={rep}1,res={res},date-group={params.date_group"\
+        {microbe}_BD_SC.xml
+        """
+        
+rule ce_fixed_date_analysis:
+    conda: "envs/beast.yaml"
+    input: "posterior_simulations/{virus}_{rep}.tree"
+    output: 
+        multiext("{virus}_CE_SC_{res}_{rep}.", "trees", "log")
+    params:  
+        seed=gen_seed
+        date_group=gen_date_group
+    shell:
+        """
+        beast\
+        -overwrite\
+        -D "microbe={microbe},rep={rep}1,res={res},date-group={params.date_group}"\
+        {virus}_CE_SC.xml
         """
