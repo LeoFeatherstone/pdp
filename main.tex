@@ -8,7 +8,7 @@
 \usepackage[square,sort,comma,numbers]{natbib}
 \setcitestyle{authoryear,open={(},close={)}}
 
-\title{Understanding the effects of date rounding in phylodynamics}
+\title{Understanding the effects of date-rounding in phylodynamics for public health}
 \author{Leo A. Featherstone$^{\ast,1}$, Courtney Lane$^{1}$, Benjamin Howden$^{1}$,\\Danielle Ingle$^{1}$, Sebastian Duchene$^{1}$}
 
 \begin{document}
@@ -19,7 +19,8 @@ $^{1}$ Peter Doherty Institute for Infection and Immunity, University of Melbour
 *email: leo.featherstone@unimelb.edu.au
 
 \section*{Abstract}
-As an extension of the increasing use of pathogen genomics to answer public-health questions, phylodynamics in increasingly being used to make  temporal epidemiological inference from pathogen genomes. Despite its broad applicability, phylodynamic analyses, always begin with pathogen genome sequences and associated sampling times, but the release of sampling time data can pose a threat to patient confidentiality. In response, sampling times are often only given with reduced resolution to the month or year, but this can bias estimates and mislead the interpretation of results. Here, we characterise the extent to which reduced sampling time resolution can bias phylodynamic analyses across a diverse range of empirical and simulated datasets and for the first time deliver a guideline on when date rounding biases phylodynamic inference. We also show that this bias is both unpredictable in its direction and compounds as evolutionary rates increase and date-resolution decreases. We conclude by suggesting a simple form of encryption where exact sampling times are essential and their is a clear risk to patient confidentiality.
+As an extension of the increasing use of pathogen genomics to answer public-health questions, phylodynamics is commonly used for epidemiological inference from pathogen genomes. Despite its broad applicability, phylodynamic analyses always begin with pathogen genome sequences and associated sampling times, but the release of sampling time data can pose a threat to patient confidentiality. In response, sampling times are often only given with reduced resolution to the month or year, but this can bias estimates and mislead the interpretation of results. Here, we characterise the extent to which reduced sampling time resolution can bias phylodynamic analyses across a diverse range of empirical and simulated datasets and for the first time deliver a guideline on when date rounding biases phylodynamic inference. We also show that this bias is both unpredictable in its direction and compounds as evolutionary rates increase and date-resolution decreases. We conclude by suggesting a simple form of encryption where exact sampling times are essential and there is a clear risk to patient confidentiality.
+
 
 \begin{spacing}{1.5}
 \section*{Introduction}
@@ -90,7 +91,7 @@ We simulated outbreaks as birth-death sampling processes using the Master packag
     H1N1                        & $4\times10^{-3}$ & 13158 & 0.0190\\
     SARS-CoV-2                  & $1\times10^{-3}$ & 29903 & 0.0334\\
     \textit{S. sonnei}    & $9\times10^{-7}$ & 4825265  & 0.3454\\
-    \textit{M. tuberculosis}    &   $1\times10^{-7}$ & 4300000 & 23.256\\
+    \textit{M. tuberculosis}    &   $1\times10^{-7}$ & 4300000 & 2.3256\\
     \hline
     \end{tabular}
     \label{tab:seq_parms}
