@@ -1,0 +1,2 @@
+#!/bin/sh
+scancel $(echo $* | grep -Eo ‘[0-9]+’)
