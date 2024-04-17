@@ -5,6 +5,7 @@
 library(tidyverse)
 library(latex2exp)
 library(plotly)
+library(htmlwidgets)
 
 ## TODO: Update path later
 trace <- readRDS("analysis/processed_simulation_posteriors/posteriors.RData")
@@ -12,15 +13,16 @@ ess <- readRDS("analysis/processed_simulation_posteriors/ess.RData")
 #treeStats <- readRDS("analysis/processed_simulation_posteriors/ess.RData")
 
 ## Find which burnin percentage yielded best convergence
-for (list in ess) {
-    print(
-        sum(
-            sapply(list, function(x) {
-                all(x > 200, na.rm = TRUE)
-            })
-        )
-    )
-} # ess 50% gave the best results (ess[[9]])
+# for (list in ess) {
+#     print(
+#         sum(
+#             sapply(list, function(x) {
+#                 all(x > 200, na.rm = TRUE)
+#             })
+#         )
+#     )
+# } 
+# ess 50% gave the best results (ess[[9]])
 
 ess_passed <- names(which(unlist(
     lapply(
@@ -31,11 +33,11 @@ ess_passed <- names(which(unlist(
     )
 )))
 
-write.table(
-    table(gsub(ess_passed, pattern = "-Fixed.+", replacement = "")),
-    row.names = FALSE, col.names = FALSE, quote = FALSE,
-    file = "/data/cephfs/punim0819/leo/pdp/analysis/simulation_results/ess_50pc.txt"
-)
+# write.table(
+#     table(gsub(ess_passed, pattern = "-Fixed.+", replacement = "")),
+#     row.names = FALSE, col.names = FALSE, quote = FALSE,
+#     file = "/data/cephfs/punim0819/leo/pdp/analysis/simulation_results/ess_50pc.txt"
+# )
 
 ## Filter out non-converged chains
 posterior <- trace %>%
@@ -322,18 +324,25 @@ ggsave(
 
 ## Likelihood plots - make interactive
 likelihood_plot <- posterior %>%
-    #filter(replicate == 1) %>%
-    filter(factor == "SARS-CoV-2" & treePrior == "BD") %>%
+    # need to select only runs for which all resolutions are defined
+    pivot_longer(
+        matches("BDSKY_Serial|CoalescentExponential"),
+        names_to = "beast_phylodynamic_likelihood_name",
+        values_to = "phylodynamicLikelihood",
+        values_drop_na = TRUE
+    ) %>%
+    filter(
+        beast_phylodynamic_likelihood_name == "BDSKY_Serial"
+        &
+        replicate == 1
+    ) %>%
     mutate(
-        phylogeneticLikelihood = posterior - likelihood - prior,
-        phylodynamicLikelihood = likelihood
+        phylogeneticLikelihood = treeLikelihood
     ) %>%
     ggplot(
         aes(
             x = phylogeneticLikelihood, y = phylodynamicLikelihood,
-            group = interaction(resolution, treePrior, factor),
-            col = interaction(resolution, treePrior, factor),
-            frame = replicate
+            col = resolution, frame = replicate
         )
     ) +
     geom_density2d() +
@@ -342,9 +351,8 @@ likelihood_plot <- posterior %>%
         scales = "free",
         labeller = label_parsed
     ) +
-    #ylab(TeX("\\textit{$R_{\\bullet}$}")) +
-    #xlab("Date resolution") +
-    coord_fixed() +
+    ylab("phylodynamic log-likelihood") +
+    xlab("phylogenetic log-likelihood") +
     theme_bw() +
     theme(
         legend.title = element_blank(),
@@ -353,9 +361,39 @@ likelihood_plot <- posterior %>%
     )
 
 likelihood_widget <- ggplotly(likelihood_plot)
+htmlwidgets::saveWidget(
+    widget = likelihood_widget,
+    file = "simulation_likelihood_saureus_BD.html"
+)
+
+
+
+likelihood_widget <- posterior %>%
+    # need to select only runs for which all resolutions are defined
+    pivot_longer(
+        matches("BDSKY_Serial|CoalescentExponential"),
+        names_to = "beast_phylodynamic_likelihood_name",
+        values_to = "phylodynamicLikelihood",
+        values_drop_na = TRUE
+    ) %>%
+    mutate(
+        phylogeneticLikelihood = treeLikelihood
+    ) %>%
+    ungroup() %>%
+    group_by(factor) %>%
+    plot_ly(
+        x = ~phylogeneticLikelihood, y = ~phylodynamicLikelihood,
+        frame = ~replicate, color = ~resolution,
+        type = "scatter"
+    ) %>%
+    plotly::subplot(nrows = 2) %>%
+    toWebGL()
+
+
+htmlwidgets::saveWidget(
+    widget = likelihood_widget,
+    file = "simulation_likelihood.html"
+)
+
+#likelihood_widget <- ggplotly(likelihood_plot)
 #ggsave("simulation_likelihood.pdf", dpi = 300, plot = likelihood_plot)
-htmlwidgets::saveWidget(likelihood_widget, "simulation_likelihood.html")
-
-
-## Tree Statistic Plots
-load("analysis/processed_simulation_posteriors/tree_imbalance.RData")
