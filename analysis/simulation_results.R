@@ -10,20 +10,9 @@ library(htmlwidgets)
 ## TODO: Update path later
 trace <- readRDS("analysis/processed_simulation_posteriors/posteriors.RData")
 ess <- readRDS("analysis/processed_simulation_posteriors/ess.RData")
-#treeStats <- readRDS("analysis/processed_simulation_posteriors/ess.RData")
+tree_stats <- readRDS("analysis/processed_simulation_posteriors/tree_imbalance.RData")
 
-## Find which burnin percentage yielded best convergence
-# for (list in ess) {
-#     print(
-#         sum(
-#             sapply(list, function(x) {
-#                 all(x > 200, na.rm = TRUE)
-#             })
-#         )
-#     )
-# } 
 # ess 50% gave the best results (ess[[9]])
-
 ess_passed <- names(which(unlist(
     lapply(
         ess[[9]],
@@ -33,12 +22,7 @@ ess_passed <- names(which(unlist(
     )
 )))
 
-# write.table(
-#     table(gsub(ess_passed, pattern = "-Fixed.+", replacement = "")),
-#     row.names = FALSE, col.names = FALSE, quote = FALSE,
-#     file = "/data/cephfs/punim0819/leo/pdp/analysis/simulation_results/ess_50pc.txt"
-# )
-
+### Wrangle posteriors
 ## Filter out non-converged chains
 posterior <- trace %>%
     mutate(
@@ -48,11 +32,9 @@ posterior <- trace %>%
             sep = "_"
         )
     ) %>%
+    filter(Sample >= (0.5 * 5e8)) %>%
     filter(id %in% ess_passed) %>%
-    filter(Sample >= (0.5 * 5e8))
-
-## REVERSING MISTAKES, I will be able to delete the next chunk when I rerun
-posterior <- posterior %>%
+    ## REVERSING MISTAKES, I will be able to delete the next chunk when I rerun
     rename(
         "treePrior" = clockModel,
         "clockModel" = treePrior
@@ -63,7 +45,13 @@ posterior <- posterior %>%
             resolution == "Month-Fixed" ~ "Month",
             resolution == "Year-Fixed" ~ "Day"
         )
-    )
+    ) %>%
+    ## R0 for CE and combine reproductive number values
+    mutate(reproductiveNumber = case_when(
+        treePrior == "CE" & organism == "h1n1" ~ (growthRate / 91.3125) + 1,
+        treePrior == "CE" & organism == "sars-cov-2" ~ (growthRate / 36.525) + 1,
+        .default = reproductiveNumber
+    ))
 
 ## Making species a factor to plot with
 posterior$factor <- factor(
@@ -75,7 +63,43 @@ posterior$factor <- factor(
     )
 )
 
-## Clock Parallel Coords
+### Handle Tree Stats
+tree_stats <- tree_stats %>%
+    mutate(
+        id = paste(
+            organism, treePrior, clockodel,
+            resolution, replicate,
+            sep = "_"
+        )
+    ) %>%
+    filter(id %in% ess_passed) %>%
+    ## REVERSING MISTAKES, I will be able to delete the next chunk when I rerun
+    rename(
+        "treePrior" = treePrior,
+        "clockModel" = clockodel
+    ) %>%
+    mutate(
+        resolution = case_when(
+            resolution == "Day-Fixed" ~ "Year",
+            resolution == "Month-Fixed" ~ "Month",
+            resolution == "Year-Fixed" ~ "Day"
+        )
+    )
+
+## Making species a factor to plot with
+tree_stats$factor <- factor(
+    levels = c("h1n1", "sars-cov-2", "saureus", "tb"),
+    tree_stats$organism,
+    labels = c(
+        "H1N1", "SARS-CoV-2",
+        "italic(S.~aureus)", "italic(M.~tuberculosis)"
+    )
+)
+## Filter cols for binding later
+tree_stats <- tree_stats %>%
+    select(!c(organism, id))
+
+## Simulation values to compare against
 rate_true <- data.frame(
     organism = c("h1n1", "sars-cov-2", "saureus", "tb"),
     factor = factor(
@@ -86,15 +110,106 @@ rate_true <- data.frame(
             "italic(S.~aureus)", "italic(M.~tuberculosis)"
         )
     ),
-    rate = c(4e-3, 1e-3, 1e-6, 1e-8)
+    rate_true = c(4e-3, 1e-3, 1e-6, 1e-8)
 )
+age_true <- data.frame(
+    organism = c("h1n1", "sars-cov-2", "saureus", "tb"),
+    factor = factor(
+        levels = c("h1n1", "sars-cov-2", "saureus", "tb"),
+        c("h1n1", "sars-cov-2", "saureus", "tb"),
+        labels = c(
+            "H1N1", "SARS-CoV-2",
+            "italic(S.~aureus)", "italic(M.~tuberculosis)"
+        )
+    ),
+    age_true = c(0.25, 0.16, 25, 25)
+)
+reproductive_number_true <- data.frame(
+    organism = c("h1n1", "sars-cov-2", "saureus", "saureus", "tb", "tb"),
+    factor = factor(
+        levels = c("h1n1", "sars-cov-2", "saureus", "tb"),
+        c("h1n1", "sars-cov-2", "saureus", "saureus", "tb", "tb"),
+        labels = c(
+            "H1N1", "SARS-CoV-2",
+            "italic(S.~aureus)", "italic(M.~tuberculosis)"
+        )
+    ),
+    reproductive_number_true = c(1.3, 2.5, 2.0, 1.0, 2.5, 1.1),
+    interval = c(
+        "mean_R0", "mean_R0",
+        "mean_Re1", "mean_Re2", "mean_Re1", "mean_Re2"
+    )
+)
+
+rel_error <- posterior %>%
+    ungroup() %>%
+    select(!organism) %>%
+    group_by(factor, treePrior, resolution, replicate) %>%
+    summarise(
+        mean_R0 = mean(reproductiveNumber),
+        mean_Re1 = mean(reproductiveNumber.1),
+        mean_Re2 = mean(reproductiveNumber.2),
+        mean_age = mean(Tree.height),
+        mean_clock_rate = mean(clockRate),
+        .groups = "keep"
+    ) %>%
+    pivot_wider(
+        names_from = resolution,
+        names_glue = "{.value}_{resolution}",
+        values_from = starts_with("mean_")
+    ) %>%
+    mutate(
+        #R0
+        error_R0_Day = 0,
+        error_R0_Month = mean_R0_Month - mean_R0_Day,
+        error_R0_Year = mean_R0_Year - mean_R0_Day,
+        #Re1
+        error_Re1_Day = 0,
+        error_Re1_Month = mean_Re1_Month - mean_Re1_Day,
+        error_Re1_Year = mean_Re1_Year - mean_Re1_Day,
+        #Re2
+        error_Re2_Day = 0,
+        error_Re2_Month = mean_Re2_Month - mean_Re2_Day,
+        error_Re2_Year = mean_Re2_Year - mean_Re2_Day,
+        #age
+        error_age_Day = 0,
+        error_age_Month = mean_age_Month - mean_age_Day,
+        error_age_Year = mean_age_Year - mean_age_Day,
+        #rate
+        error_clock_rate_Day = 0,
+        error_clock_rate_Month = mean_clock_rate_Month - mean_clock_rate_Day,
+        error_clock_rate_Year = mean_clock_rate_Year - mean_clock_rate_Day,
+    ) %>%
+    select(!starts_with("mean_")) %>%
+    pivot_longer(
+        starts_with("error_"),
+        names_to = c(".value", "resolution"),
+        names_pattern = "(error_.+)_(Day|Month|Year)"
+    ) %>%
+    pivot_longer(
+            matches("error_R(0|e1|e2)"),
+            names_to = "interval",
+            values_to = "error_reproductive_number",
+            values_drop_na = TRUE
+    ) %>%
+    mutate(interval = sub(interval, pattern = "error_", replacement = "")) %>%
+    left_join(
+        tree_stats,
+        by = c("factor", "replicate", "resolution", "treePrior")
+    )
+
+####################################
+############# Plotting #############
+####################################
+
+## Clock Parallel Coords
 clock_plot <- (posterior %>%
     group_by(factor, treePrior, resolution, replicate) %>%
     summarise(mean_clock_rate = mean(clockRate)) %>%
     ggplot() +
     geom_segment(
         data = rate_true,
-        aes(y = rate, yend = rate, x = -Inf, xend = Inf),
+        aes(y = rate_true, yend = rate, x = -Inf, xend = Inf),
         col = "black", alpha = 0.6, lty = 3
     ) +
     geom_line(
@@ -142,25 +257,14 @@ clock_plot
 ggsave("clock_traj.pdf", dpi = 300, width = 10, height = 5, units = "in")
 
 ## Origin Parallel Coords
-origin_true <- data.frame(
-    organism = c("h1n1", "sars-cov-2", "saureus", "tb"),
-    factor = factor(
-        levels = c("h1n1", "sars-cov-2", "saureus", "tb"),
-        c("h1n1", "sars-cov-2", "saureus", "tb"),
-        labels = c(
-            "H1N1", "SARS-CoV-2",
-            "italic(S.~aureus)", "italic(M.~tuberculosis)"
-        )
-    ),
-    origin = c(0.25, 0.16, 25, 25)
-)
+
 origin_plot <- (posterior %>%
     group_by(factor, treePrior, resolution, replicate) %>%
     summarise(mean_outbreak_age = mean(Tree.height)) %>%
     ggplot() +
     geom_segment(
         data = origin_true,
-        aes(y = origin, yend = origin, x = -Inf, xend = Inf),
+        aes(y = origin_true, yend = origin, x = -Inf, xend = Inf),
         col = "black", alpha = 0.6, lty = 3
     ) +
     geom_line(
@@ -212,10 +316,6 @@ ggsave("origin_traj.pdf", dpi = 300, width = 10, height = 5, units = "in")
 
 
 ## Reproductive Number Parallel Coords
-reproductive_number_true <- data.frame(
-    organism = c("h1n1", "sars-cov-2", "saureus", "saureus", "tb", "tb"),
-    reproductive_number = c(1.3, 2.5, 2.0, 1.0, 2.5, 1.1)
-)
 reproductive_number_true$factor <- factor(
     reproductive_number_true$organism,
     levels = c("h1n1", "sars-cov-2", "saureus", "tb"),
@@ -224,17 +324,13 @@ reproductive_number_true$factor <- factor(
             "italic(S.~aureus)", "italic(M.~tuberculosis)"
         )
     )
-# R0 for CE and combine reproductive number values
-posterior <- (posterior %>%
-    mutate(reproductiveNumber = case_when(
-        treePrior == "CE" & organism == "h1n1" ~ (growthRate / 91.3125) + 1,
-        treePrior == "CE" & organism == "sars-cov-2" ~ (growthRate / 36.525) + 1,
-        .default = reproductiveNumber
-    )))
 
 reproductive_number_plot <- (posterior %>%
     filter(
-        !((organism == "h1n1" | organism == "sars-cov-2") & resolution == "Year")
+        !(
+            (organism == "h1n1" | organism == "sars-cov-2")
+            & resolution == "Year"
+        )
     ) %>%
     group_by(factor, treePrior, resolution, replicate) %>%
     summarise(
@@ -253,7 +349,7 @@ reproductive_number_plot <- (posterior %>%
     geom_segment(
         data = reproductive_number_true,
         aes(
-            y = reproductive_number, yend = reproductive_number,
+            y = reproductive_number_true, yend = reproductive_number,
             x = -Inf, xend = Inf
         ),
         col = "black", alpha = 0.6, lty = 3
@@ -310,7 +406,7 @@ ggsave(
     width = 10, height = 5, units = "in"
 )
 
-## Simulation Combines Parms plot
+## Simulation Combined Parms plot
 cowplot::plot_grid(
     labels = "AUTO",
     clock_plot, origin_plot, reproductive_number_plot,
@@ -322,78 +418,197 @@ ggsave(
     dpi = 300
 )
 
-## Likelihood plots - make interactive
-likelihood_plot <- posterior %>%
-    # need to select only runs for which all resolutions are defined
+## Likelihood plots. TODO Make interactive later
+posterior %>%
     pivot_longer(
         matches("BDSKY_Serial|CoalescentExponential"),
         names_to = "beast_phylodynamic_likelihood_name",
         values_to = "phylodynamicLikelihood",
         values_drop_na = TRUE
     ) %>%
-    filter(
-        beast_phylodynamic_likelihood_name == "BDSKY_Serial"
-        &
-        replicate == 1
+    mutate(phylogeneticLikelihood = treeLikelihood) %>%
+    ungroup() %>%
+    select(!organism) %>%
+    group_by(factor, treePrior, resolution, replicate) %>%
+    summarise(
+        mean_phylogenetic = mean(phylogeneticLikelihood),
+        mean_phylodynamic = mean(phylodynamicLikelihood),
+        .groups = "keep"
+    ) %>%
+    pivot_wider(
+        names_from = resolution,
+        names_glue = "{.value}_{resolution}",
+        values_from = starts_with("mean_phylo")
     ) %>%
     mutate(
-        phylogeneticLikelihood = treeLikelihood
+        # Adjusted Phylogenetic Likelihood
+        phylogenetic_Day = 0,
+        phylogenetic_Month = mean_phylogenetic_Month - mean_phylogenetic_Day,
+        phylogenetic_Year = mean_phylogenetic_Year - mean_phylogenetic_Day,
+        # Adjusted Phylodynamic Likelihood
+        phylodynamic_Day = 0,
+        phylodynamic_Month = mean_phylodynamic_Month - mean_phylodynamic_Day,
+        phylodynamic_Year = mean_phylodynamic_Year - mean_phylodynamic_Day,
     ) %>%
+    select(!starts_with("mean_phylo")) %>%
+    pivot_longer(
+        matches("(phylogenetic|phylodynamic)_(Day|Month|Year)"),
+        names_to = c(".value", "resolution"),
+        names_pattern = "(phylogenetic|phylodynamic)_(Day|Month|Year)"
+    ) %>%
+    filter(!(factor == "H1N1" & phylodynamic > 25000)) %>% # Just for scale
     ggplot(
         aes(
-            x = phylogeneticLikelihood, y = phylodynamicLikelihood,
-            col = resolution, frame = replicate
+            x = phylogenetic, y = phylodynamic,
+            fill = resolution, group = interaction(replicate, treePrior)
         )
     ) +
-    geom_density2d() +
+    xlab("Adjusted Phylogenetic Likelihood") +
+    ylab("Adjusted Phylodynamic Likelihood") +
+    geom_point(shape = 21, alpha = 0.75) +
     facet_wrap(
         ~factor, nrow = 2,
         scales = "free",
         labeller = label_parsed
     ) +
-    ylab("phylodynamic log-likelihood") +
-    xlab("phylogenetic log-likelihood") +
+    theme(
+        legend.position = "bottom",
+        legend.title = element_blank()
+    )
+ggsave("simulation_likelihood.pdf", dpi = 300)
+
+### EI branch ratio vs resolution
+ei_plot <- (rel_error %>%
+    filter(
+        !(
+            (factor == "H1N1" | factor == "SARS-CoV-2")
+            & resolution == "Year"
+        )
+    ) %>%
+    group_by(factor, treePrior, resolution, replicate) %>%
+    ggplot() +
+    geom_line(
+        aes(
+            x = resolution,
+            y = ei_ratio,
+            group = interaction(factor, replicate, treePrior),
+            col = interaction(treePrior)
+        ),
+        alpha = 1, linewidth = 0.5
+    ) +
+    facet_wrap(
+        ~factor, nrow = 1,
+        scales = "free",
+        labeller = label_parsed
+    ) +
+    ylab("External to Internal Branch Length Ratio") +
+    xlab("Date resolution") +
     theme_bw() +
     theme(
         legend.title = element_blank(),
         legend.position = "bottom",
         panel.grid.minor = element_blank()
-    )
+    ))
+ei_plot
+ggsave("ei_ratio.pdf", dpi = 300)
 
-likelihood_widget <- ggplotly(likelihood_plot)
-htmlwidgets::saveWidget(
-    widget = likelihood_widget,
-    file = "simulation_likelihood_saureus_BD.html"
-)
+### Error plots
 
-
-
-likelihood_widget <- posterior %>%
-    # need to select only runs for which all resolutions are defined
+## Age error
+rel_error %>%
+    filter(
+        resolution != "Day"
+        &
+        !(factor == "H1N1" & resolution == "Year")
+        &
+        !(factor == "SARS-CoV-2" & resolution == "Year")
+    ) %>%
     pivot_longer(
-        matches("BDSKY_Serial|CoalescentExponential"),
-        names_to = "beast_phylodynamic_likelihood_name",
-        values_to = "phylodynamicLikelihood",
-        values_drop_na = TRUE
+            matches("n_tips|coless_imbalance|sampling_span"),
+            names_to = "stat",
+            values_to = "value",
+            values_drop_na = TRUE
     ) %>%
-    mutate(
-        phylogeneticLikelihood = treeLikelihood
+    ggplot(
+        aes(
+            x = value, y = error_age,
+            fill = interaction(interval, treePrior, resolution),
+            col = interaction(interval, treePrior, resolution)
+        )
+    ) +
+    geom_smooth(method = "lm", se = FALSE) +
+    geom_point(shape = 21, alpha = 0.2, col = "black") +
+    facet_wrap(
+        ~ factor * stat, labeller = label_parsed,
+        ncol = 3, scales = "free"
+    ) +
+    theme(
+        legend.position = "bottom", legend.title = element_blank()
+    )
+ggsave("age_error.pdf", dpi = 300)
+
+## clock error
+rel_error %>%
+    filter(
+        resolution != "Day"
+        &
+        !(factor == "H1N1" & resolution == "Year")
+        &
+        !(factor == "SARS-CoV-2" & resolution == "Year")
     ) %>%
-    ungroup() %>%
-    group_by(factor) %>%
-    plot_ly(
-        x = ~phylogeneticLikelihood, y = ~phylodynamicLikelihood,
-        frame = ~replicate, color = ~resolution,
-        type = "scatter"
+    pivot_longer(
+            matches("n_tips|coless_imbalance|sampling_span"),
+            names_to = "stat",
+            values_to = "value",
+            values_drop_na = TRUE
     ) %>%
-    plotly::subplot(nrows = 2) %>%
-    toWebGL()
+    ggplot(
+        aes(
+            x = value, y = error_clock_rate,
+            fill = interaction(interval, treePrior, resolution),
+            col = interaction(interval, treePrior, resolution)
+        )
+    ) +
+    geom_smooth(method = "lm", se = FALSE) +
+    geom_point(shape = 21, alpha = 0.2, col = "black") +
+    facet_wrap(
+        ~ factor * stat, labeller = label_parsed,
+        ncol = 3, scales = "free"
+    ) +
+    theme(
+        legend.position = "bottom", legend.title = element_blank()
+    )
+ggsave("clock_rate_error.pdf", dpi = 300)
 
-
-htmlwidgets::saveWidget(
-    widget = likelihood_widget,
-    file = "simulation_likelihood.html"
-)
-
-#likelihood_widget <- ggplotly(likelihood_plot)
-#ggsave("simulation_likelihood.pdf", dpi = 300, plot = likelihood_plot)
+## reproductive number error
+rel_error %>%
+    filter(
+        resolution != "Day"
+        &
+        !(factor == "H1N1" & resolution == "Year")
+        &
+        !(factor == "SARS-CoV-2" & resolution == "Year")
+    ) %>%
+    pivot_longer(
+            matches("n_tips|coless_imbalance|sampling_span"),
+            names_to = "stat",
+            values_to = "value",
+            values_drop_na = TRUE
+    ) %>%
+    ggplot(
+        aes(
+            x = value, y = error_reproductive_number,
+            fill = interaction(interval, treePrior, resolution),
+            col = interaction(interval, treePrior, resolution)
+        )
+    ) +
+    geom_smooth(method = "lm", se = FALSE) +
+    geom_point(shape = 21, alpha = 0.2, col = "black") +
+    facet_wrap(
+        ~ factor * stat, labeller = label_parsed,
+        ncol = 3, scales = "free"
+    ) +
+    theme(
+        legend.position = "bottom", legend.title = element_blank()
+    )
+ggsave("reproductie_number_error.pdf", dpi = 300)

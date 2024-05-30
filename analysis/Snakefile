@@ -1,0 +1,165 @@
+configfile: "./config.yaml"
+
+MICROBES = ["h1n1", "sars-cov-2", "tb", "saureus"]
+VIRUS = ["h1n1", "sars-cov-2"]
+REP =  range(1, 101)
+RES = ["Day-Fixed", "Month-Fixed", "Year-Fixed"]
+
+def gen_seed(wildcards):
+    return (int(wildcards.rep) * 100) + int(wildcards.rep)
+
+def gen_date_group(wildcards):
+    if wildcards.res == "Day-Fixed":
+        return 3
+    elif wildcards.res =="Month-Fixed":
+        return 2
+    else:
+        return 1
+
+rule all:
+    input: 
+        "processed_simulation_posteriors/ess.RData",
+        "processed_simulation_posteriors/posteriors.RData"
+
+
+rule beast_version:
+    conda: "envs/beast.yaml"
+    output: "logs/beast.version"
+    shell: "beast -version > {output}"
+
+rule simulate_trees:
+    conda: "envs/beast.yaml"
+    input: 
+        xml="tree_simulations/{microbe}.xml", 
+        beast_loaded="logs/beast.version"
+    output: "tree_simulations/{microbe}_{rep}.tree"
+    params: seed=gen_seed
+    resources:
+        runtime=59
+    shell:
+        """
+        beast -overwrite -D "ID={wildcards.rep}" -working -seed {params.seed} {input.xml} 
+        """
+
+rule format_tips:
+    conda: "envs/r.yaml"
+    input: rules.simulate_trees.output
+    output: "posterior_simulations/{microbe}_{rep}.tree"
+    resources:
+        runtime=10
+    script: "scripts/format_tips.R"
+
+rule bd_fixed_date_analysis:
+    conda: "envs/beast.yaml"
+    input: 
+        tree="posterior_simulations/{microbe}_{rep}.tree",
+        xml="posterior_simulations/{microbe}_BD_SC.xml",
+        beast_loaded="logs/beast.version"
+    output: 
+        multiext("posterior_simulations/{microbe}_BD_SC_{res}_{rep}.", "trees", "log")
+    params: 
+        seed=gen_seed,
+        date_group=gen_date_group,
+        in_tree="posterior_simulations/{microbe}_{rep}.tree",
+        statefile="posterior_simulations/{microbe}_BD_SC_{res}_{rep}.state"
+    resources:
+        runtime=1200, # defined in minutes
+        mem_mb=16000
+    shell:
+        """
+        beast -overwrite -working -seed {params.seed} -statefile {params.statefile} -D "microbe={wildcards.microbe},rep={wildcards.rep},res={wildcards.res},date-group={params.date_group},in-tree={params.in_tree}" {input.xml}
+        """
+
+rule ce_fixed_date_analysis:
+    conda: "envs/beast.yaml"
+    input: 
+        tree="posterior_simulations/{virus}_{rep}.tree",
+        xml="posterior_simulations/{virus}_CE_SC.xml",
+        beast_loaded="logs/beast.version"
+    output:
+        multiext("posterior_simulations/{virus}_CE_SC_{res}_{rep}.", "trees", "log")
+    params:  
+        seed=gen_seed,
+        date_group=gen_date_group,
+        in_tree="posterior_simulations/{virus}_{rep}.tree",
+        statefile="posterior_simulations/{virus}_CE_SC_{res}_{rep}.state"
+    resources:
+        runtime=3000, # defined in minutes
+        mem_mb=16000
+    shell:
+        """
+        beast -overwrite -working -seed {params.seed} -statefile {params.statefile} -D "microbe={wildcards.virus},rep={wildcards.rep},res={wildcards.res},date-group={params.date_group},in-tree={params.in_tree}" {input.xml}
+        """
+
+rule get_simlation_ess_values:
+    conda: "envs/r.yaml"
+    resources:
+        runtime=119,
+        mem_mb=16000
+    input: 
+        expand("posterior_simulations/{microbe}_BD_SC_{res}_{rep}.log", microbe=MICROBES, res=RES, rep=REP),
+        expand("posterior_simulations/{virus}_CE_SC_{res}_{rep}.log", virus=VIRUS, res=RES, rep=REP)
+    output: "processed_simulation_posteriors/ess.RData"
+    script: "scripts/ess.R"
+
+rule save_simulation_posteriors:
+    conda: "envs/r-posteriors.yaml"
+    resources:
+        runtime=119,
+        mem_mb=16000
+    input: 
+        expand("posterior_simulations/{microbe}_BD_SC_{res}_{rep}.log", microbe=MICROBES, res=RES, rep=REP),
+        expand("posterior_simulations/{virus}_CE_SC_{res}_{rep}.log", virus=VIRUS, res=RES, rep=REP)
+    output: "processed_simulation_posteriors/posteriors.RData"
+    script: "scripts/get_posteriors.R"
+
+rule tree_results:
+    conda: "envs/r-tree-imbalance.yaml",
+    threads: 32
+    resources:
+        runtime=2400,
+        mem_mb=32000
+    input: 
+        expand("posterior_simulations/{microbe}_BD_SC_{res}_{rep}.trees", microbe=MICROBES, res=RES, rep=REP),
+        expand("posterior_simulations/{virus}_CE_SC_{res}_{rep}.trees", virus=VIRUS, res=RES, rep=REP)
+    output: 
+        "processed_simulation_posteriors/tree_imbalance.RData"
+    script: "scripts/tree_stats.R"
+
+rule empirical_analysis_BD:
+    conda: "envs/beast.yaml"
+    input: 
+        data="empirical_data/{microbe}.fasta",
+        xml="empirical_data/{microbe}_BD_SC.xml",
+        beast_loaded="logs/beast.version"
+    output: 
+        multiext("empirical_data/{microbe}_BD_SC_{res}.", "trees", "log")
+    params: 
+        seed=4321,
+        date_group=gen_date_group,
+        statefile="empirical_data/{microbe}_BD_SC_{res}.state"
+    resources:
+        runtime=300 # defined in minutes
+    shell:
+        """
+        beast -overwrite -working -seed {params.seed} -statefile {params.statefile} -D "aln-file={input.data},microbe={wildcards.microbe},res={wildcards.res},date-group={params.date_group}" {input.xml}
+        """
+
+rule empirical_analysis_CE:
+    conda: "envs/beast.yaml"
+    input: 
+        data="empirical_data/{virus}.fasta",
+        xml="empirical_data/{virus}_CE_SC.xml",
+        beast_loaded="logs/beast.version"
+    output: 
+        multiext("empirical_data/{virus}_CE_SC_{res}.", "trees", "log")
+    params: 
+        seed=4321,
+        date_group=gen_date_group,
+        statefile="empirical_data/{virus}_CE_SC_{res}.state"
+    resources:
+        runtime=300 # defined in minutes
+    shell:
+        """
+        beast -overwrite -working -seed {params.seed} -statefile {params.statefile} -D "aln-file={input.data},microbe={wildcards.virus},res={wildcards.res},date-group={params.date_group}" {input.xml}
+        """
