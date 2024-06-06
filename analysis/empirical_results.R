@@ -7,6 +7,10 @@ library(tidyverse)
 library(latex2exp)
 library(cowplot)
 conflicted::conflicts_prefer(dplyr::filter())
+library(treedataverse)
+library(NELSI)
+library(phangorn)
+library(phytools)
 
 # Get the list of .log files in the directory
 log_files <- list.files("empirical_data", pattern = "\\.log$", full.names = TRUE)
@@ -17,19 +21,20 @@ names(traces) <- basename(log_files)
 
 # Merge lists into a single data frame
 traces <- traces %>%
-  bind_rows(.id  = "file") %>%
-  separate_wider_delim(
-    file, delim = "_", names = c("organism", "treePrior", "clock", "resolution"),
-  ) %>%
-  select(!matches("rate.+|freq.+")) %>%
-  filter(Sample > 25000000) %>%
-  mutate(resolution = gsub(pattern = "-Fixed[.]log", replacement = "", resolution)) %>%
-  mutate(reproductiveNumber = case_when(
-        treePrior == "CE" & organism == "h1n1" ~ (growthRate  / 91.3125) + 1,
+    bind_rows(.id = "file") %>%
+    separate_wider_delim(
+        file,
+        delim = "_", names = c("organism", "treePrior", "clock", "resolution"),
+    ) %>%
+    select(!matches("rate.+|freq.+")) %>%
+    filter(Sample > 25000000) %>%
+    mutate(resolution = gsub(pattern = "-Fixed[.]log", replacement = "", resolution)) %>%
+    mutate(reproductiveNumber = case_when(
+        treePrior == "CE" & organism == "h1n1" ~ (growthRate / 91.3125) + 1,
         treePrior == "CE" & organism == "sars-cov-2" ~ (growthRate / 36.525) + 1,
         .default = reproductiveNumber
- )) %>%
- filter(!(organism %in% c("h1n1", "sars-cov-2") & resolution == "Year"))
+    )) %>%
+    filter(!(organism %in% c("h1n1", "sars-cov-2") & resolution == "Year"))
 
 # Convert organism to factor for plotting
 traces$organism <- factor(
@@ -42,12 +47,12 @@ traces$organism <- factor(
 )
 
 # Plot posterior clock rate. Facet by organism and colour by resolution
-clock_plot <- traces %>% 
+clock_plot <- traces %>%
     ggplot(aes(x = resolution, y = clockRate, fill = treePrior)) +
     geom_violin(alpha = 0.5) +
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
-        labels = c(Birth~Death, Coalescent~Exponential),
+        labels = c(Birth ~ Death, Coalescent ~ Exponential),
         values = c("BD" = "dodgerblue", "CE" = "darkorange")
     ) +
     scale_y_continuous(
@@ -55,7 +60,7 @@ clock_plot <- traces %>%
         breaks = scales::trans_breaks("log10", function(x) 10^x),
         labels = scales::trans_format("log10", scales::math_format(10^.x))
     ) +
-    facet_wrap(~ organism, scales = "free", labeller = label_parsed, nrow = 1) +
+    facet_wrap(~organism, scales = "free", labeller = label_parsed, nrow = 1) +
     ylab(TeX("Substitution rate \\textit{(subs/site/time)}")) +
     theme_bw() +
     theme(
@@ -64,13 +69,13 @@ clock_plot <- traces %>%
     )
 
 # Plot posterior tree height. Facet by organism and colour by resolution
-age_plot <- traces %>% 
+age_plot <- traces %>%
     filter(!(organism == "SARS-CoV-2" & treePrior == "CE")) %>% # Posterior is flat
     ggplot(aes(x = resolution, y = Tree.height, fill = treePrior)) +
     geom_violin(alpha = 0.5) +
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
-        labels = c(Birth~Death, Coalescent~Exponential),
+        labels = c(Birth ~ Death, Coalescent ~ Exponential),
         values = c("BD" = "dodgerblue", "CE" = "darkorange")
     ) +
     scale_y_continuous(
@@ -81,7 +86,7 @@ age_plot <- traces %>%
             paste0(seq(30, 60, by = 10), "y")
         )
     ) +
-    facet_wrap(~ organism, scales = "free", labeller = label_parsed, nrow = 1) +
+    facet_wrap(~organism, scales = "free", labeller = label_parsed, nrow = 1) +
     ylab(TeX("Outbreak age (months or years)")) +
     theme_bw() +
     theme(
@@ -91,7 +96,7 @@ age_plot <- traces %>%
     )
 
 # Plot the posterior reproductive number. Facet by organism and colour by resolution
-reproductive_plot <- traces %>% 
+reproductive_plot <- traces %>%
     filter(!(organism %in% c("H1N1", "SARS-CoV-2") & resolution == "Year")) %>%
     pivot_longer(cols = starts_with("reproductiveNumber"), names_to = "interval", values_to = "reproductiveNumber") %>%
     ggplot(
@@ -104,10 +109,10 @@ reproductive_plot <- traces %>%
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
         labels = c(
-            ~italic(R[0])~Birth~Death, ~italic(R[e[1]])~Birth~Death,
-            ~italic(R[e[2]])~Birth~Death, ~italic(R[0])~Coalescent~Exponential
-         ),
-         values = c(
+            ~ italic(R[0]) ~ Birth ~ Death, ~ italic(R[e[1]]) ~ Birth ~ Death,
+            ~ italic(R[e[2]]) ~ Birth ~ Death, ~ italic(R[0]) ~ Coalescent ~ Exponential
+        ),
+        values = c(
             "reproductiveNumber.BD" = "dodgerblue", "reproductiveNumber.CE" = "darkorange",
             "reproductiveNumber.1.BD" = "purple", "reproductiveNumber.2.BD" = "green"
         )
@@ -116,7 +121,7 @@ reproductive_plot <- traces %>%
         trans = "log",
         breaks = c(0.5, 1, 1.1, 1.2, 2, 3, 5, 10, 15)
     ) +
-    facet_wrap(~ organism, scales = "free", labeller = label_parsed, nrow = 1) +
+    facet_wrap(~organism, scales = "free", labeller = label_parsed, nrow = 1) +
     labs(y = TeX("\\textit{$R_{\\bullet}$}"), x = "Date resolution") +
     theme_bw() +
     theme(
@@ -133,3 +138,65 @@ panel <- plot_grid(
 
 ggsave(plot = panel, "empirical_parms.pdf", width = 10, height = 10, units = "in", dpi = 300)
 
+## Emprirical densitree plots
+
+# List .trees files in the directory
+tree_files <- list.files("empirical_data", pattern = "\\.trees$", full.names = TRUE)
+
+# Read and combine the .trees files into lists
+trees <- lapply(tree_files, read.nexus)
+
+# Remove 10% burn-in and sample 100 trees from each posterior
+trees <- lapply(trees, function(x) x[sample((0.1 * length(x)):length(x), 100)])
+
+# Name each posterior by file name without path and extension
+names(trees) <- basename(tree_files) %>%
+    gsub(pattern = "\\.trees", replacement = "", x = .)
+
+# Create a vector of modified names from trees
+tree_names <- names(trees) %>%
+    str_remove(".trees") %>%
+    str_remove("-Fixed") %>%
+    str_remove("SC_") %>%
+    str_replace_all("_", "~") %>%
+    str_replace("saureus", "italic(S.~aureus)") %>%
+    str_replace("tb", "italic(M.~tuberculosis)") %>%
+    str_replace("h1n1", "H1N1") %>%
+    str_replace("sars-cov-2", "SARS-CoV-2")
+
+# colour vector matching order of colouring for resolution and tree prior above
+tree_colour <- c(
+    rep("dodgerblue", 3), rep("darkorange", 3),
+    rep("dodgerblue", 3), rep("darkorange", 3),
+    rep("dodgerblue", 3), rep("dodgerblue", 3)
+)
+
+# lower x limits for each organism
+x_limits <- c(rep(-0.5, 3), rep(-0.6, 3), rep(-0.2, 3), rep(-0.65, 3), rep(-35, 3), rep(-35, 3))
+
+tree_plot <- lapply(seq_along(trees), function(i) {
+    ggdensitree(
+        trees[[i]],
+        colour = tree_colour[i],
+        alpha = 0.1
+    ) +
+    ggtitle(parse(text = tree_names[i])) +
+    xlim(x_limits[i], 0) +
+    theme_tree2() +
+    ggtree::theme(
+        legend.position = "none",
+        plot.title = element_text(hjust = 0.5)
+    )
+})
+
+# Combine the tree plots into a single panel
+tree_panel <- cowplot::plot_grid(
+    plotlist = tree_plot, ncol = 6,
+    labels = "AUTO", byrow = FALSE
+)
+
+# Save the final plot as a PDF
+ggsave(
+    plot = tree_panel, filename = "../figures/empirical_densitrees.pdf",
+    width = 17, height = 10, units = "in", dpi = 300
+)
