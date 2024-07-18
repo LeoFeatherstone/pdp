@@ -12,8 +12,9 @@ library(NELSI)
 library(phangorn)
 library(phytools)
 
+
 # Get the list of .log files in the directory
-log_files <- list.files("empirical_data", pattern = "\\.log$", full.names = TRUE)
+log_files <- list.files("analysis/empirical_data", pattern = "\\.log$", full.names = TRUE)
 
 # Read and combine the .log files into lists
 traces <- lapply(log_files, tracerer::parse_beast_tracelog_file)
@@ -138,6 +139,49 @@ panel <- plot_grid(
 
 ggsave(plot = panel, "empirical_parms.pdf", width = 10, height = 10, units = "in", dpi = 300)
 
+## Table of mean posterior estimates and HPDs
+mean_HPD <- function(vec) {
+    mean <- format(mean(vec), digits = 2, scientific = TRUE)
+    hpd <- format(
+        quantile(vec, probs = c(0.025, 0.975), na.rm = TRUE),
+        digits = 2,
+        scientific = TRUE
+    )
+
+    str <- paste0(mean, " (", paste(hpd, collapse = ", "), ")")
+
+    return(str)
+}
+
+
+tab <- traces %>% select(
+    organism, treePrior, resolution,
+    reproductiveNumber, reproductiveNumber.1, reproductiveNumber.2,
+    Tree.height, clockRate
+    ) %>%
+    group_by(organism, treePrior, resolution) %>%
+    summarise(
+        clock = mean_HPD(clockRate),
+        reproductiveNumber = mean_HPD(reproductiveNumber),
+        reproductiveNumber.1 = mean_HPD(reproductiveNumber.1),
+        reproductiveNumber.2 = mean_HPD(reproductiveNumber.2),
+        age = mean_HPD(Tree.height)
+    ) %>%
+    mutate(across(everything(), ~ {
+        gsub(.x, pattern = "NA [(]NA, NA[)]", replacement = "-") %>%
+        gsub(pattern = "[e][+]00", replacement = "") %>%
+        gsub(pattern = "[e][-]0", replacement = "e-")
+    }))
+
+clock_origin_tab <- tab %>% select(clock, age)
+re_tab <- tab %>% select(starts_with("reproductiveNumber"))
+
+latex_tab1 <- kable(clock_origin_tab, format = "latex", booktabs = TRUE)
+latex_tab2 <- kable(re_tab, format = "latex", booktabs = TRUE)
+
+writeLines(latex_tab1, "empirical_clock_age.tex")
+writeLines(latex_tab2, "empirical_re.tex")
+  
 ## Emprirical densitree plots
 
 # List .trees files in the directory
@@ -198,5 +242,54 @@ tree_panel <- cowplot::plot_grid(
 # Save the final plot as a PDF
 ggsave(
     plot = tree_panel, filename = "../figures/empirical_densitrees.pdf",
+    width = 17, height = 10, units = "in", dpi = 300
+)
+
+## Empirical likelihood plots
+emp_likelihood_plot <- traces %>% 
+    group_by(organism, resolution, treePrior) %>%
+    pivot_longer(
+        matches("BDSKY_Serial|CoalescentExponential"),
+        names_to = "beast_phylodynamic_likelihood_name",
+        values_to = "phylodynamicLikelihood",
+        values_drop_na = TRUE
+    ) %>%
+    mutate(phylogeneticLikelihood = treeLikelihood) %>%
+    mutate(treePrior = case_when(
+        treePrior == "CE" ~ "Coalescent~Exponential",
+        treePrior == "BD" ~ "Birth~Death"
+    )) %>%
+    ggplot(
+        aes(
+            x = phylogeneticLikelihood,
+            y = phylodynamicLikelihood,
+            fill = resolution,
+            col = resolution
+        )) +
+    stat_ellipse() +
+    geom_point(shape = 21, size = 3, alpha = 0.1) +
+    facet_wrap(
+        ~ organism * treePrior,
+        scales = "free",
+        labeller = label_parsed,
+        dir = "v", ncol = 3
+    ) +
+    labs(
+        x = "Phylogenetic Likelihood",
+        y = "Phylodynamic Likelihood",
+    ) +
+    scale_discrete_manual(
+        aesthetics = c("fill", "col"),
+        values = c("red", "dodgerblue", "black")
+    ) +
+    theme(
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        text = element_text(size = 16)
+    )
+
+ggsave(
+    plot = emp_likelihood_plot,
+    filename = "figures/empirical_likelihood.pdf",
     width = 17, height = 10, units = "in", dpi = 300
 )
