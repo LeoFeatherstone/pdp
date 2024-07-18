@@ -285,7 +285,7 @@ emp_likelihood_plot <- traces %>%
     theme(
         legend.title = element_blank(),
         legend.position = "bottom",
-        text = element_text(size = 16)
+        text = element_text(size = 24)
     )
 
 ggsave(
