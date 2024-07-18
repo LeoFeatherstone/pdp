@@ -159,6 +159,12 @@ Phylodynamic and phylodynamic likelihoods also vary with decreasing date resolut
 
 Broadly, analyses of the empirical datasets reproduce the trends of bias in reproductive number, substitution rate, and time of origin from the simulation study (figures \ref{fig:empR},\ref{fig:empClock}). That is, the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the origin. There are a few exceptions to this trend that we consider below and which we attribute to the difference between simulated and empirical sampling time distributions.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/empirical_likelihood.pdf}
+    \caption{}
+    \label{fig:emp-likelihood}
+\end{figure}
 
 \subsubsection*{H1N1 influenza virus}
 Posterior $R_0$ increases with decreasing date resolution in a comparable way to the simulation study. However, the posterior substitution rate and origin time estimates remain essentially the same for day and month resolution (mean values of 1.083, 1.44 and $10^{-2}$, $10^{-2}$ respectively)(table \ref{table:empData}),  before moving upwards at year resolution as expected from the simulation study. This finding can be explained by the sampling time distribution, since the earlier samples occur later in their month (change fig3 to date axis proper), such that rounding them down to the first of the month effectively expands the timespan of sampling and thus driving signal for a lower evolutionary rate and older origin time.
@@ -202,7 +208,9 @@ The functional component of phylodynamic data is the \emph{difference} between s
 \subsection*{Supplementary Material}
 
 \renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
 \setcounter{figure}{0}
+\setcounter{table}{0}
 
 \begin{figure}[h!]
     \centering
