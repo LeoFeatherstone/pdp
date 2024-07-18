@@ -5,6 +5,7 @@
 \usepackage{lineno}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage[square,sort,comma,numbers]{natbib}
 \setcitestyle{authoryear,open={(},close={)}}
 
@@ -135,26 +136,29 @@ The \textit{M. tuberculosis} dataset consists of 36 sequenced isolates from a re
 
 \section*{Results}
 \subsection*{Simulation study}
-Broadly, the bias in posterior mean reproductive number increases with decreasing date resolution. This effect is most pronounced for the viral simulation conditions, where the rounding units of one month or one year is greater than the amount of time expected for one mutation to arise. In this case, date rounding compresses divergent sequences in time, driving a signal for higher rates of evolution and transmission. Conversely, the effect is less pronounced in the bacterial conditions where the date resolution lost is a smaller fraction of the effective mutation time, such as for the \textit{M. tuberculosis} and \textit{S.sonnei} data sets. In these cases, sequences are less divergent such that temporal clustering does not inflate posterior evolutionary rate. Moreover, the sampling timespans for these datasets are longer (table \ref{tab:sim_parms}), meaning that clustering to month or year leads to a less pronounced inflation of the reproductive number as samples still remain temporally distributed.
-
-Corresponding with the above trend in evolutionary rate, the mean posterior origin time have an  upwards bias, representing a signal for a shorter outbreak duration (Fig \ref{fig:simOrigin}). This is the result of a well understood axis among phylodynamic models where higher rates of evolution suggest shorter periods of evolution \citep{featherstone_decoding_2023}. In the epidemiological view, this translates into placing more weight on lower values for the duration of the outbreak.
-
-The H1N1 influenza virus simulation conditions demonstrate strongest relationship between high estimates of evolutionary rates and shorter outbreak duration. It can be thought of as the simulation conditions with the highest divergence among sequences relative to simulation time, owing to a combination of a higher mutation and transmission rate alongside a lower mutation rate (table \ref{tab:sim_parms}). For the date rounding to the year, we see extremely high values of $R_0$ and substitution, with means of around $10^{8}$ and $10^{6}$ subs/site/year, respectively. Such values, although implausible, demonstrate a key point that bias in posterior estimates compounds with decreasing date resolution. The effect is nonlinear, but also exacerbated by more divergent sequences, which would otherwise make for an idea phylodynamic dataset \citep{featherstone_decoding_2023}. Rounding to the month demonstrates intermediate effects with erroneously high bias. The SARS-Cov-2 simulation condition presents a similar trend, albeit with a less extreme degree of bias. 
-
-The two bacterial simulation conditions demonstrate the same trends in $R_e$, the substitution rate, and the origin. The \textit{S. sonnei} dataset shows intermediate effects with minimal bias when moving to month resolution and larger effects at year levels for all the above parameters. This is expected given its effective mutation time is somewhere between the order of months and years (table \ref{tab:sim_parms}). This effect is also markedly increased for $R_{e_2}$ in comparison to $R_{e_1}$ at the year level, suggesting that bias also increases where more distinct samples appear to arise at the same time (we expect more samples in the second window of the \textit{S. sonnei} simulations).
-
-The \textit{M. tuberculosis} simulation conditions effectively act as a control conditions, since it appears inter to date rounding. Again this is expected, because this dataset reflects both longer simulation time, with temporal clustering less likely to inflate $R_e$, but also the effective mutation time is longer than 1 year. As such, even rounding to a year is unlikely to drive a signal for increased evolutionary rate or a more recent origin time.
+The viral simulation conditions (SARS-CoV-2 and H1N1) display the greatest bias in mean posterior estimates of substitution rate, outbreak age, and reproductive number with decreasing date resolution (Figure \ref{fig:sim-parms} A-C). In the bacterial simulation conditions exhibit a lesser bias in response to decreasing date resolution. The \textit{M. tuberculosis} simulation conditions is effectively inert to decreasing date resolution down to the year with mean posterior estimates for each parameter of interest remaining consistent across date resolution. The \textit{S. aureus} provides an important intermediate case where estimates of each parameter changing when transitioning from Month to Year date resolution (see crossing of lines from Month to Date resolution in the \textit{S. aureus} column of Figure \ref{fig:sim-parms}). These trends generally support the hypothesis of decreasing date resolution causing increased bias where the lost resolution exceeds the average time for a substitution to arise. In this case, date rounding compresses divergent sequences in time, driving a signal for higher rates of evolution and transmission locally to each cluster of sampling times.  The effect is less pronounced in the bacterial conditions where the date resolution lost is a smaller fraction of the effective substitution time, such as for the \textit{M. tuberculosis} and \textit{S. aureus} conditions.  However, there are also notable deviations in the this effect bias across duration of sampling efforts, tree priors, and simulation conditions.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{simulation_parm_panel.pdf}
-    \caption{Mean posterior estimates for parameters of interest for each simulated dataset varying across date resolution. Individual lines track inference for one simulated dataset over decreasing date resolution. Rows correspond to individual parameters, columns correspond to simulation condition, and colour corresponds to tree prior or reproductive number interval. Dashed horizontal lines correspond to the true value under which each dataset was simulated. In general, reduced date resolution leads to bias where resolution is greater than the average time until mutation.  (\textbf{A}) Inferred mutation rate across simulation scenarios. (\textbf{B}) Inferred age of outbreaks. (\textbf{C}) Inferred reproductive number. }
+    \caption{Mean posterior estimates for parameters of interest for each simulated dataset varying across date resolution. Individual lines track inference for one simulated dataset over decreasing date resolution while boxplots are given to summarise the spread and direction of bias across simulated datasets. Rows correspond to individual parameters, columns correspond to simulation condition (underlying parameters corresponding to each pathogen dataset), and colour corresponds to tree prior or reproductive number interval. Dashed horizontal lines correspond to the true value under which each dataset was simulated. In general, reduced date resolution leads to bias where resolution is greater than the average time until mutation.  (\textbf{A}) Inferred mutation rate across simulation scenarios. (\textbf{B}) Inferred age of outbreaks. (\textbf{C}) Inferred reproductive number. }
     \label{fig:sim-parms}
 \end{figure}
+
+For the viral simulation conditions, there is an upwards bias in mean posterior reproductive number and substitution rate with decreasing date resolution for the viral simulation conditions. At the same time, the mean posterior age of each outbreak decreases in relation with increased rates of substitution (Figure \ref{fig:sim-parms} A-C). The coalescent exponential shows overall downwards bias in the substitution rate for the SARS-CoV-2 and H1N1 treatments at month resolution while the birth-death exhibits upwards bias. Since the sampling times for each viral dataset are distributed over 3 months, date rounding will compress the diversity among samples within each month, but also increase the distance in time between months, driving a signal for lower transmission and substitution rates over this time. The different phylodynamic likelihood functions for each tree prior appear to respond to this warped distribution of diversity over time with the coalescent exponential placing more weight on decreased rates of evolution while the birth death places more on increased substitution rates. At Year-resolution there is there is also lower bias in estimates of substitution rate for the coalescent exponential, however both models prefer upwards biased substitution rates as Year resolution. This is probably because Year resolution clusters all sampling times to one time point, meaning an inflated rate of substitution is needed to model the burst in diversity at one time point relative to the start of each outbreak (Figure \ref{fig:densitree}). At the same time, the mean posterior age of each outbreak moves inversely to bias in the substitution rate. This is the result of a well understood axis among phylodynamic models where higher rates of evolution suggest shorter periods of evolution \citep{featherstone_decoding_2023}.
+
+The reproductive number for each viral dataset ($R_0$) also becomes biased with decreasing date resolution under the birth death. This is in agreement with temporal clustering of samples driving a signal for higher transmission rates. Conversely, estimates under the coalescent exponential remain largely unchanged at Month-resolution. This is probably because the model can adjust the population size parameter instead of modulating the growth rate, which would be reflected in $R_0$. Estimates of $R_0$ for the SARS-CoV-2 condition are also biased heavily downwards, and this is probably due to high sequencing proportions violating the assumption of low sampling under the coalescent.
+
+The \textit{S. aureus} condition yields consistent estimates of substitution rate, outbreak age, and reproductive number ($R_e$ in this case) when dates are rounded to the month (Figure \ref{fig:sim-parms} \textit{S. aureus} column). At year resolution the posterior substitution rate appears appears biased downwards. This can be explained by the two year sampling duration of the \textit{S. aureus} condition, such that samples rounded to the year will be on average further apart in time than if dates are given to the month or day (Figure \ref{fig:densitree}). This spacing of diversity in time likely drives the signal for lower substitution rates and an older outbreak in turn. There is no clear pattern in the direction of bias for $R_{e_1}$ and $R_{e_2}$ at year resolution, though estimates do deviate from those at month and day resolution. Estimates for $R_{e_1}$ are also overall lower than their true value of 2, but this is attributable to inconsistent sampling over the duration of the outbreak which has been shown previously for similar datasets in \cite{featherstone_infectious_2021}.
+
+The \textit{M. tuberculosis} simulation conditions effectively act as a control conditions, since it appears inter to date rounding. Again this is expected, because this dataset reflects both longer simulation time, with temporal clustering less likely to inflate $R_e$, but also the effective mutation time is longer than 1 year. As such, even rounding to a year is unlikely to drive a signal for increased evolutionary rate or a more recent origin time.
+
+Phylodynamic and phylodynamic likelihoods also vary with decreasing date resolution (Figure \ref{fig:sim-likeihood}). Variation also increases with lesser date resolution between Month and Year. This shows that altered date resolution affects the likelihood manifold of each analysis.
 
 \subsection*{Empirical Results}
 
 Broadly, analyses of the empirical datasets reproduce the trends of bias in reproductive number, substitution rate, and time of origin from the simulation study (figures \ref{fig:empR},\ref{fig:empClock}). That is, the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the origin. There are a few exceptions to this trend that we consider below and which we attribute to the difference between simulated and empirical sampling time distributions.
+
 
 \subsubsection*{H1N1 influenza virus}
 Posterior $R_0$ increases with decreasing date resolution in a comparable way to the simulation study. However, the posterior substitution rate and origin time estimates remain essentially the same for day and month resolution (mean values of 1.083, 1.44 and $10^{-2}$, $10^{-2}$ respectively)(table \ref{table:empData}),  before moving upwards at year resolution as expected from the simulation study. This finding can be explained by the sampling time distribution, since the earlier samples occur later in their month (change fig3 to date axis proper), such that rounding them down to the first of the month effectively expands the timespan of sampling and thus driving signal for a lower evolutionary rate and older origin time.
@@ -213,5 +217,71 @@ The functional component of phylodynamic data is the \emph{difference} between s
     \caption{Adjusted phylodynamic likelihood against adjusted phylogenetic likelihood with panels corresponding to each simulation condition. Points correspond to mean posterior likelihood for each simulated dataset under each simulation condition. Colour corresponds to date resolution. Likelihoods are adjusted by subtracting the mean phylodynamic or phylogenetic likelihood at Day resolution from each the means under Month and year resolution. Resulting points therefore show the difference phylodynamic and phylogenetic likelihoods due to date rounding with the point $(0, 0)$ representing likelihood at day resolution for each dataset. Month resolution generally results in smaller differences that Year resolution, suggesting coarser date resolution results in more perturbed likelihoods. There is also generally more error in phylodynamic likelihood than phylogenetic likelihood.}
     \label{fig:sim-likeihood}
 \end{figure}
+
+
+\begin{table}[]
+    \centering
+    \caption{Mean posterior estimates of substitution rate and outbreak age for empirical data with 95\% HPD in brackets.}
+    \begin{tabular}{lccc}
+        \toprule
+         & Tree Prior & Substitution Rate (subs/site/yr) & Outbreak Age\\
+        \midrule
+        H1N1 & BD & 4.3e-3 (3.7e-3, 4.9e-3) & 3.7e-1 (3.3e-1, 4.2e-1)\\
+        H1N1 & BD & 3.9e-3 (3.2e-3, 4.6e-3) & 3.5e-1 (3.1e-1, 4.1e-1)\\
+        \addlinespace
+        H1N1 & CE & 3.9e-3 (3.2e-3, 4.5e-3) & 4.2e-1 (3.6e-1, 5.0e-1)\\
+        H1N1 & CE & 3.2e-3 (2.6e-3, 3.8e-3) & 4.6e-1 (3.8e-1, 5.6e-1)\\
+        \addlinespace
+        SARS-CoV-2 & BD & 2.5e-4 (1.1e-4, 4.5e-4) & 1.4e-1 (1.4e-1, 1.5e-1)\\
+        SARS-CoV-2 & BD & 6.6e-4 (3.3e-4, 1.1e-3) & 1.7e-1 (1.7e-1, 1.7e-1)\\
+        \addlinespace
+        SARS-CoV-2 & CE & 2.4e-4 (9.1e-5, 4.7e-4) & 2e-1 (1.4e-1, 3.6e-1)\\
+        SARS-CoV-2 & CE & 4.3e-5 (4.4e-6, 1.4e-4) & 1.6 (2.9e-1, 5.9)\\
+        \addlinespace
+        \textit{S. aureus} & BD & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \textit{S. aureus} & BD & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \textit{S. aureus} & BD & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \addlinespace
+        \textit{M. tuberculosis} & BD & 1e-7 (6.5e-8, 1.4e-7) & 2.2e+01 (1.7e+01, 3.2e+01)\\
+        \textit{M. tuberculosis} & BD & 1e-7 (6.6e-8, 1.4e-7) & 2.2e+01 (1.7e+01, 3.2e+01)\\
+        \textit{M. tuberculosis} & BD & 9.9e-8 (6.2e-8, 1.4e-7) & 2.2e+01 (1.8e+01, 3.4e+01)\\
+        \bottomrule
+    \end{tabular}
+
+    \label{tab:emp-clock-age}
+\end{table}
+
+\begin{table}[]
+    \centering
+    \caption{Mean posterior estimates of $R_{\bullet}$ for empirical data with 95\% HPD in brackets.}
+    \begin{tabular}{lcccc}
+    \toprule
+     & Tree Prior & $R_0$ & $R_{e_1}$ & $R_{e_2}$\\
+    \midrule
+    H1N1 & BD & 1.1 (1.1, 1.1) & - & -\\
+    H1N1 & BD & 1.1 (1.1, 1.2) & - & -\\
+    \addlinespace
+    H1N1 & CE & 1.1 (1.1, 1.2) & - & -\\
+    H1N1 & CE & 1.1 (1.1, 1.2) & - & -\\
+    \addlinespace
+    SARS-CoV-2 & BD & 1.2 (9.3e-1, 1.6) & - & -\\
+    SARS-CoV-2 & BD & 5.8 (3.7, 9.0) & - & -\\
+    \addlinespace
+    SARS-CoV-2 & CE & 1 (9.6e-1, 1.0) & - & -\\
+    SARS-CoV-2 & CE & 1 (9.8e-1, 1.1) & - & -\\
+    \addlinespace
+    \textit{S. aureus} & BD & - & 1.6 (1.5, 1.7) & 6.6e-1 (5.1e-1, 8.0e-1)\\
+    \textit{S. aureus} & BD & - & 1.6 (1.5, 1.7) & 6.8e-1 (5.4e-1, 8.3e-1)\\
+    \textit{S. aureus} & BD & - & 1.7 (1.6, 1.8) & 3.7e-1 (1.9e-1, 5.4e-1)\\
+    \addlinespace
+    \textit{M. tuberculosis} & BD & - & 2.8 (5.8e-1, 5.3) & 1.4 (7.2e-1, 2.7)\\
+    \textit{M. tuberculosis} & BD & - & 2.7 (5.7e-1, 5.0) & 1.4 (7.4e-1, 2.7)\\
+    \textit{M. tuberculosis} & BD & - & 2.7 (4.6e-1, 5.1) & 1.5 (8.1e-1, 2.9)\\
+    \bottomrule
+    \end{tabular}
+
+    \label{tab:emp-re}
+\end{table}
+
 
 \end{document}
