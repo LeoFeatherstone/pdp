@@ -419,7 +419,7 @@ ggsave(
 )
 
 ## Likelihood plots. TODO Make interactive later
-posterior %>%
+sim_likielihood_plot <- posterior %>%
     pivot_longer(
         matches("BDSKY_Serial|CoalescentExponential"),
         names_to = "beast_phylodynamic_likelihood_name",
@@ -463,19 +463,29 @@ posterior %>%
             fill = resolution, group = interaction(replicate, treePrior)
         )
     ) +
-    xlab("Adjusted Phylogenetic Likelihood") +
-    ylab("Adjusted Phylodynamic Likelihood") +
-    geom_point(shape = 21, alpha = 0.75) +
+    xlab("Phylogenetic likelihood (difference from day)") +
+    ylab("Phylodynamic Likelihood (difference from day)") +
+    geom_point(shape = 21, alpha = 0.75, size = 3) +
+    scale_discrete_manual(
+        aesthetics = c("fill", "col"),
+        values = c("red", "dodgerblue", "black")
+    ) +
     facet_wrap(
         ~factor, nrow = 2,
         scales = "free",
         labeller = label_parsed
     ) +
     theme(
+        legend.title = element_blank(),
         legend.position = "bottom",
-        legend.title = element_blank()
+        text = element_text(size = 24)
     )
-ggsave("simulation_likelihood.pdf", dpi = 300)
+
+ggsave(
+    plot = sim_likielihood_plot,
+    filename = "figures/simulation_likelihood.pdf",
+    dpi = 300
+)
 
 ### EI branch ratio vs resolution
 ei_plot <- (rel_error %>%
