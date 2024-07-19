@@ -156,18 +156,28 @@ The \textit{M. tuberculosis} simulation conditions effectively act as a control 
 Phylodynamic and phylodynamic likelihoods also vary with decreasing date resolution (Figure \ref{fig:sim-likeihood}). Variation also increases with lesser date resolution between Month and Year. This shows that altered date resolution affects the likelihood manifold of each analysis.
 
 \subsection*{Empirical Results}
+Broadly, analyses of the empirical datasets reproduce the patterns of bias across date resolution from from the simulation study in the reproductive number, substitution rate, and outbreak age (figures \ref{fig:emp-parm}). That is, the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the age of outbreak. There are a few exceptions to this trend that we consider below and which we attribute to the difference between simulated and empirical sampling time distributions.
 
-Broadly, analyses of the empirical datasets reproduce the trends of bias in reproductive number, substitution rate, and time of origin from the simulation study (figures \ref{fig:empR},\ref{fig:empClock}). That is, the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the origin. There are a few exceptions to this trend that we consider below and which we attribute to the difference between simulated and empirical sampling time distributions.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{empirical_parms.pdf}
+    \caption{Posterior distributions for parameters of interest estimated for each empirical dataset. Date resolution is given on the horizontal axis and colour denotes tree-prior. across date resolutions and tree-priors. Estimates at year-resolution are omitted because results deviate by many orders of magnitude due to sampling times being identical. (\textbf{A}) Posterior substitution rate across date resolutions. (\textbf{B}) Posterior outbreak age (tMRCA) on a month or year axis.  (\textbf{C}) Posterior reproductive number on a log-transformed axis.}
+    \label{fig:emp-parm}
+\end{figure}
 
-\begin{figure}
+Phylodynamic and phylogenetic likelihoods also appear diverged where the loss in date resolution exceed the average time for a substitution to arise (Figure \ref{fig:emp-likelihood}). For both viral datasets, month and day posterior distributions of phylodynamic and phylogenetic likelihood do not overlap, while all are overlapping for the \textit{M. tuberculosis} data. The \textit{S. aureus} data provide an intermediate case where only the posterior likelihoods for year-resolution differ. Together, these distributions support the hypothesis that date resolution larger than the average time to one mutation cause a shift in the likelihood manifold for analyses under both birth-death based and coalescent tree priors.
+
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{figures/empirical_likelihood.pdf}
-    \caption{}
+    \caption{Posterior phylodynamic likelihood against phylogenetic likelihood for each combination of empirical dataset and with colour corresponding to date resolution. Ellipses represent the 95\% highest posterior density region. Both Phylodynamic and phylogenetic likelihoods are diverged between day and month resolution for the viral datasets, while year resolution differs from month and day for the \textit{S. aureus} data and posterior likelihoods all coincide for \textit{M. tuberculosis}. }
     \label{fig:emp-likelihood}
 \end{figure}
 
-\subsubsection*{H1N1 influenza virus}
-Posterior $R_0$ increases with decreasing date resolution in a comparable way to the simulation study. However, the posterior substitution rate and origin time estimates remain essentially the same for day and month resolution (mean values of 1.083, 1.44 and $10^{-2}$, $10^{-2}$ respectively)(table \ref{table:empData}),  before moving upwards at year resolution as expected from the simulation study. This finding can be explained by the sampling time distribution, since the earlier samples occur later in their month (change fig3 to date axis proper), such that rounding them down to the first of the month effectively expands the timespan of sampling and thus driving signal for a lower evolutionary rate and older origin time.
+\subsubsection*{H1N1}
+Mean posterior $R_0$ increases with decreasing date resolution for both the birth death (1.08 to 1.14) yet remains similar for the coalescent exponential (1.14 to 1.13) (Table \ref{tab:emp-re}). Mean posterior substitution rate also decreases for both tree priors across day to month date resolution ($4.3\times10^{-3}$ to $3.9\times10^{-3}$ and $3.9\times10^{-3}$ to $3.2\times10^{-3}$ for the birth death and coalescent exponential respectively) (Table \ref{tab:emp-clock-age}). The posterior age of outbreak also differs between tree priors, with a decrease from date to month resolution for the birth death and an increase for the coalescent exponential. For the coalescent exponential, we can attribute the decrease in reproductive number and substitution rate from day to month resolution to month rounding spreading out the samples further in time, which drives the signal for and an older outbreak and lower rates of transmission overall. While the same is true for the birth-death, the additional information it draws from identical sampling times as month-resolution likely inflates the mean posterior reproductive number while still driving a lower substitution rate and outbreak age.
+
+However, the posterior substitution rate and origin time estimates remain essentially the same for day and month resolution (mean values of 1.083, 1.44 and $10^{-2}$, $10^{-2}$ respectively)(table \ref{table:empData}),  before moving upwards at year resolution as expected from the simulation study. This finding can be explained by the sampling time distribution, since the earlier samples occur later in their month (change fig3 to date axis proper), such that rounding them down to the first of the month effectively expands the timespan of sampling and thus driving signal for a lower evolutionary rate and older origin time.
 
 \subsubsection*{SARS-CoV-2}
 The SARS-CoV-2 datasets behaves as expected with respect to the posterior $R_0$. In particular, rounding to the month results in an unlikely, but plausible value of $R_0 = 5.972$ (table \ref{table:empData}). Rounding to the year inflates $R_0$ further as expected.
@@ -179,13 +189,6 @@ For $R_{e_1}$, the \textit{S. sonnei} dataset matched the simulation study, with
 
 \subsubsection*{\textit{M. tuberculosis}}
 The \textit{M. tuberculosis} data recapitulate the outcome of the simulation study. Posterior origin times and evolutionary rate remain consistent across decreasing date resolution at 20 years and $10^{-7}$ (subs/site/time) respectively. We observe minimal upwards bias in posterior $R_{e_1}$ and $R_{e_2}$, and the expectation that $R_{e_1} > R_{e_s}$ is met, coinciding with an earlier burst of transmission in agreement with \citet{kuhnert_tuberculosis_2018}. This reaffirms that if the effective mutation time sufficiently large compared to the date resolution lost, then date rounding has a lesser effect.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=\textwidth]{empirical_parms.pdf}
-    \caption{Posterior distributions for parameters of interest estimated for each empirical dataset. Date resolution is given on the horizontal axis and colour denotes tree-prior. across date resolutions and tree-priors. Estimates at year-resolution are omitted because results deviate by many orders of magnitude due to sampling times being identical. (\textbf{A}) Posterior substitution rate across date resolutions. (\textbf{B}) Posterior outbreak age (tMRCA) on a month or year axis.  (\textbf{C}) Posterior reproductive number on a log-transformed axis.}
-    \label{fig:emp-parm}
-\end{figure}
 
 \section*{Discussion}
 
@@ -230,29 +233,29 @@ The functional component of phylodynamic data is the \emph{difference} between s
 \begin{table}[]
     \centering
     \caption{Mean posterior estimates of substitution rate and outbreak age for empirical data with 95\% HPD in brackets.}
-    \begin{tabular}{lccc}
+    \begin{tabular}{lllcc}
         \toprule
-         & Tree Prior & Substitution Rate (subs/site/yr) & Outbreak Age\\
+         & Tree Prior & Resolution & Substitution Rate (subs/site/yr) & Outbreak Age\\
         \midrule
-        H1N1 & BD & 4.3e-3 (3.7e-3, 4.9e-3) & 3.7e-1 (3.3e-1, 4.2e-1)\\
-        H1N1 & BD & 3.9e-3 (3.2e-3, 4.6e-3) & 3.5e-1 (3.1e-1, 4.1e-1)\\
+        H1N1 & BD & Day & 4.3e-3 (3.7e-3, 4.9e-3) & 3.7e-1 (3.3e-1, 4.2e-1)\\
+        H1N1 & BD & Month & 3.9e-3 (3.2e-3, 4.6e-3) & 3.5e-1 (3.1e-1, 4.1e-1)\\
         \addlinespace
-        H1N1 & CE & 3.9e-3 (3.2e-3, 4.5e-3) & 4.2e-1 (3.6e-1, 5.0e-1)\\
-        H1N1 & CE & 3.2e-3 (2.6e-3, 3.8e-3) & 4.6e-1 (3.8e-1, 5.6e-1)\\
+        H1N1 & CE & Day & 3.9e-3 (3.2e-3, 4.5e-3) & 4.2e-1 (3.6e-1, 5.0e-1)\\
+        H1N1 & CE & Month & 3.2e-3 (2.6e-3, 3.8e-3) & 4.6e-1 (3.8e-1, 5.6e-1)\\
         \addlinespace
-        SARS-CoV-2 & BD & 2.5e-4 (1.1e-4, 4.5e-4) & 1.4e-1 (1.4e-1, 1.5e-1)\\
-        SARS-CoV-2 & BD & 6.6e-4 (3.3e-4, 1.1e-3) & 1.7e-1 (1.7e-1, 1.7e-1)\\
+        SARS-CoV-2 & BD & Day & 2.5e-4 (1.1e-4, 4.5e-4) & 1.4e-1 (1.4e-1, 1.5e-1)\\
+        SARS-CoV-2 & BD & Month & 6.6e-4 (3.3e-4, 1.1e-3) & 1.7e-1 (1.7e-1, 1.7e-1)\\
         \addlinespace
-        SARS-CoV-2 & CE & 2.4e-4 (9.1e-5, 4.7e-4) & 2e-1 (1.4e-1, 3.6e-1)\\
-        SARS-CoV-2 & CE & 4.3e-5 (4.4e-6, 1.4e-4) & 1.6 (2.9e-1, 5.9)\\
+        SARS-CoV-2 & CE & Day & 2.4e-4 (9.1e-5, 4.7e-4) & 2e-1 (1.4e-1, 3.6e-1)\\
+        SARS-CoV-2 & CE & Month & 4.3e-5 (4.4e-6, 1.4e-4) & 1.6 (2.9e-1, 5.9)\\
         \addlinespace
-        \textit{S. aureus} & BD & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
-        \textit{S. aureus} & BD & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
-        \textit{S. aureus} & BD & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \textit{S. aureus} & BD & Day & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \textit{S. aureus} & BD & Month & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \textit{S. aureus} & BD & Year & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
         \addlinespace
-        \textit{M. tuberculosis} & BD & 1e-7 (6.5e-8, 1.4e-7) & 2.2e+01 (1.7e+01, 3.2e+01)\\
-        \textit{M. tuberculosis} & BD & 1e-7 (6.6e-8, 1.4e-7) & 2.2e+01 (1.7e+01, 3.2e+01)\\
-        \textit{M. tuberculosis} & BD & 9.9e-8 (6.2e-8, 1.4e-7) & 2.2e+01 (1.8e+01, 3.4e+01)\\
+        \textit{M. tuberculosis} & BD & Day & 1e-7 (6.5e-8, 1.4e-7) & 2.2e+01 (1.7e+01, 3.2e+01)\\
+        \textit{M. tuberculosis} & BD & Month & 1e-7 (6.6e-8, 1.4e-7) & 2.2e+01 (1.7e+01, 3.2e+01)\\
+        \textit{M. tuberculosis} & BD & Year & 9.9e-8 (6.2e-8, 1.4e-7) & 2.2e+01 (1.8e+01, 3.4e+01)\\
         \bottomrule
     \end{tabular}
 
@@ -262,29 +265,29 @@ The functional component of phylodynamic data is the \emph{difference} between s
 \begin{table}[]
     \centering
     \caption{Mean posterior estimates of $R_{\bullet}$ for empirical data with 95\% HPD in brackets.}
-    \begin{tabular}{lcccc}
+    \begin{tabular}{lllccc}
     \toprule
-     & Tree Prior & $R_0$ & $R_{e_1}$ & $R_{e_2}$\\
+     & Tree Prior & Resolution & $R_0$ & $R_{e_1}$ & $R_{e_2}$\\
     \midrule
-    H1N1 & BD & 1.1 (1.1, 1.1) & - & -\\
-    H1N1 & BD & 1.1 (1.1, 1.2) & - & -\\
+    H1N1 & BD & Day & 1.1 (1.1, 1.1) & - & -\\
+    H1N1 & BD & Month & 1.1 (1.1, 1.2) & - & -\\
     \addlinespace
-    H1N1 & CE & 1.1 (1.1, 1.2) & - & -\\
-    H1N1 & CE & 1.1 (1.1, 1.2) & - & -\\
+    H1N1 & CE & Day & 1.1 (1.1, 1.2) & - & -\\
+    H1N1 & CE & Month & 1.1 (1.1, 1.2) & - & -\\
     \addlinespace
-    SARS-CoV-2 & BD & 1.2 (9.3e-1, 1.6) & - & -\\
-    SARS-CoV-2 & BD & 5.8 (3.7, 9.0) & - & -\\
+    SARS-CoV-2 & BD & Day & 1.2 (9.3e-1, 1.6) & - & -\\
+    SARS-CoV-2 & BD & Month & 5.8 (3.7, 9.0) & - & -\\
     \addlinespace
-    SARS-CoV-2 & CE & 1 (9.6e-1, 1.0) & - & -\\
-    SARS-CoV-2 & CE & 1 (9.8e-1, 1.1) & - & -\\
+    SARS-CoV-2 & CE & Day & 1 (9.6e-1, 1.0) & - & -\\
+    SARS-CoV-2 & CE & Month & 1 (9.8e-1, 1.1) & - & -\\
     \addlinespace
-    \textit{S. aureus} & BD & - & 1.6 (1.5, 1.7) & 6.6e-1 (5.1e-1, 8.0e-1)\\
-    \textit{S. aureus} & BD & - & 1.6 (1.5, 1.7) & 6.8e-1 (5.4e-1, 8.3e-1)\\
-    \textit{S. aureus} & BD & - & 1.7 (1.6, 1.8) & 3.7e-1 (1.9e-1, 5.4e-1)\\
+    \textit{S. aureus} & BD & Day & - & 1.6 (1.5, 1.7) & 6.6e-1 (5.1e-1, 8.0e-1)\\
+    \textit{S. aureus} & BD & Month & - & 1.6 (1.5, 1.7) & 6.8e-1 (5.4e-1, 8.3e-1)\\
+    \textit{S. aureus} & BD & Year & - & 1.7 (1.6, 1.8) & 3.7e-1 (1.9e-1, 5.4e-1)\\
     \addlinespace
-    \textit{M. tuberculosis} & BD & - & 2.8 (5.8e-1, 5.3) & 1.4 (7.2e-1, 2.7)\\
-    \textit{M. tuberculosis} & BD & - & 2.7 (5.7e-1, 5.0) & 1.4 (7.4e-1, 2.7)\\
-    \textit{M. tuberculosis} & BD & - & 2.7 (4.6e-1, 5.1) & 1.5 (8.1e-1, 2.9)\\
+    \textit{M. tuberculosis} & BD & Day & - & 2.8 (5.8e-1, 5.3) & 1.4 (7.2e-1, 2.7)\\
+    \textit{M. tuberculosis} & BD & Month & - & 2.7 (5.7e-1, 5.0) & 1.4 (7.4e-1, 2.7)\\
+    \textit{M. tuberculosis} & BD & Year & - & 2.7 (4.6e-1, 5.1) & 1.5 (8.1e-1, 2.9)\\
     \bottomrule
     \end{tabular}
 
