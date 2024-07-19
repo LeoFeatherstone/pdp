@@ -11,6 +11,7 @@ library(treedataverse)
 library(NELSI)
 library(phangorn)
 library(phytools)
+library(kableExtra)
 
 
 # Get the list of .log files in the directory
@@ -141,7 +142,7 @@ ggsave(plot = panel, "empirical_parms.pdf", width = 10, height = 10, units = "in
 
 ## Table of mean posterior estimates and HPDs
 mean_HPD <- function(vec) {
-    mean <- format(mean(vec), digits = 2, scientific = TRUE)
+    mean <- format(mean(vec), digits = 3, scientific = TRUE)
     hpd <- format(
         quantile(vec, probs = c(0.025, 0.975), na.rm = TRUE),
         digits = 2,
@@ -154,10 +155,11 @@ mean_HPD <- function(vec) {
 }
 
 
-tab <- traces %>% select(
-    organism, treePrior, resolution,
-    reproductiveNumber, reproductiveNumber.1, reproductiveNumber.2,
-    Tree.height, clockRate
+tab <- traces %>%
+    select(
+        organism, treePrior, resolution,
+        reproductiveNumber, reproductiveNumber.1, reproductiveNumber.2,
+        Tree.height, clockRate
     ) %>%
     group_by(organism, treePrior, resolution) %>%
     summarise(
@@ -173,8 +175,8 @@ tab <- traces %>% select(
         gsub(pattern = "[e][-]0", replacement = "e-")
     }))
 
-clock_origin_tab <- tab %>% select(clock, age)
-re_tab <- tab %>% select(starts_with("reproductiveNumber"))
+clock_origin_tab <- tab %>% select(resolution, clock, age)
+re_tab <- tab %>% select(resolution, starts_with("reproductiveNumber"))
 
 latex_tab1 <- kable(clock_origin_tab, format = "latex", booktabs = TRUE)
 latex_tab2 <- kable(re_tab, format = "latex", booktabs = TRUE)
