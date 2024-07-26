@@ -63,11 +63,12 @@ clock_plot <- traces %>%
         labels = scales::trans_format("log10", scales::math_format(10^.x))
     ) +
     facet_wrap(~organism, scales = "free", labeller = label_parsed, nrow = 1) +
-    ylab(TeX("Substitution rate \\textit{(subs/site/time)}")) +
+    ylab(TeX("Substitution rate")) +
     theme_bw() +
     theme(
         legend.position = "none",
-        axis.title.x = element_blank()
+        axis.title.x = element_blank(),
+        text = element_text(size = 14)
     )
 
 # Plot posterior tree height. Facet by organism and colour by resolution
@@ -89,18 +90,22 @@ age_plot <- traces %>%
         )
     ) +
     facet_wrap(~organism, scales = "free", labeller = label_parsed, nrow = 1) +
-    ylab(TeX("Outbreak age (months or years)")) +
+    ylab(TeX("Outbreak age")) +
     theme_bw() +
     theme(
         legend.position = "bottom",
         legend.title = element_blank(),
-        axis.title.x = element_blank()
+        axis.title.x = element_blank(),
+        text = element_text(size = 14)
     )
 
 # Plot the posterior reproductive number. Facet by organism and colour by resolution
 reproductive_plot <- traces %>%
     filter(!(organism %in% c("H1N1", "SARS-CoV-2") & resolution == "Year")) %>%
-    pivot_longer(cols = starts_with("reproductiveNumber"), names_to = "interval", values_to = "reproductiveNumber") %>%
+    pivot_longer(
+        cols = starts_with("reproductiveNumber"),
+        names_to = "interval", values_to = "reproductiveNumber"
+    ) %>%
     ggplot(
         aes(
             x = resolution, y = reproductiveNumber,
@@ -115,13 +120,15 @@ reproductive_plot <- traces %>%
             ~ italic(R[e[2]]) ~ Birth ~ Death, ~ italic(R[0]) ~ Coalescent ~ Exponential
         ),
         values = c(
-            "reproductiveNumber.BD" = "dodgerblue", "reproductiveNumber.CE" = "darkorange",
-            "reproductiveNumber.1.BD" = "purple", "reproductiveNumber.2.BD" = "green"
+            "reproductiveNumber.BD" = "dodgerblue",
+            "reproductiveNumber.CE" = "darkorange",
+            "reproductiveNumber.1.BD" = "purple",
+            "reproductiveNumber.2.BD" = "green"
         )
     ) +
     scale_y_continuous(
         trans = "log",
-        breaks = c(0.5, 1, 1.1, 1.2, 2, 3, 5, 10, 15)
+        breaks = c(0.5, 1.1, 2, 3, 5, 10, 15)
     ) +
     facet_wrap(~organism, scales = "free", labeller = label_parsed, nrow = 1) +
     labs(y = TeX("\\textit{$R_{\\bullet}$}"), x = "Date resolution") +
@@ -129,7 +136,8 @@ reproductive_plot <- traces %>%
     theme(
         legend.position = "bottom",
         legend.title = element_blank(),
-        panel.grid.minor = element_blank()
+        panel.grid.minor = element_blank(),
+        text = element_text(size = 14)
     )
 
 # Combine the plots into a single panel
@@ -138,7 +146,12 @@ panel <- plot_grid(
     nrow = 3, labels = "AUTO"
 )
 
-ggsave(plot = panel, "empirical_parms.pdf", width = 10, height = 10, units = "in", dpi = 300)
+ggsave(
+    plot = panel, 
+    "figures/empirical_parms.pdf",
+    width = 8, height = 8,
+    units = "in", dpi = 300
+)
 
 ## Table of mean posterior estimates and HPDs
 mean_HPD <- function(vec) {
