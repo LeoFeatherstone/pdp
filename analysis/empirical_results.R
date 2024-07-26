@@ -295,3 +295,40 @@ ggsave(
     filename = "figures/empirical_likelihood.pdf",
     width = 17, height = 10, units = "in", dpi = 300
 )
+
+## Checking posterior population size under CE
+epop_plot <- traces %>% 
+    group_by(organism, resolution, treePrior) %>%
+    filter(treePrior == "CE") %>%
+    ggplot(
+        aes(
+            x = ePopSize,
+            y = growthRate,
+            fill = resolution,
+            col = resolution
+        )) +
+    stat_ellipse() +
+    geom_point(shape = 21, size = 3, alpha = 0.1) +
+    facet_wrap(
+        ~ organism, scales = "free_y"
+    ) +
+    scale_x_log10() +
+    labs(
+        x = "Scaled Effective Population Size",
+        y = "Growth Rate",
+    ) +
+    scale_discrete_manual(
+        aesthetics = c("fill", "col"),
+        values = c("red", "dodgerblue", "black")
+    ) +
+    theme(
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        text = element_text(size = 12)
+    )
+
+ggsave(
+    plot = epop_plot,
+    filename = "figures/empirical_effpop.pdf",
+    dpi = 300, width = 6, height = 3
+)
