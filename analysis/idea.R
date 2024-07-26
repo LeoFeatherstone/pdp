@@ -42,57 +42,64 @@ data <- data %>%
 t_breaks <- sapply(c(1, 30, 365.25), function(x) log_7(x))
 
 data %>%
-    ggplot(aes(x = resolution, y = m_t, group = name, label = name, fill = col)) +
-    annotate("polygon", x = c(0, 0, 4.8), y = c(0, 4.8, 4.8), fill = "grey") +
+    ggplot(
+        aes(x = resolution, y = m_t, group = name, label = name, fill = col)
+    ) +
+    annotate("polygon", x = c(0, 0, 5.1), y = c(0, 5.1, 5.1), fill = "grey") +
     geom_line() +
-    geom_point(pch = 21, size = 7) +
+    geom_point(pch = 21, size = 2) +
     geom_text(
         data = subset(data, resolution == 1),
         aes(x = resolution, y = m_t, label = name),
         parse = TRUE,
-        nudge_y = 0.1,
-        nudge_x = -0.05,
-        size = 6,
+        nudge_y = c(-0.25, 0.25, 0.25, 0.25),
+        nudge_x = c(-0.05, -0.05, -0.05, 0.75),
+        size = 3,
         hjust = 0,
         check_overlap = TRUE
     ) +
     geom_abline(intercept = 1e-100, slope = 1) +
-    coord_cartesian(xlim = c(0, 4.7), ylim = c(0, 4.7)) +
+    coord_cartesian() +
     scale_x_continuous(
-        breaks = c(0, log_7(30), log_7(365.25)),
+        breaks = c(0, 1, log_7(30), log_7(365.25), log_7(3652.5)),
         labels = c(
-            "Days", "Months", "Years"
+            "Days", "Weeks", "Months", "Years", "Decades"
         ),
-        limits = c(0, 4.8),
-        name = "Resolution",
+        limits = c(0, 5.1),
+        name = "Sampling date resolution",
         expand = c(0, 0)
     ) +
     scale_y_continuous(
-        breaks = c(0, log_7(30), log_7(365.25)),
+        breaks = c(0, 1, log_7(30), log_7(365.25), log_7(3652.5)),
         labels = c(
-            "", "Months", "Years"
+            "", "Weeks", "Months", "Years", "Decades"
         ),
-        limits = c(0, 4.8),
-        name = "Average mutation time",
+        limits = c(0, 5.1),
+        name = "Average substitution time",
         expand = c(0, 0)
     ) +
     annotate(
         "label",
-        label = "More Robust <---> Less Robust",
-        x = 3, y = 3,
-        size = 6
+        label = "Robust%<->%Biased",
+        x = 3.2, y = 3.3,
+        size = 3,
+        parse = TRUE
     ) +
     coord_fixed(ratio = 1) +
-    theme_linedraw() +
+    theme_classic() +
     theme(
         panel.grid = element_blank(),
-        axis.text = element_text(size = 14),
-        axis.title = element_text(size = 14),
         legend.position = "none",
-        text = element_text(size = 14)
+        text = element_text(size = 12),
+        axis.text = element_text(angle = 45, hjust = 1)
     )
+
 ggsave(
     "figures/plane.pdf",
     dpi = 300,
-    units = "in"
+    units = "in",
+    width = 3,
+    height = 3
 )
+
+
