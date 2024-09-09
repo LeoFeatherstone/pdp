@@ -112,7 +112,7 @@ rate_true <- data.frame(
     ),
     rate_true = c(4e-3, 1e-3, 1e-6, 1e-8)
 )
-age_true <- data.frame(
+origin_true <- data.frame(
     organism = c("h1n1", "sars-cov-2", "saureus", "tb"),
     factor = factor(
         levels = c("h1n1", "sars-cov-2", "saureus", "tb"),
@@ -122,7 +122,7 @@ age_true <- data.frame(
             "italic(S.~aureus)", "italic(M.~tuberculosis)"
         )
     ),
-    age_true = c(0.25, 0.16, 25, 25)
+    origin_true = c(0.25, 0.16, 25, 25)
 )
 reproductive_number_true <- data.frame(
     organism = c("h1n1", "sars-cov-2", "saureus", "saureus", "tb", "tb"),
@@ -209,7 +209,7 @@ clock_plot <- (posterior %>%
     ggplot() +
     geom_segment(
         data = rate_true,
-        aes(y = rate_true, yend = rate, x = -Inf, xend = Inf),
+        aes(y = rate_true, yend = rate_true, x = -Inf, xend = Inf),
         col = "black", alpha = 0.6, lty = 3
     ) +
     geom_line(
@@ -251,7 +251,8 @@ clock_plot <- (posterior %>%
         legend.title = element_blank(),
         legend.position = "none",
         axis.title.x = element_blank(),
-        panel.grid.minor = element_blank()
+        panel.grid.minor = element_blank(),
+        text = element_text(size = 14)
     ))
 clock_plot
 ggsave("clock_traj.pdf", dpi = 300, width = 10, height = 5, units = "in")
@@ -264,7 +265,7 @@ origin_plot <- (posterior %>%
     ggplot() +
     geom_segment(
         data = origin_true,
-        aes(y = origin_true, yend = origin, x = -Inf, xend = Inf),
+        aes(y = origin_true, yend = origin_true, x = -Inf, xend = Inf),
         col = "black", alpha = 0.6, lty = 3
     ) +
     geom_line(
@@ -300,14 +301,15 @@ origin_plot <- (posterior %>%
         scales = "free_y",
         labeller = label_parsed
     ) +
-    ylab(TeX("Outbreak age (months or years)")) +
+    ylab(TeX("tMRCA (months or years)")) +
     xlab("Date resolution") +
     #guides(fill = "none", col = "none") +
     theme_bw() +
     theme(
         legend.title = element_blank(),
         legend.position = "bottom",
-        panel.grid.minor = element_blank()
+        panel.grid.minor = element_blank(),
+        text = element_text(size = 14)
     ))
 origin_plot
 ggsave("origin_traj.pdf", dpi = 300, width = 10, height = 5, units = "in")
@@ -349,7 +351,7 @@ reproductive_number_plot <- (posterior %>%
     geom_segment(
         data = reproductive_number_true,
         aes(
-            y = reproductive_number_true, yend = reproductive_number,
+            y = reproductive_number_true, yend = reproductive_number_true,
             x = -Inf, xend = Inf
         ),
         col = "black", alpha = 0.6, lty = 3
@@ -397,6 +399,7 @@ reproductive_number_plot <- (posterior %>%
     theme_bw() +
     theme(
         legend.title = element_blank(),
+        text = element_text(size = 14),
         legend.position = "bottom",
         panel.grid.minor = element_blank()
     ))
@@ -414,7 +417,7 @@ cowplot::plot_grid(
     nrow = 3
 )
 ggsave(
-    "simulation_parm_panel.pdf",
+    "figures/simulation_parm_panel.pdf",
     dpi = 300
 )
 
