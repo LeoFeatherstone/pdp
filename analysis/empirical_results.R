@@ -90,7 +90,7 @@ age_plot <- traces %>%
         )
     ) +
     facet_wrap(~organism, scales = "free", labeller = label_parsed, nrow = 1) +
-    ylab(TeX("Outbreak age")) +
+    ylab(TeX("tMRCA")) + # was "Outbreak Age"
     theme_bw() +
     theme(
         legend.position = "bottom",
