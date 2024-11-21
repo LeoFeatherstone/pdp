@@ -255,7 +255,7 @@ clock_plot <- (posterior %>%
         text = element_text(size = 14)
     ))
 clock_plot
-ggsave("clock_traj.pdf", dpi = 300, width = 10, height = 5, units = "in")
+ggsave("figures/clock_traj.pdf", dpi = 300, width = 10, height = 5, units = "in")
 
 ## Origin Parallel Coords
 
@@ -312,7 +312,7 @@ origin_plot <- (posterior %>%
         text = element_text(size = 14)
     ))
 origin_plot
-ggsave("origin_traj.pdf", dpi = 300, width = 10, height = 5, units = "in")
+ggsave("figures/origin_traj.pdf", dpi = 300, width = 10, height = 5, units = "in")
 
 
 
@@ -336,7 +336,7 @@ reproductive_number_plot <- (posterior %>%
     ) %>%
     group_by(factor, treePrior, resolution, replicate) %>%
     summarise(
-        mean_R0 = mean(reproductiveNumber),
+        mean_R0 = mean(reproductiveNumber), # a for legend ordering
         mean_Re1 = mean(reproductiveNumber.1),
         mean_Re2 = mean(reproductiveNumber.2),
     ) %>%
@@ -347,6 +347,7 @@ reproductive_number_plot <- (posterior %>%
             values_drop_na = TRUE
     ) %>%
     group_by(factor, treePrior, resolution, replicate, interval) %>%
+    arrange(interval) %>%
     ggplot() +
     geom_segment(
         data = reproductive_number_true,
@@ -381,12 +382,16 @@ reproductive_number_plot <- (posterior %>%
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
         labels = c(
-            ~italic(R[0])~Birth~Death, ~italic(R[e[1]])~Birth~Death,
-            ~italic(R[e[2]])~Birth~Death, ~italic(R[0])~Coalescent~Exponential
+            ~italic(R[0])~Birth~Death, ~italic(R[0])~Coalescent~Exponential,
+            ~italic(R[e[1]])~Birth~Death, ~italic(R[e[2]])~Birth~Death
          ),
          values = c(
-            "mean_R0.BD" = "dodgerblue", "mean_R0.CE" = "darkorange",
-            "mean_Re1.BD" = "purple", "mean_Re2.BD" = "green"
+            "mean_R0.BD" = "dodgerblue", "mean_Re1.BD" = "purple",
+            "mean_Re2.BD" = "green", "mean_R0.CE" = "darkorange"
+        ),
+        limits = c(
+            "mean_R0.BD", "mean_R0.CE",
+            "mean_Re1.BD", "mean_Re2.BD"
         )
     ) +
     facet_wrap(
@@ -405,7 +410,7 @@ reproductive_number_plot <- (posterior %>%
     ))
 reproductive_number_plot
 ggsave(
-    "reproductive_number_traj.pdf", dpi = 300,
+    "figures/reproductive_number_traj.pdf", dpi = 300,
     width = 10, height = 5, units = "in"
 )
 
@@ -523,7 +528,7 @@ ei_plot <- (rel_error %>%
         panel.grid.minor = element_blank()
     ))
 ei_plot
-ggsave("ei_ratio.pdf", dpi = 300)
+ggsave("figures/ei_ratio.pdf", dpi = 300)
 
 ### Error plots
 
@@ -558,7 +563,7 @@ rel_error %>%
     theme(
         legend.position = "bottom", legend.title = element_blank()
     )
-ggsave("age_error.pdf", dpi = 300)
+ggsave("figures/age_error.pdf", dpi = 300)
 
 ## clock error
 rel_error %>%
@@ -591,7 +596,7 @@ rel_error %>%
     theme(
         legend.position = "bottom", legend.title = element_blank()
     )
-ggsave("clock_rate_error.pdf", dpi = 300)
+ggsave("figures/clock_rate_error.pdf", dpi = 300)
 
 ## reproductive number error
 rel_error %>%
@@ -624,4 +629,4 @@ rel_error %>%
     theme(
         legend.position = "bottom", legend.title = element_blank()
     )
-ggsave("reproductie_number_error.pdf", dpi = 300)
+ggsave("figures/reproductie_number_error.pdf", dpi = 300)

@@ -25,7 +25,7 @@ data <- data %>%
     mutate(m_t = 365.25 / (rate * g_length)) %>%
     slice(rep(seq_len(n()), 3))
 
-data <- cbind.data.frame(data, "resolution" = rep(c(7, 30, 365.25)))
+data <- cbind.data.frame(data, "resolution" = rep(c(2.625, 30, 365.25)))
 
 data <- data %>%
     mutate(m_t = log_7(m_t)) %>%

@@ -5,6 +5,7 @@
 library(tracerer)
 library(tidyverse)
 library(latex2exp)
+conflicted::conflicts_prefer(latex2exp::TeX)
 library(cowplot)
 conflicted::conflicts_prefer(dplyr::filter())
 library(treedataverse)
@@ -115,9 +116,17 @@ reproductive_plot <- traces %>%
     geom_violin(alpha = 0.4, scale = "width", na.rm = TRUE) +
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
+        limits = c(
+            "reproductiveNumber.BD",
+            "reproductiveNumber.CE",
+            "reproductiveNumber.1.BD",
+            "reproductiveNumber.2.BD"
+        ),
         labels = c(
-            ~ italic(R[0]) ~ Birth ~ Death, ~ italic(R[e[1]]) ~ Birth ~ Death,
-            ~ italic(R[e[2]]) ~ Birth ~ Death, ~ italic(R[0]) ~ Coalescent ~ Exponential
+            ~ italic(R[0]) ~ Birth ~ Death,
+            ~ italic(R[0]) ~ Coalescent ~ Exponential,
+            ~ italic(R[e[1]]) ~ Birth ~ Death,
+            ~ italic(R[e[2]]) ~ Birth ~ Death
         ),
         values = c(
             "reproductiveNumber.BD" = "dodgerblue",
@@ -125,6 +134,7 @@ reproductive_plot <- traces %>%
             "reproductiveNumber.1.BD" = "purple",
             "reproductiveNumber.2.BD" = "green"
         )
+        
     ) +
     scale_y_continuous(
         trans = "log",
