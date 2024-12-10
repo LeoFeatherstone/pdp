@@ -73,10 +73,10 @@ clock_plot <- traces %>%
     )
 
 # Plot posterior tree height. Facet by organism and colour by resolution
-age_plot <- traces %>%
-    filter(!(organism == "SARS-CoV-2" & treePrior == "CE")) %>% # Posterior is flat
+age_plot_covid_ce_unfiltered <- traces %>%
+    #filter(!(organism == "SARS-CoV-2" & treePrior == "CE")) %>% # Posterior is flat
     ggplot(aes(x = resolution, y = Tree.height, fill = treePrior)) +
-    geom_violin(alpha = 0.5) +
+    geom_violin(alpha = 0.5, scale = "width") +
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
         labels = c(Birth ~ Death, Coalescent ~ Exponential),
@@ -99,7 +99,33 @@ age_plot <- traces %>%
         axis.title.x = element_blank(),
         text = element_text(size = 14)
     )
-
+# Plot posterior tree height. Facet by organism and colour by resolution
+age_plot_covid_ce_filtered <- traces %>%
+    filter(!(organism == "SARS-CoV-2" & treePrior == "CE")) %>% # Posterior is flat
+    ggplot(aes(x = resolution, y = Tree.height, fill = treePrior)) +
+    geom_violin(alpha = 0.5, scale = "width") +
+    scale_discrete_manual(
+        aesthetics = c("colour", "fill"),
+        labels = c(Birth ~ Death, Coalescent ~ Exponential),
+        values = c("BD" = "dodgerblue", "CE" = "darkorange")
+    ) +
+    scale_y_continuous(
+        breaks = c(0, (1 / 12), (2 / 12), seq(0.25, 0.75, by = 0.25), seq(1, 30, by = 5), seq(30, 60, by = 10)),
+        labels = c(
+            0, paste0(c(1, 2, 3, 6, 9), "m"),
+            paste0(seq(1, 30, by = 5), "y"),
+            paste0(seq(30, 60, by = 10), "y")
+        )
+    ) +
+    facet_wrap(~organism, scales = "free", labeller = label_parsed, nrow = 1) +
+    ylab(TeX("tMRCA")) + # was "Outbreak Age"
+    theme_bw() +
+    theme(
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        axis.title.x = element_blank(),
+        text = element_text(size = 14)
+    )
 # Plot the posterior reproductive number. Facet by organism and colour by resolution
 reproductive_plot <- traces %>%
     filter(!(organism %in% c("H1N1", "SARS-CoV-2") & resolution == "Year")) %>%
@@ -152,7 +178,7 @@ reproductive_plot <- traces %>%
 
 # Combine the plots into a single panel
 panel <- plot_grid(
-    clock_plot, age_plot, reproductive_plot,
+    clock_plot, age_plot_covid_ce_filtered, reproductive_plot,
     nrow = 3, labels = "AUTO"
 )
 
@@ -162,6 +188,19 @@ ggsave(
     width = 8, height = 8,
     units = "in", dpi = 300
 )
+
+panel <- plot_grid(
+    clock_plot, age_plot_covid_ce_unfiltered, reproductive_plot,
+    nrow = 3, labels = "AUTO"
+)
+
+ggsave(
+    plot = panel, 
+    "figures/empirical_parms_covid_ce_unfiltered.pdf",
+    width = 8, height = 8,
+    units = "in", dpi = 300
+)
+
 
 ## Table of mean posterior estimates and HPDs
 mean_HPD <- function(vec) {
