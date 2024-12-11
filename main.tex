@@ -126,7 +126,9 @@ The H1N1 data consist of 161 samples from North America during the 2009 H1N1 inf
 
 Under the birth-death model, we placed a $\textnormal{Lognormal}(\mu=0,\sigma=1)$ prior on $R_0$, $\beta(1,1)$ prior on $p$, and fixed the becoming-uninfectious rate to ($\delta = 91\ years^{-1}$), corresponding to a four-day duration of infection. We also placed an improper ($U(0,\infty)$) prior on the age of the outbreak and a $\textnormal{Gamma}(\textnormal{shape}=2,\textnormal{rate}=400)$ prior on the substitution rate.
 
-Under the coalescent exponential, we placed a $\textnormal{Laplace}(\mu=0,\textnormal{scale}=100)$ prior on the growth rate, which was later transformed to $R_0$ via $R_0 = rD+1$ where $r$ is the growth rate and $D$ is the duration of infection. We also placed an improper prior on the effective population size, and otherwise included the same priors as for the birth-death.
+Under the coalescent exponential, we placed a $\textnormal{Laplace}(\mu=0,\textnormal{scale}=100)$ prior on the growth rate, which was later transformed to $R_0$ via $R_0 = rD+1$ where $r$ is the growth rate and $D$ is the duration of infection. We also placed an \textcolor{blue}{improper prior ($\frac{1}{x}$) on the effective population size, which is the maximally uninformative Jeffrey's prior, particularly for coalescent intervals \citep{drummond_estimating_2002}. We otherwise included the same priors as for the birth-death.}
+
+
 
 \subsubsection*{SARS-CoV-2}
 The SARS-CoV-2 data consist of 112 samples from a densely sequenced transmission cluster from Victoria, Australia over late July to mid September 2020 \citet{lane2021genomics}. These data are similar to the H1N1 datasets in presenting a quickly evolving viral pathogen, but differ in that a high proportion of cases were sequenced.
@@ -170,7 +172,7 @@ Broadly, analyses of the empirical datasets reproduce the patterns of bias in th
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{empirical_parms.pdf}
-    \caption{Posterior distributions for parameters of interest estimated for each empirical dataset. Date resolution is given on the horizontal axis and colour denotes tree prior. Estimates for viral datasets at year-resolution are omitted because results deviate by implausible orders of magnitude due to sampling times rounded to identical dates. (\textbf{A}) Posterior substitution rate across date resolutions. (\textbf{B}) Posterior tMRCA in units of months (m) or years (y). \textcolor{blue}{Posterior tMRCA for SARS-CoV-2 data under the coalescent exponential are omitted because they are effectively flat over zero to twenty-plus years, obscuring the other distributions. The un-filtered figure is available \href{https://github.com/LeoFeatherstone/pdp/blob/main/figures/empirical_parms_covid_ce_unfiltered.pdf}{on GitHub}.}  (\textbf{C}) Posterior reproductive number on a log-transformed axis.}
+    \caption{Posterior distributions for parameters of interest estimated for each empirical dataset. Date resolution is given on the horizontal axis and colour denotes tree prior. \textcolor{blue}{Horizontal lines in each violin plot denote the median and 95\% highest posterior density interval.} Estimates for viral datasets at year-resolution are omitted because results deviate by implausible orders of magnitude due to sampling times rounded to identical dates. (\textbf{A}) Posterior substitution rate across date resolutions. (\textbf{B}) Posterior tMRCA in units of months (m) or years (y). \textcolor{blue}{Posterior tMRCA for SARS-CoV-2 data under the coalescent exponential are omitted because they are effectively flat over zero to twenty-plus years, obscuring the other distributions. The un-filtered figure is available \href{https://github.com/LeoFeatherstone/pdp/blob/main/figures/empirical_parms_covid_ce_unfiltered.pdf}{online}.}  (\textbf{C}) Posterior reproductive number on a log-transformed axis.}
     \label{fig:emp-parm}
 \end{figure}
 
