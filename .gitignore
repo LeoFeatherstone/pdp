@@ -1,6 +1,7 @@
 # Ignore BEAST, Snakemake, and R output
 analysis/jobs
 analysis/logs
+analysis/.snakemake
 **/*.log
 **/*.state
 **/*.trees
@@ -10,6 +11,8 @@ analysis/logs
 **/.Rhistory
 
 # Overleaf things
+*.tex
+*.bst
 *.aux
 *.glo
 *.idx
