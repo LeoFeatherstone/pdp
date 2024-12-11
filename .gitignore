@@ -1,6 +1,7 @@
 # Ignore BEAST, Snakemake, and R output
 analysis/jobs
 analysis/logs
+analysis/.snakemake
 **/*.log
 **/*.state
 **/*.trees
