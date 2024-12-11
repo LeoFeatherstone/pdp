@@ -49,10 +49,8 @@ traces$organism <- factor(
     )
 )
 
-# Plot posterior clock rate. Facet by organism and colour by resolution
-clock_plot <- traces %>%
-    ggplot(aes(x = resolution, y = clockRate, fill = treePrior)) +
-    geom_violin(alpha = 0.5) +
+clock_plot <- ggplot(traces, aes(x = resolution, y = clockRate, fill = treePrior)) +
+    geom_violin(alpha = 0.5, scale = "width", draw_quantiles = c(0.025, 0.5, 0.975)) +
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
         labels = c(Birth ~ Death, Coalescent ~ Exponential),
@@ -76,7 +74,7 @@ clock_plot <- traces %>%
 age_plot_covid_ce_unfiltered <- traces %>%
     #filter(!(organism == "SARS-CoV-2" & treePrior == "CE")) %>% # Posterior is flat
     ggplot(aes(x = resolution, y = Tree.height, fill = treePrior)) +
-    geom_violin(alpha = 0.5, scale = "width") +
+    geom_violin(alpha = 0.5, scale = "width", draw_quantiles = c(0.025, 0.5, 0.975)) +
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
         labels = c(Birth ~ Death, Coalescent ~ Exponential),
@@ -103,7 +101,7 @@ age_plot_covid_ce_unfiltered <- traces %>%
 age_plot_covid_ce_filtered <- traces %>%
     filter(!(organism == "SARS-CoV-2" & treePrior == "CE")) %>% # Posterior is flat
     ggplot(aes(x = resolution, y = Tree.height, fill = treePrior)) +
-    geom_violin(alpha = 0.5, scale = "width") +
+    geom_violin(alpha = 0.5, scale = "width", draw_quantiles = c(0.025, 0.5, 0.975)) +
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
         labels = c(Birth ~ Death, Coalescent ~ Exponential),
@@ -139,7 +137,7 @@ reproductive_plot <- traces %>%
             fill = interaction(interval, treePrior)
         )
     ) +
-    geom_violin(alpha = 0.4, scale = "width", na.rm = TRUE) +
+    geom_violin(alpha = 0.4, scale = "width", na.rm = TRUE, draw_quantiles = c(0.025, 0.5, 0.975)) +
     scale_discrete_manual(
         aesthetics = c("colour", "fill"),
         limits = c(
