@@ -1,0 +1,332 @@
+\documentclass[12pt]{article}
+
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{setspace}
+\usepackage[]{lineno}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{caption}
+\captionsetup{font=small}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[square,sort,comma,numbers]{natbib}
+\setcitestyle{authoryear,open={(},close={)}}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue]{hyperref}
+
+\graphicspath{{figures/}}
+    
+\title{How does date-rounding affect phylodynamic inference for public health?}
+\author{Leo A. Featherstone$^{\ast,1}$, Danielle J. Ingle$^{1}$, Wytamma Wirth$^{1}$,\\Sebastian Duchene$^{1,2}$}
+
+\begin{document}
+
+\maketitle
+
+\section*{}
+\footnotesize
+$^{1}$ Peter Doherty Institute for Infection and Immunity, University of Melbourne, Australia.\\
+$^{2}$ Department of Computational Biology, Institut Pasteur, Paris, France.\\
+$^{*}$ leo.featherstone@unimelb.edu.au
+
+\normalsize
+\linenumbers
+
+\section*{Abstract}
+Phylodynamic analyses enable the inference of epidemiological parameters from pathogen genome sequences for enhanced genomic surveillance in public health. Pathogen genome sequences and their associated sampling times are the essential data in every analysis. However, sampling times are usually associated with hospitalisation or testing dates and can sometimes be used to identify individual patients, posing a threat to patient confidentiality. To lower this risk, sampling times are often given with reduced date-resolution to the month or year, which can potentially bias inference of epidemiological parameters. \textcolor{blue}{Here, we introduce a practical guideline on when date-rounding biases inference and characterise the extent to which reduced date-resolution biases inference of epidemiologically important parameters across a diverse range of empirical and simulated datasets. We show that the direction of bias varies with parameter, dataset, and tree prior while compounding with lower date-resolution, higher substitution rates, and shorter sampling intervals.} We conclude by discussing future solutions that prioritise patient confidentiality and propose a method for safer sharing of sampling dates by translating them uniformly by a random number.
+
+\begin{spacing}{2}
+
+\section*{Introduction}
+Phylodynamics is commonly used to estimate the parameters of viral spread with increasing application to bacteria. It allows estimation of important epidemiological quantities including rates of transmission, the age of outbreaks, rates of spatial advance, and the prevalence of variants of concern \citep{featherstone2022epidemiological, attwood2022phylogenetic, du2015getting,volz_fitness_2023}. It is applicable across the scales of transmission from the pandemic and epidemic scales, such as for SARS-CoV-2 and Ebola virus \citep{lancet2021genomic,mbala2019medical}, to long-term bacterial transmission such as in \textit{Salmonella enterica} and \textit{Klebsiella pneumoniae}. Phylodynamic analyses are most useful where temporal and spatial records of transmission are sparse, using genomic information to help fill in the gaps.
+
+The basis of all phylodynamic inference is that epidemiological spread leaves a trace in the form of substitutions in pathogen genomes that can be used to reconstruct transmission histories. Pathogen populations meeting this assumption are said to be `measurably evolving populations' \citep{drummond2003measurably, biek_measurably_2015}. In accordance, phylodynamics uses a combination of genome sequences and associated sampling times to leverage measurable evolution and infer temporally explicit parameters of transmission and pathogen demography.
+
+Ideal phylodynamic datasets should include precise sampling dates alongside genome sequences \citep{black2020ten}, but sampling times necessarily carry over sensitive information about times of hospitalisation, testing, or treatment than can be used to identify individual patients. This can pose an unacceptable risk for patient confidentiality. In some cases, sampling times or dates of admission are even available for purchase or have allowed identification for a majority of patients in a given record \citep{sweeney_matching_2013}. In acknowledgement of this risk, \citet{shean_private_2018} suggest that Expert Determination govern whether sampling times be released alongside genome sequences, and the resolution to which they are disclosed (day, month, year). Essentially, this approach involves an expert opinion on whether information is safe to release on a case-by-case basis.
+
+From a phylodynamic point of view, sampling times with reduced resolution are usable. Uncertainty in sampling times can be accommodated in Bayesian inference \citep{shapiro2011bayesian}, but such an approach is only effective when samples with uncertain dates comprise a small proportion of the total data \citep{rieux2017tipdatingbeast}.
+
+The most common technique for incorporating data with a majority of uncertain sampling times is to assume that sampling occurred at the middle of the uncertainty range, such as all samples from 2020 being assigned 15 June 2020. Other approaches would include sampling a random day within 2020 using a probability distribution over the duration of 2020 for each sample. Both approaches introduce a degree of \textcolor{blue}{noise}, which may cause bias because sampling times often drive phylodynamic inference \citep{featherstone_decoding_2023,featherstone_infectious_2021,volz_sampling_2014}. Understanding this bias has practical significance, as there are many examples of phylodynamic analyses conducted with reduced date resolution for a diverse array of pathogens. These include viral pathogens such as Rabies virus, Enterovirus, SARS-CoV-2, Dengue virus \citep{talbi_phylodynamics_2010,xiao_genomic_2022,wolf_temporal_2022,bennett_epidemic_2010}, and bacterial pathogens, such as \textit{Klebsiella pneumoniae}, \textit{Streptococcus pneumoniae}, and \textit{Mycobacterium tuberculosis} \citep{cella_multi-drug_2017,azarian_impact_2018,merker_evolutionary_2015}. 
+
+Precision in sampling dates is also relevant to the design and curation of pathogen sequence databases because sampling dates are often considered as metadata, and thus recorded inconsistently throughout repositories \citep{raza2016big}. For example, as of early September 2024, there were roughly 19.9M SARS-CoV-2 genome sequences available on GISAID with roughly 2.4\% (382K) of these having incomplete date information, where sampling dates are absent or only given to the month or year. In other words, roughly 1 in 50 sequences lacked clear date resolution, reflecting global inconsistency in SARS-CoV-2 sampling time records.
+
+In recognition of this issue, we characterised the conditions under which biases arise from reduced date resolution in phylodynamic inference. We analysed four empirical datasets of SARS-CoV-2, H1N1 Influenza, \textit{M. tuberculosis}, \textit{Staphylococcus aureus}, and conducted a simulation study with parameters corresponding to each empirical dataset. These pathogens are key examples of candidates for genome surveillance, with SARS-CoV-2 and H1N1 having caused pandemics and \textit{S. aureus} and \textit{M. tuberculosis} being global priority pathogens \citep{who_bppl_2024}. These data also have diverse infectious periods and molecular evolutionary rates, thus providing a broad representation of phylodynamics' applicability to pathogens presenting human-health threats. For each empirical and simulated dataset, we studied the bias in estimated epidemiological parameters across treatments with sampling times rounded to the day, month, or year. For example, 2021-10-11 would be specified as 2021-10-15 when rounding to the month and 2021-06-15 when the month and day are not provided.
+
+We focused on inference of the reproductive number ($R_0$ or $R_e$ for the basic and effective reproductive number, respectively), defined as the average number of secondary infections stemming from an individual case (reviewed by \citet{du2015getting,featherstone2022epidemiological, kuhnert2011phylogenetic}), the time to the most recent common ancestor (tMRCA), and the substitution rate (substitutions per site per year) in each dataset. Together, these parameters span much of the insight that phylodynamics offers through inferring when an outbreak started and how fast it proceeded. The evolutionary rate is also the central parameter relating evolutionary time to epidemiological time, so any resulting bias in this parameter is expected to have a pervasive effect throughout each phylodynamic model. \textcolor{blue}{Throughout this manuscript, we refer to bias where we recover error in estimated parameters with a consistent direction among replicates in our simulation study. We do not chiefly consider the variance in posterior distributions of estimated parameters, but touch on this in the results.}
+
+ We hypothesised that reduced date resolution causes bias that compounds where the uncertainty in dates exceeds the average time for a substitution to arise in a given pathogen. We visualise the relationship between date resolution and average substitution time in Fig \ref{fig:plane}. For example, H1N1 influenza virus accumulates substitutions at a rate of about 4 $\times10^{-3}$ subs/site/year \citep{hedge_2013_real-time}. With a genome length of 13,158bp, we then expect roughly one substitution to accrue per week. Therefore, rounding dates to the month or year conflates molecular evolution in time and biases inferences. Based on this, we expected the SARS-CoV-2 and H1N1 datasets to exhibit bias from month resolution onwards, the \textit{S. aureus} dataset to exhibit bias at year resolution, and the \textit{M. tuberculosis} dataset to not display bias up to and including year resolution (See Table \ref{tab:seq_parms} for average substitution times).
+ 
+ Our results across the simulation study and analyses of empirical data support using the average substitution time as a rough threshold for when date-rounding causes compounding bias. We also discuss factors that modulate the extent of bias, such as duration of sampling intervals and the choice of phylodynamic model. We finish by discussing future solutions that prioritise both patient confidentiality and accurate data sharing for routine phylodynamic analyses for public health.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.5\textwidth]{plane.pdf}
+    \caption{The average time to accrue one substitution based on a fixed genome size and evolutionary rate, $T_s = [\textnormal{Genome Length (sites)}\times\textnormal{Evolutionary rate (subs/site/yr)}]^{-1}$ against the temporal resolution lost by date-rounding. We hypothesised and showed that when analyses for a given pathogen round dates to an extent nearing or crossing the diagonal from left to right, biases is induced in $R_e$, tMRCA, and substitution rate. substitution rates are taken from each source for the empirical data. We do not report the numerical axis as this figure is designed to illustrate a concept rather than serve as a reference, in the same spirit as its inspiration in Figure 2 of \citet{biek_measurably_2015}.}
+    \label{fig:plane}
+\end{figure}
+
+\section*{Methods}
+\subsection*{Overview}
+Our study is based on four empirical datasets including with two viruses, H1N1 influenza and SARS-CoV-2, and two bacterial species, \textit{Staphylococcus aureus} and \textit{Mycobacterium tuberculosis}. We also conducted a  simulation study with parameters tailored to each dataset. These data were chosen to span the usual parameter space for substitution rate and sampling duration in phylodynamics for epidemiology (roughly $10^{-3}\textnormal{-to-}10^{-8}$ (subs/site/yr) for substitution rate and months-to-decades for duration of sampling).
+
+To assess the effects of date-rounding, we conducted phylodynamic analyses for both the empirical and simulated datasets with sampling dates rounded to the day, month, or year. For example, two samples from 2000-05-29 and 2000-05-02 would become 2000-05-15 if rounded to the month. We then measured the resulting bias in epidemiologically- or phylodynamically-important parameters: the reproductive number ($R_0$ or $R_e$), substitution rate (subs/site/year), and the tMRCA. The tMRCA gives a measure of the age of the pathogen population driving the outbreak and is often interpreted as the age of the outbreak. We also consider the tMRCA to facilitate comparison, because there is variability in which phylodynamic models include the length of the root branch in the age of the outbreak \citep{stadler2012estimating}.
+
+The two viral datasets consist of samples from the 2009 H1N1 pandemic (n=161) from \citet{hedge_2013_real-time}, and a cluster of early SARS-CoV-2 cases from  Victoria, Australia in 2020 (n = 112) \citep{lane2021genomics}. The bacterial datasets consist of \textit{S. aureus}, with 104 samples from New York sampled over $\approx$2 years \citep{duchene_2016_genome,volz_modeling_2018,uhlemann_molecular_2014}, and 30 \textit{M. tuberculosis} samples from an $\approx$25 year outbreak studied by \citet{kuhnert_tuberculosis_2018}. These data were chosen because they encompass a diversity of epidemiological dynamics, timescales, and variable substitution rates.
+
+\subsection*{Simulation Study}
+We simulated outbreaks as birth-death sampling processes using the ReMaster package in BEAST v2.7.6 \citep{vaughan_remaster_2024,bouckaert_beast_2019}. Simulations employed four parameter settings corresponding to each empirical dataset (Table \ref{tab:sim_parms}), with 100 replicates of each. All parameter sets include a proportion of cases sequenced ($p$), outbreak duration ($T$), a `becoming un-infectious' rate ($\delta = \frac{1}{\textnormal{Duration of infection}}$)\textcolor{blue}{, and transmission rates via reproductive numbers. We matched the values of each parameter to those in the originating literature (Table \ref{tab:sim_parms}). We fixed the sequencing proportion in the H1N1 simulations by dividing the sample size ($n=161$) and the cumulative number of North American cases over the empirical data's sampling interval, resulting in the order of $1\%$ \citep{jhung_epidemiology_2011}.}
+
+For simulations corresponding the viral datasets, transmission was modelled via $R_0$, the average number of secondary infections (assuming a fully susceptible population). For those corresponding to the bacterial datasets, we allowed the effective reproductive numbers to vary over two intervals ($R_{e_1}$ and $R_{e_2}$ respectively). For the \textit{S. aureus} setting, the change time for $R_e$ was set at $t=22$ with the sequencing proportion ($p$) also set to zero before this time to replicate the sampling effort in the empirical dataset. For the \textit{M. tuberculosis} dataset, the change time was fixed at halfway through simulations ($t=12.5$) with a fixed sequencing proportion throughout.
+
+\begin{table}[H]
+    \centering
+    \caption{Parameter sets for the simulation study corresponding to each empirical dataset. $\delta$ is the `becoming un-infectious` rate, which is the reciprocal of the duration of infection in units of years$^{-1}$. $R_0$ is the basic reproductive number, describing the average number of secondary infections arising at the beginning of an outbreak where the susceptible population is greatest. $R_{e_\bullet}$ refers to the effective reproductive number over two successive intervals of an outbreak as the susceptible population varies. $p$ is the proportion of sequenced cases. $T$ is the duration of the outbreak.}
+    \begin{tabular}{lccccccl}
+    \toprule
+    Microbe & $\delta$ (yrs$^{-1}$) & $R_0$ & $R_{e_1}$ & $R_{e_2}$ & $p$ & $T$ (yrs) & Source \\
+    \midrule
+    H1N1    & 91.31  & 1.3  & -   & -    & 0.015  & 0.25  & \citet{hedge_2013_real-time} \\
+    SARS-CoV-2  & 36.56  & 2.5  & -   & -    & 0.80   & 0.16  & \citet{lane2021genomics} \\
+    \textit{S. aureus}  & 0.93   & -    & 2.0 & 1.0  & 0.2$^{\dagger}$ & 25 &   \citet{duchene_2016_genome} \\ 
+    &        &      &     &      &        &     & \citet{volz_modeling_2018} \\
+    \textit{M. tuberculosis}    & 0.125  & -    & 2.0 & 1.10 & 0.08   & 25.0 &      \citet{kuhnert_tuberculosis_2018} \\
+    \bottomrule
+    \end{tabular}
+    \label{tab:sim_parms}
+\end{table}
+\footnotesize
+$^\dagger$ $p$ was set to zero before $T=22$
+\normalsize
+
+Simulations generated a total of 400 outbreaks which we then used to simulate sequences data under a Jukes-Cantor model using Seq-Gen v1.3.4 \citep{rambaut_seq-gen_1997} with fixed substitution rates (Table \ref{tab:seq_parms}). We chose a simple substitution model to reduce parameter space and because substitution model mismatch has been widely explored elsewhere (e.g. \citet{lemmon2004importance}).
+
+\begin{table}[H]
+    \centering
+    \caption{Substitution rates and genome length for sequence simulation.}
+    \begin{tabular}{lcll}
+    \toprule
+    Microbe                     &   Substitution Rate (subs/site/yr) & Genome Length & Time/Sub/Genome (yrs)  \\
+    \midrule
+    H1N1                        & $4\times10^{-3}$ & 13158 & 0.0190\\
+    SARS-CoV-2                  & $1\times10^{-3}$ & 29903 & 0.0334\\
+    \textit{S. aureus}    & $1\times10^{-6}$ & 2900000  & 0.3458\\
+    \textit{M. tuberculosis}    &   $1\times10^{-7}$ & 4300000 & 2.3256\\
+    \bottomrule
+    \end{tabular}
+    \label{tab:seq_parms}
+\end{table}
+
+\textcolor{blue}{We then analysed each of the 400 simulated datasets under three date resolutions (day, month, and year), and two tree priors: the birth-death \citep{stadler2012estimating} and coalescent with exponential growth, referred to hereon as the `coalescent exponential` \citep{kingman_1982_coalescent}. This yielded 1800 analyses in total (1200 for the birth-death and 600 for the coalescent exponential).} We used identical model specifications and prior distributions as for the corresponding empirical datasets. We ran each MCMC chain for $5\times18^{8}$ steps, sampling every $10^{4\textnormal{th}}$ step and discarding the first 50\% as burnin. We then discarded all analyses that did not have effective sample sizes of the MCMC ($ESS$) of at least 200 ($ESS\geq200$), leaving a total of 1670 replicates incorporated in our results.
+
+\subsection*{Empirical Data}
+We conducted Bayesian phylodynamic analyses using a birth-death skyline tree prior in BEAST v2.7.6 for all datasets \citep{bouckaert_beast_2019}. We also fit a coalescent exponential tree prior to the viral datasets. \textcolor{blue}{We did not fit the coalescent exponential to the bacterial datasets because they capture transmission beyond the exponential phase, which would therefore result in model misspecification.} We sampled from the posterior distribution using Markov chain Monte Carlo (MCMC), with $5\times10^{7}$ steps ($1\times10^{7}$ for SARS-CoV-2 data), sampling every $10^{4}$ steps, and discarding the initial 10\% as burnin. We assessed sufficient sampling from the stationary distribution by ensuring $ESS\geq200$ for all parameters and likelihoods.
+
+\subsubsection*{H1N1}
+The H1N1 data consist of 161 samples from North America during the 2009 H1N1 influenza virus pandemic, previously analysed by \citet{hedge_2013_real-time}. Samples originate from April to September 2009 and provide an example of a rapidly evolving pathogen sparsely sequenced during an emerging outbreak. 
+
+Under the birth-death model, we placed a $\textnormal{Lognormal}(\mu=0,\sigma=1)$ prior on $R_0$, $\beta(1,1)$ prior on $p$, and fixed the becoming-uninfectious rate to ($\delta = 91\ years^{-1}$), corresponding to a four-day duration of infection. We also placed an improper ($U(0,\infty)$) prior on the age of the outbreak and a $\textnormal{Gamma}(\textnormal{shape}=2,\textnormal{rate}=400)$ prior on the substitution rate.
+
+Under the coalescent exponential, we placed a $\textnormal{Laplace}(\mu=0,\textnormal{scale}=100)$ prior on the growth rate, which was later transformed to $R_0$ via $R_0 = rD+1$ where $r$ is the growth rate and $D$ is the duration of infection. We also placed an improper prior on the effective population size, and otherwise included the same priors as for the birth-death.
+
+\subsubsection*{SARS-CoV-2}
+The SARS-CoV-2 data consist of 112 samples from a densely sequenced transmission cluster from Victoria, Australia over late July to mid September 2020 \citet{lane2021genomics}. These data are similar to the H1N1 datasets in presenting a quickly evolving viral pathogen, but differ in that a high proportion of cases were sequenced.
+
+Under the birth-death, we placed a $\textrm{Lognormal}(\textrm{mean}=1, \textrm{sd}=1.25)$ prior on $R_0$ and an $\textrm{Inv-Gamma}(\alpha=5.807, \beta=346.020)$ prior on the becoming-uninfectious rate ($\delta$). The sampling proportion was fixed to $p=0.8$ since the target was to sequence every known SARS-CoV-2 case in Victoria at this stage of the pandemic, with a roughly 20\% sequencing failure rate. We also placed an $\textrm{Exp}(\textrm{mean}=0.019)$ prior on the origin, corresponding to a lag of up to one week  between the index case and the first putative transmission event. \textcolor{blue}{In this case, the origin parameter corresponds to the length of the root branch. In the results we still report the age of the outbreak as the tMRCA for consistent comparison with other datasets.} Lastly, we placed a $\textnormal{Gamma}(\textnormal{shape}=2,\textnormal{rate}=2000)$ prior on the substitution rate.
+
+Under the coalescent exponential, we placed an improper prior ($\frac{1}{x}$) on the effective population size and a $\textnormal{Laplace}(\mu=0.01,\textnormal{scale}=0.5)$ prior on the growth rate. Other parameters were given the same priors as under the birth-death. \textcolor{blue}{Note that the coalescent exponential is not a natural choice of tree prior for the SARS-CoV-2 data because of its very high sequencing proportion \citep{stadler_how_2015}. We nevertheless include it for the SARS-CoV-2 data to provide a comparison to the coalescent exponential for the H1N1 data, and an example of how data-rounding may exacerbate error due to poorly fitting models. The model's poor fit is reflected later in the results.}
+
+\subsubsection*{\textit{Staphylococcus aureus}}
+The \textit{S. aureus} dataset originates from \citet{uhlemann_molecular_2014} and we analysed a subset of the data later analysed in \citet{duchene_2016_genome} and \citet{volz_modeling_2018}. It consists of a single nucleotide polymorphism (SNP) alignment of 104 sequenced isolates sampled in New York from 2009 to 2011. Populations growth is understood to have been driven by $\beta$-lactam antibiotic use beginning in the 1980s. These data therefore provide a comparison to the \textit{M. tuberculosis} dataset in a briefer sampling span from an outbreak of similar duration.
+
+To accommodate changing transmission dynamics, we included two intervals for $R_e$ with a $\textnormal{Lognormal}(\mu=0,\sigma=1)$ prior on each. We also placed a $\beta(1,1)$ prior on the sampling proportion, which was otherwise fixed to 0 before the first sample to capture the lag in sampling. We also placed a $U(0,1000)$ prior on the origin, and fixed the becoming un-infectious rate at $\delta=0.93$, corresponding to a nearly year-long duration of infection following \citet{volz_modeling_2018}.
+
+\subsubsection*{\textit{Mycobacterium tuberculosis}}
+The \textit{M. tuberculosis} dataset consists of 36 sequenced isolates from a retrospectively recognised outbreak in California, USA, that originated in the Wat Tham Krabok refugee camp in Thailand. The data were originally analysed using the birth-death tree prior by \citet{kuhnert_tuberculosis_2018}. We applied the same prior configurations as \citet{kuhnert_tuberculosis_2018}, with the exception of including two intervals for $R_e$ and fitting a strict molecular clock with a $\textnormal{Gamma}(\textnormal{shape}=0.001,\textnormal{rate}=1000.0)$ prior.
+
+\section*{Results}
+\subsection*{Simulation study} % TODO: Add reference to variance
+The viral simulation conditions (i.e. SARS-CoV-2 and H1N1) display the greatest bias in mean posterior estimates of substitution rate, tMRCA, and reproductive number with decreasing date resolution (Figure \ref{fig:sim-parms} A-C). The \textit{S. aureus} simulations exhibit  similar trend with lesser bias in response to decreasing date resolution when rounding dates to the year. The \textit{M. tuberculosis} condition is effectively inert to decreasing date resolution, with mean posterior estimates for each parameter of interest remaining consistent across date resolution (day to year). The \textit{S. aureus} data provide an important intermediate case in that estimates of each parameter change when transitioning from month to year resolution (see crossing of lines from month to year resolution in the \textit{S. aureus} column of Figure \ref{fig:sim-parms}). These trends are in agreement with the hypothesis of decreasing date resolution causing increased bias where the resolution lost exceeds the average time for a substitution to arise. This occurs because date-rounding compresses divergent sequences in time, driving a signal for higher rates of substitution and transmission locally to each temporal cluster of sampling times.  This effect is less pronounced in the bacterial simulation conditions relative to the viral conditions, because the date resolution lost is a smaller fraction of the effective substitution time (average time to until substitution is $\approx4$ months and $\approx28$ months for \textit{S. aureus} and \textit{M. tuberculosis} conditions respectively, Table \ref{tab:seq_parms}). In other words, the bacterial sequences clustered in time were on average less divergent than for the viral data, which is biologically realistic given that bacteria tend to accrue substitutions more slowly than viruses. There are also notable deviations from these general trends across date resolutions, simulation conditions, and tree priors that we attribute to the duration of the sampling intervals below. \textcolor{blue}{The posterior variance for each estimated parameter also tended to increase with decreasing date resolution, demonstrating that poorer date resolution increases the uncertainty as well as accuracy of parameter estimates (Figure \ref{fig:variance}).}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{simulation_parm_panel.pdf}
+    \caption{Mean posterior estimates for parameters of interest for each simulated dataset varying across date resolution. Individual lines track mean posterior estimates for each simulated dataset and boxplots are given to summarise the spread and direction of bias across all simulated datasets at each date resolution. Rows correspond to individual parameters, columns correspond to simulation conditions (underlying parameters matching each empirical dataset), and colour corresponds to tree prior or reproductive number interval. Dashed horizontal lines correspond to the true value under which each dataset was simulated. (\textbf{A}) Mean posterior substitution rate across simulation scenarios. (\textbf{B}) Mean posterior tMRCA, a measure of the age of the population driving the outbreak. (\textbf{C}) mean posterior reproductive number.}
+    \label{fig:sim-parms}
+\end{figure}
+
+The coalescent exponential shows overall downwards bias in the substitution rate for the SARS-CoV-2 and H1N1 treatments at month resolution, while the birth-death exhibits upwards bias. Since the sampling times for each viral dataset are distributed over three months, date-rounding compresses samples within a month to one time, simultaneously increasing the time between samples across months and driving a signal for lower transmission and substitution rates between months. The different phylodynamic likelihood functions for each tree prior respond differently to this warped distribution of diversity over time with the coalescent exponential placing more weight on decreased rates of substitution rates while the birth-death favoured an increase. This can be explained by the birth-death drawing signal for increased transmission among coincident sampling times within each month, while the coalescent exponential instead conditions on sampling times \citep{volz_sampling_2014}. At year resolution there is also lower bias in estimates of substitution rate for the coalescent exponential than the birth-death, however both models estimate upwards-biased substitution rates as year resolution. This is probably because year resolution clusters all sampling times to a single time, meaning a highly inflated rate of substitution is needed to model the artificial burst in diversity at one time for both tree priors - See Figure \ref{fig:densitree} to see sampling times compressed in time across date resolution for posterior trees. For all viral simulation conditions, the mean posterior tMRCA of each outbreak shifts inversely to the substitution rate. This is the result of a well understood relationship among phylodynamic models where higher rates of evolution suggest shorter periods of evolution.
+
+The reproductive number for each viral dataset ($R_0$) also changes markedly with decreasing date resolution under the birth-death, but not under the coalescent. For the birth-death, this is in agreement with temporal clustering of samples driving a signal for higher transmission rates. Conversely, estimates under the coalescent exponential remain near-identical at month resolution, which is again due to its conditioning on sampling times. Estimates of $R_0$ for the SARS-CoV-2 settings under the coalescent exponential are also heavily biased downwards. This is probably due to high sequencing proportions violating the assumption of low sampling under the coalescent, thus leading to poorly fitting model in the first place.
+
+The \textit{S. aureus} condition yields consistent estimates of substitution rate, tMRCA, and reproductive number ($R_e$ in this case) when days are rounded to the month (Figure \ref{fig:sim-parms} \textit{S. aureus} column). At year resolution the posterior substitution rate appears biased downwards. This can be explained by the two year sampling duration of the \textit{S. aureus} condition, such that samples rounded to the year will be on average further apart in time than if dates are given to the month or day (Figure \ref{fig:densitree}). This spacing of diversity in time likely drives the signal for lower substitution rates and an older outbreak in turn. There is no clear pattern in the direction of bias for $R_{e_1}$ and $R_{e_2}$ at year resolution, though estimates deviate from those at month and day resolution. Estimates for $R_{e_1}$ are also overall lower than their true value of 2.0, and this is attributable to inconsistent sampling over the duration of the outbreak which was previously demonstrated for other datasets with late sampling in \cite{featherstone_infectious_2021}.
+
+The \textit{M. tuberculosis} simulation condition effectively acts as a control, since it appears inert to date-rounding. This is expected because this dataset reflects longer simulation time, with temporal clustering less likely to inflate $R_e$, and an average substitution time is longer than a year. As such, even rounding to the year is unlikely to drive a signal for increased evolutionary rate or a more recent origin time.
+
+Phylodynamic and phylogenetic terms from the total posterior likelihood also vary with decreasing date resolution (Figure \ref{fig:sim-likeihood}). Deviation also increases with lesser date resolution from month and year. This verifies that altered date resolution affects the likelihood manifold of each analysis, which is reflected in the different trends of bias in each parameter of interest.
+
+\subsection*{Empirical Results}
+Broadly, analyses of the empirical datasets reproduce the patterns of bias in the simulation study(Figure \ref{fig:emp-parm}). That is, the reproductive number increases with decreasing date resolution along with an increase in the substitution rate and corresponding decrease in the tMRCA. There are a few exceptions to this trend that we consider below and which we again attribute to the difference between simulated and empirical sampling time distributions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{empirical_parms.pdf}
+    \caption{Posterior distributions for parameters of interest estimated for each empirical dataset. Date resolution is given on the horizontal axis and colour denotes tree prior. Estimates for viral datasets at year-resolution are omitted because results deviate by implausible orders of magnitude due to sampling times rounded to identical dates. (\textbf{A}) Posterior substitution rate across date resolutions. (\textbf{B}) Posterior tMRCA in units of months (m) or years (y). \textcolor{blue}{Posterior tMRCA for SARS-CoV-2 data under the coalescent exponential are omitted because they are effectively flat over zero to twenty-plus years, obscuring the other distributions. The un-filtered figure is available \href{https://github.com/LeoFeatherstone/pdp/blob/main/figures/empirical_parms_covid_ce_unfiltered.pdf}{on GitHub}.}  (\textbf{C}) Posterior reproductive number on a log-transformed axis.}
+    \label{fig:emp-parm}
+\end{figure}
+
+Phylodynamic and phylogenetic likelihoods also diverge where the loss in date resolution exceed the average time for a substitution to arise (Figure \ref{fig:emp-likelihood}). For both viral datasets, month and day posterior distributions of phylodynamic and phylogenetic likelihood are diverged, while likelihoods overlap at all date resolutions for the \textit{M. tuberculosis} data. The \textit{S. aureus} data provide an intermediate case where only the posterior likelihoods for year-resolution differ. Together, these likelihood distributions support the hypothesis that date-uncertainty that is wider (in time) than the average time to one substitution causes a qualitative shift in the likelihood manifold for analyses under both birth-death based and coalescent tree priors.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/empirical_likelihood.pdf}
+    \caption{Posterior phylodynamic likelihood against phylogenetic likelihood for each combination of empirical dataset and with colour corresponding to date resolution. Ellipses surround the 95\% highest posterior density region for each posterior. Both Phylodynamic and phylogenetic likelihoods diverge between day and month resolution for the viral datasets, while year resolution differs from month and day for the \textit{S. aureus} data. Posterior likelihoods all coincide for \textit{M. tuberculosis}. }
+    \label{fig:emp-likelihood}
+\end{figure}
+
+\subsubsection*{H1N1}
+Mean posterior $R_0$ increases from day to month resolution for the birth-death (1.08 to 1.14), yet remains near-identical for the coalescent exponential (1.14 to 1.13) (Table \ref{tab:emp-ests}). The mean posterior substitution rate also decreases for both tree priors across day to month resolution ($4.3\times10^{-3}$ to $3.9\times10^{-3}$ and $3.9\times10^{-3}$ to $3.2\times10^{-3}$ for the birth-death and coalescent exponential respectively) (Table \ref{tab:emp-ests}). The posterior tMRCA also differs between tree priors mirroring substitution rate, with a decrease from date to month resolution for the birth-death and an increase for the coalescent exponential. For the coalescent exponential, we can attribute the decrease in reproductive number and substitution rate from day to month resolution to samples being spread further in time (Figure \ref{fig:sampling}), which drives the signal for and an older outbreak and lower transmission rates. While the same is true for the sampling distribution under the birth-death, the additional information it draws from identical sampling times as month-resolution likely inflates the mean posterior reproductive number despite the signal for a lower substitution rate and older outbreak.
+
+\subsubsection*{SARS-CoV-2}
+Under the birth-death, the SARS-CoV-2 dataset behaves as expected, with an increase in posterior $R_0$ from day to month rounding. In particular, rounding to the month results in a high, yet plausible value of $R_0 = 5.972$ (Table \ref{tab:emp-ests}). Under the coalescent exponential, the mean posterior $R_0$ remains near identical across day to month treatments ($1.00$ to $1.01$ respectively). We again note that the coalescent exponential is included for completeness for the SARS-CoV-2 dataset, but is not an appropriate choice of model in practice due to the near complete-sequencing of the original transmission cluster. Thus, poor model-fit is probably the cause of unrealistic estimates of $R_0$.
+
+The mean posterior substitution rate under the birth-death increases over two-fold when rounding to the month ($2.47\times10^{-4}$ to $6.56\times10^{-4}$, Table \ref{tab:emp-ests}). Mean posterior tMRCA also increases from 0.15 years to 0.17 years from day to month, which contradicts the expectation of a decreased estimate of tMRCA under date-rounding. We again attribute these differences to the distribution of the empirical sampling times under date-rounding. Sampling for the SARS-CoV-2 dataset mainly occurred over August to September 2020, with most August samples originating later in the month (Figure \ref{fig:sampling}). Rounding to 15$^{th}$ of August therefore made these samples appear older in time and likely contributed to the older origin under month-rounding.
+
+\subsubsection*{\textit{S. aureus}}
+For $R_{e_1}$, the \textit{S. aureus} dataset recapitulated the simulation study with month rounding having a minimal effect, but year rounding inducing an upwards bias (mean values of 1.57, 1.56, 1.73 respectively)(Figure \ref{fig:emp-parm}, Table \ref{tab:emp-ests}). $R_{e_2}$ displays a similar pattern with consistent estimates at day and month-rounding before a reduction at year rounding (0.66, 0.67, and 0.37 respectively). This result is consistent with the estimates an initial increase in growth rate in previous analyses of the dataset \cite{volz_modeling_2018}.
+
+Mean posterior substitution rate and tMRCA remain identical across date resolutions ($10^{-5}$ subs/site/year and a tMRCA of 30 years), despite the change in reproductive numbers at year rounding. This is surprising given the change in posterior phylodynamic and phylogenetic likelihoods (Figure \ref{fig:emp-likelihood}), and highlights that date-rounding can perturb the likelihood without predictable changes in parameters of epidemiological significance.
+
+\subsubsection*{\textit{M. tuberculosis}}
+The \textit{M. tuberculosis} data recapitulate the outcome of the simulation study in being robust to date-rounding. Posterior substitution rates and outbreak ages remain consistent across decreasing date resolution ($1.02\times10^{-7}$, $1.02\times10^{-7}$, $9.86\times10^{-8}$ (subs/site/time) and 21.7, 21.7, and 22.5 years respectively) (Table \ref{tab:emp-ests}, Figure \ref{fig:emp-parm}). We also infer that $R_{e_1} > R_{e_s}$ across date-rounding conditions, coinciding with an earlier burst of transmission in agreement with \citet{kuhnert_tuberculosis_2018}. However, $R_{e_1}$ decreases slightly date date-rounding (mean posterior estimates of $2.77$, $2.74$, $2.66$ for day, month and year rounding)(Table \ref{tab:emp-ests}), while $R_{e_2}$ increases (1.4, 1.41, 1.53 from day to year rounding). This was likely caused by the higher number of samples in the second sampling interval, from roughly 2002 to 2010, such that compressing sampling times drive drove a signal for higher transmission in the second interval with longer periods between sampling in the first interval at year resolution. Again, this shows that distribution of sampling times for empirical data, which is largely unpredictable, modulate the effects of date-rounding.
+
+\section*{Discussion}
+The results of the simulation study and analyses of empirical data support our hypothesis that phylodynamic inference is most biased where the temporal resolution lost in date rounding exceeds the average time for one substitution to arise. In the both the simulation study and empirical analyses, the viral datasets (H1N1 and SARS-CoV-2) display the greatest bias in mean posterior reproductive number, substitution rate, and tMRCA when rounding to the month or year, with the average substitution time being less than one month in both simulation conditions. The \textit{S. aureus} data provide an intermediate case, with estimated parameters displaying bias when rounding dates to the year (average substitution time between the order of months to a year). Lastly, the \textit{M. tuberculosis} data also provide supporting evidence in not displaying any notable bias between estimates at day, month, or year date-rounding. This is expected because the average substitution time longer than a year in all \textit{M. tuberculosis} analyses.  
+
+ We therefore propose the average substitution time as a rough practical threshold after which genomic epidemiologists can invariably expect date-rounding to distort inference. Genomic epidemiologists can make this assessment by calculating the average substitution time, $T_s$, as $T_s = [\textnormal{Genome Length (sites)}\times\textnormal{Evolutionary rate (subs/site/yr)}]^{-1}$ and checking whether $T_s < \frac{1}{12}$ (indicating substitutions arising faster than monthly) when justifying rounding to the day, or $T_s < 1$ (substitutions arising more than yearly) when justifying rounding to the month. In the more general terms, we propose that date rounding is problematic for fast-evolving RNA viruses, such as in the H1N1 and SARS-CoV-2 datasets. \textcolor{blue}{We urge others uploading data to repositories to include dates to the day where possible.} This will increase the added-value of phylodynamic analysis for future infectious disease threats. Rounding to the year is sufficient for slowly evolving bacteria such as \textit{M. tuberculosis}. We suggest case-by-case assessment for pathogens with intermediate average substitution times, such as the \textit{S. aureus} herein and other faster-evolving bacteria including \textit{Streptococcus}, multi-drug resistant \textit{Escherichia coli}, or \textit{Klebsiella pneumoniae} \citep{gorrie_antimicrobial-resistant_2018,sherry_multi-site_2022,xie_temporal_2024}. In the specific cases of \textit{S. aureus} and other high disease-burden bacteria with asymptomatic and/or community carriage, we suggest preserving dates as much as possible to recover maximal information given the additional work that is often dedicated to screening samples. Finally, we note that genome samples with or without rounded dates reflect considerable efforts in the field to collect and process samples. In the case where only low-resolution dates are available, we do not discourage phylodynamic analyses, but instead encourage additional analyses to test the effects of rounded dates, such as by including priors on sampling ranges.
+
+ We also strongly emphasise that this proposal is a rough guideline lacking rigorous mathematical derivation. Any degree of date-rounding may alter likelihood and parameter estimation in phylodynamic analyses. Other factors such as as the length of the sampling window, distribution of sampling times over this interval, and choice of tree prior also affect the direction and severity of bias when rounding dates.  
+
+Shorter sampling intervals can also exacerbate the bias due to date-rounding. For example, in the SARS-CoV-2 data and simulation conditions, most sequences originated over one month with the remainder towards the end of each of the previous two months. Bias for these data was greater for each parameter compared to otherwise similar H1N1 data, which had a more even distribution of sampling over three full months. This result is in line with previous results for ancient DNA data showing that date-rounding has negligible effects for timescales of millennia or longer, which we expect to span the average substitution time several-fold \citep{molak_2013_phylogenetic}. This emphasises the importance of accurate dates for phylodynamic datasets of emerging pathogens sequenced over shorter timescales, where results are likely to be the most urgent and reflect shorter sampling intervals.
+
+The choice of tree prior also affects bias when rounding dates. For example, the coalescent exponential tended to infer decreased substitution rates while the birth-death favoured increased substitution rates across simulated and empirical viral data. The inverse trend also arose for the tMRCA. This is because the birth-death draws additional information from clustered sampling times, which serves to elevate rates of substitution and transmission, while the coalescent conditions on these and relies more on the longer duration between sampling times at month resolution. \textcolor{blue}{These patterns emerged even for the coalescent exponential fit to the SARS-CoV-2 empirical and simulated data, for which it is a poorly fitting tree prior. This highlights that date rounding has a pervasive effect distinct from the effects of a poorly fitting tree prior.}
+
+Taken together, the results form the simulation study and empirical data show that although date-rounding biases epidemiological estimates in a theoretically predictable directions (upwards for transmission and substitution rates, downwards for tMRCA), the intensity of the bias is difficult to predict and varies with the distribution and span of sampling times as well as tree prior. We conclude that sufficiently accurate sampling times are essential where phylodynamic insight is needed to understand infectious disease epidemiology and evolution. There does not appear to be an clear way to adjust for the bias caused otherwise. Accurate sampling times will be essential for employing phylodynamics amid future infectious disease threats.
+
+We also acknowledge that while accurate sampling times are essential for reliable phylodynamic results, it may pose an unacceptable level of risk to patient confidentiality to release sampling times. We therefore emphasise the importance of methods that prioritise both patient confidentiality and data transparency and finish by discussing potential future solutions.
+
+\subsection*{Translating dates by random seeds}
+The functional component of phylodynamic data are the differences among genome sequences and among dates, rather than their absolute values. It may therefore be possible to protect patient confidentiality while sharing accurate dates by translating dates uniformly by a random number. This would protect the true sampling dates while preserving the relative times between them. For example, if the sampling times in a dataset of 3 genomes are 2000, 2001 and 2002, then data providers may randomly draw a number of 1000, which is kept secret, to shift dates. The genome-associated dates 2000, 2001 and 2002 are then shared as 3000, 3001 and 3002. While currently implausible, these translated dates are usable in phylodynamic analyses and preserve the distance between sampling times. Once results are returned the data provider can internally account for the translation in any estimated ages, such as node ages or the tMRCA, by subtracting 1000. For example if the estimated age of the outbreak (taken as the tMRCA) was 5 years before the most recent sample, then the data provider can privately estimate the outbreak's onset as 1997 (2002 - 5), while those conducting the analysis externally can only estimate the relative age of 5 years. In the same way, intervals of transmission parameters such as $R_e$ can be placed with respect to the true sampling times. Rates, such as growth or infection rates can also be accurately estimated via this method since these are not biased by shifting dates uniformly in time.
+
+\subsection*{Distributed computing}
+Approaches based on distributed computing, where data are analysed across remote servers, also offer promise for maximising data transparency and patient confidentiality. For example, \citet{santos_private_2022} recently developed a method to estimate phylogenetic trees from private genome data using distributed computing and quantum crytographic protocols. Routine phylodynamic analysis for genomic surveillance may also benefit from adopting protocols from so-called swarm learning approaches that allow artificial intelligence models in precision medicine to be trained across distributed datasets (together comprising a swarm) \citep{warnat-herresthal_swarm_2021}. Such approaches are in general complementary with hub-and-spoke networks, which are commonly used for storing sensitive pathogen genome data in national repositories \citep{hoang_austrakka_2022}. We remain optimistic that future advances in distributed computing can eliminate the need for date-rounding in phylodynamic analysis.
+
+\subsection*{Data Availability}
+All analyses and data used in this work can be accessed and run as a Snakemake pipline at \href{https://github.com/LeoFeatherstone/pdp}{https://github.com/LeoFeatherstone/pdp}.
+
+%\subsection*{Acknowledgements}
+\subsection*{Authors' Contributions}
+LAF designed the study, performed all analyses, and wrote the paper. DJI provided initial empirical data and contributed to writing of the manuscript. WW and SDG provided supervision and contributed to writing of the manuscript.
+
+\end{spacing}
+
+\bibliographystyle{natbib}
+\bibliography{refs}
+
+\subsection*{Supplementary Material}
+
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/simulation_variance_panel.pdf}
+    \caption{\textcolor{blue}{Mean posterior variance for parameters of interest for each replicate of simulated data varying across date resolution. Individual lines track mean posterior variance for each simulated dataset and boxplots are given to summarise variance in each condition at each date resolution. Rows correspond to individual parameters, columns correspond to simulation conditions (underlying parameters matching each empirical dataset), and colour corresponds to tree prior or reproductive number interval. (\textbf{A}) Mean posterior variance in substitution rate across simulation scenarios. (\textbf{B}) Posterior variance in tMRCA, a measure of the age of the population driving the outbreak. (\textbf{C}) Posterior variance in reproductive number reproductive number.}}
+    \label{fig:variance}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/empirical_sampling_times.pdf}
+    \caption{The number of samples over time for each empirical dataset. Date-rounding has the effect of moving each sampling within a month or year to the middle of that month or year ($15^{th}$ of the month or June $15^{th}$ of the year).}
+    \label{fig:sampling}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{empirical_densitrees.pdf}
+    \caption{Desnsitrees (overlaid posterior trees) for empirical data with columns corresponding to pathogen under each combination of date resolution and tree prior. For the H1N1 and SARS-CoV-2 treatments, Year resolution causes trees to collapse to instantaneous bursts.}
+    \label{fig:densitree}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{simulation_likelihood.pdf}
+    \caption{Adjusted phylodynamic likelihood against adjusted phylogenetic likelihood with panels corresponding to each simulation condition. Points correspond to mean posterior likelihood for each simulated dataset under each simulation condition. Colour corresponds to date resolution. Likelihoods are adjusted by subtracting the mean phylodynamic or phylogenetic likelihood at Day resolution from each the means under Month and year resolution. Resulting points therefore show the difference phylodynamic and phylogenetic likelihoods due to date-rounding with the point $(0, 0)$ representing likelihood at day resolution for each dataset. Month resolution generally results in smaller differences that Year resolution, suggesting coarser date resolution results in more perturbed likelihoods. There is also generally more error in phylodynamic likelihood than phylogenetic likelihood.}
+    \label{fig:sim-likeihood}
+\end{figure}
+
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Mean posterior estimates of substitution rate and tMRCA for empirical data with 95\% HPD in brackets.  The lower table gives mean posterior estimates of $R_{\bullet}$ for empirical data with 95\% HPD in brackets.}
+    \begin{tabular}{lllcc}
+        \toprule
+         & Tree Prior & Resolution & Substitution Rate (subs/site/yr) & tMRCA\\
+        \midrule
+        H1N1 & BD & Day & 4.31e-3 (3.7e-3, 4.9e-3) & 3.67e-1 (3.3e-1, 4.2e-1)\\
+        H1N1 & BD & Month & 3.9e-3 (3.2e-3, 4.6e-3) & 3.53e-1 (3.1e-1, 4.1e-1)\\
+        H1N1 & CE & Day & 3.87e-3 (3.2e-3, 4.5e-3) & 4.25e-1 (3.6e-1, 5.0e-1)\\
+        H1N1 & CE & Month & 3.17e-3 (2.6e-3, 3.8e-3) & 4.59e-1 (3.8e-1, 5.6e-1)\\
+        \midrule
+        SARS-CoV-2 & BD & Day & 2.47e-4 (1.1e-4, 4.5e-4) & 1.45e-1 (1.4e-1, 1.5e-1)\\
+        SARS-CoV-2 & BD & Month & 6.56e-4 (3.3e-4, 1.1e-3) & 1.7e-1 (1.7e-1, 1.7e-1)\\
+        SARS-CoV-2 & CE & Day & 2.37e-4 (9.1e-5, 4.7e-4) & 2.03e-1 (1.4e-1, 3.6e-1)\\
+        SARS-CoV-2 & CE & Month & 4.34e-5 (4.4e-6, 1.4e-4) & 1.6 (2.9e-1, 5.9)\\
+        \midrule
+        \textit{S. aureus} & BD & Day & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \textit{S. aureus} & BD & Month & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \textit{S. aureus} & BD & Year & 1e-5 (1e-5, 1e-5) & 3e+01 (3e+01, 3e+01)\\
+        \midrule
+        \textit{M. tuberculosis} & BD & Day & 1.02e-7 (6.5e-8, 1.4e-7) & 2.17e+01 (1.7e+1, 3.2e+1)\\
+        \textit{M. tuberculosis} & BD & Month & 1.02e-7 (6.6e-8, 1.4e-7) & 2.17e+01 (1.7e+1, 3.2e+1)\\
+        \textit{M. tuberculosis} & BD & Year & 9.86e-8 (6.2e-8, 1.4e-7) & 2.25e+01 (1.8e+1, 3.4e+1)\\
+\bottomrule
+    \end{tabular}
+
+    \label{tab:emp-ests}
+\end{table}
+
+\begin{table}[H]
+    \ContinuedFloat
+    \centering
+    \small
+    \begin{tabular}{lllccc}
+    \toprule
+     & Tree Prior & Resolution & $R_0$ & $R_{e_1}$ & $R_{e_2}$\\
+    \midrule
+    H1N1 & BD & Day & 1.08 (1.1, 1.1) & - & -\\
+    H1N1 & BD & Month & 1.14 (1.1, 1.2) & - & -\\
+    H1N1 & CE & Day & 1.14 (1.1, 1.2) & - & -\\
+    H1N1 & CE & Month & 1.13 (1.1, 1.2) & - & -\\
+    \midrule
+    SARS-CoV-2 & BD & Day & 1.2 (9.3e-1, 1.6) & - & -\\
+    SARS-CoV-2 & BD & Month & 5.85 (3.7, 9.0) & - & -\\
+    SARS-CoV-2 & CE & Day & 1 (9.6e-1, 1.0) & - & -\\
+    SARS-CoV-2 & CE & Month & 1.01 (9.8e-1, 1.1) & - & -\\
+    \midrule
+    \textit{S. aureus} & BD & Day & - & 1.57 (1.5, 1.7) & 6.56e-1 (5.1e-1, 8.0e-1)\\
+    \textit{S. aureus} & BD & Month & - & 1.56 (1.5, 1.7) & 6.78e-1 (5.4e-1, 8.3e-1)\\
+    \textit{S. aureus} & BD & Year & - & 1.73 (1.6, 1.8) & 3.71e-1 (1.9e-1, 5.4e-1)\\
+    \midrule
+    \textit{M. tuberculosis} & BD & Day & - & 2.77 (5.8e-1, 5.3) & 1.4 (7.2e-1, 2.7)\\
+    \textit{M. tuberculosis} & BD & Month & - & 2.74 (5.7e-1, 5.0) & 1.41 (7.4e-1, 2.7)\\
+    \textit{M. tuberculosis} & BD & Year & - & 2.66 (4.6e-1, 5.1) & 1.53 (8.1e-1, 2.9)\\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\end{document}
