@@ -10,6 +10,8 @@ analysis/logs
 **/.Rhistory
 
 # Overleaf things
+*.tex
+*.bst
 *.aux
 *.glo
 *.idx
