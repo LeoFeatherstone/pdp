@@ -163,3 +163,22 @@ rule empirical_analysis_CE:
         """
         beast -overwrite -working -seed {params.seed} -statefile {params.statefile} -D "aln-file={input.data},microbe={wildcards.virus},res={wildcards.res},date-group={params.date_group}" {input.xml}
         """
+
+rule empirical_analysis_MTBD:
+    conda: "envs/beast.yaml"
+    input: 
+        data="empirical_data/h3n2.fasta",
+        xml="empirical_data/h3n2_MTBD_SC.xml",
+        beast_loaded="logs/beast.version"
+    output: 
+        multiext("empirical_data/h1n1_BD_SC_{res}.", "trees", "log")
+    params: 
+        seed=4321,
+        date_group=gen_date_group,
+        statefile="empirical_data/h1n1_BD_SC_{res}.state"
+    resources:
+        runtime=300 # defined in minutes
+    shell:
+        """
+        beast -overwrite -working -seed {params.seed} -statefile {params.statefile} -D "aln-file={input.data},microbe=h3n2,res={wildcards.res},date-group={params.date_group}" {input.xml}
+        """
