@@ -18,8 +18,15 @@ def gen_date_group(wildcards):
 
 rule all:
     input: 
+        # Main analyses
         "processed_simulation_posteriors/ess.RData",
-        "processed_simulation_posteriors/posteriors.RData"
+        "processed_simulation_posteriors/posteriors.RData" #,        # Supplementary analyses
+        # "empirical_data/h3n2_MTBD_SC_Day-Fixed.trees",
+        # "empirical_data/h3n2_MTBD_SC_Day-Fixed.log",
+        # "empirical_data/h3n2_MTBD_SC_Month-Fixed.trees",
+        # "empirical_data/h3n2_MTBD_SC_Month-Fixed.log",
+        # "empirical_data/h3n2_MTBD_SC_Year-Fixed.trees",
+        # "empirical_data/h3n2_MTBD_SC_Year-Fixed.log"
 
 
 rule beast_version:
@@ -162,4 +169,23 @@ rule empirical_analysis_CE:
     shell:
         """
         beast -overwrite -working -seed {params.seed} -statefile {params.statefile} -D "aln-file={input.data},microbe={wildcards.virus},res={wildcards.res},date-group={params.date_group}" {input.xml}
+        """
+
+rule empirical_analysis_MTBD:
+    conda: "envs/beast.yaml"
+    input: 
+        data="empirical_data/h3n2.fasta",
+        xml="empirical_data/h3n2_MTBD_SC.xml",
+        beast_loaded="logs/beast.version"
+    output: 
+        multiext("empirical_data/h3n2_MTBD_SC_{res}.", "trees", "log")
+    params: 
+        seed=4321,
+        date_group=gen_date_group,
+        statefile="empirical_data/h3n2_MTBD_SC_{res}.state"
+    resources:
+        runtime=300 # defined in minutes
+    shell:
+        """
+        beast -overwrite -working -seed {params.seed} -statefile {params.statefile} -D "aln-file={input.data},microbe=h3n2,res={wildcards.res},date-group={params.date_group}" {input.xml}
         """

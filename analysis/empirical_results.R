@@ -18,8 +18,8 @@ library(kableExtra)
 # Get the list of .log files in the directory
 log_files <- list.files("analysis/empirical_data", pattern = "\\.log$", full.names = TRUE)
 
-# Read and combine the .log files into lists
-traces <- lapply(log_files, tracerer::parse_beast_tracelog_file)
+# Read and combine the .log files into lists. Filter H3N2 for the moment
+traces <- lapply(log_files[!grepl("h3n2", log_files)], tracerer::parse_beast_tracelog_file)
 names(traces) <- basename(log_files)
 
 # Merge lists into a single data frame
@@ -391,4 +391,69 @@ ggsave(
     plot = epop_plot,
     filename = "figures/empirical_effpop.pdf",
     dpi = 300, width = 6, height = 3
+)
+
+### Supplementary H3N2 Figures
+# Get the list of .log files in the directory
+log_files <- list.files("analysis/empirical_data", pattern = "h3n2.+\\.log$", full.names = TRUE)
+
+# Read and combine the .log files into lists. Filter only H3N2
+traces <- lapply(log_files, tracerer::parse_beast_tracelog_file)
+names(traces) <- basename(log_files)
+
+# Merge lists into a single data frame
+h3n2_data <- traces %>%
+    bind_rows(.id = "file") %>%
+    filter(Sample > 25000000) %>%
+    separate_wider_delim(
+        file,
+        delim = "_", names = c("organism", "treePrior", "clock", "resolution"),
+    ) %>%
+    select(!matches("rate.+|freq.+")) %>%
+    filter(Sample > 25000000) %>%
+    mutate(resolution = gsub(pattern = "-Fixed[.]log", replacement = "", resolution)) %>%
+    pivot_longer(
+        cols = matches("R0\\.\\d"),
+        names_to = "interval", values_to = "reproductiveNumber"
+    ) %>%
+    pivot_longer(
+        cols = c(treeHeight, clockRate, reproductiveNumber),
+        names_to = "parameter", values_to = "value"
+    ) %>%
+    mutate(
+        interval = ifelse(parameter == "reproductiveNumber", interval, "N/A")
+    )
+    
+plot <- ggplot(
+    h3n2_data,
+    aes(x = resolution, y = value, fill = interval)
+) +
+geom_violin(alpha = 0.5, scale = "width", draw_quantiles = c(0.025, 0.5, 0.975)) +
+facet_wrap(
+    ~factor(parameter, levels = c("clockRate", "treeHeight", "reproductiveNumber")), 
+    nrow = 1, scales = "free",
+    labeller = as_labeller(c(
+        reproductiveNumber = "italic(R[0])",
+        clockRate = "Substitution~rate~(subs/site/yr)",
+        treeHeight = "tMRCA~(yrs)"
+    ), label_parsed), 
+    strip.position = "left"
+) +
+labs(y = NULL, x = "Date resolution") +
+scale_fill_manual(
+    values = c("R0.1" = "purple", "R0.2" = "green", "N/A" = "dodgerblue"),
+    labels = c( "N/A", ~ italic(R[0]) ~ Hong~Kong , ~ italic(R[0]) ~ New ~ Zealand)
+) +
+theme_bw() +
+theme(
+    legend.position = "bottom",
+    text = element_text(size = 14),
+    strip.background = element_blank(),
+    strip.placement = "outside"
+)
+ggsave(
+    plot,
+    file = "figures/h3n2_parms.pdf",
+    dpi = 300,
+    height = 6, width = 8, units = "in"
 )

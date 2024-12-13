@@ -1,4 +1,4 @@
->EU856841_HongKong_2005.34246575_2005-06-15_2005-05-15_2005-05-05
+>EU856841|HongKong|2005.34246575_2005-06-15_2005-05-15_2005-05-05
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -29,7 +29,7 @@ cattaaacaa ccggttccag atcaaaggcg tcgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU856989_HongKong_2002.58356164_2002-06-15_2002-08-15_2002-08-01
+>EU856989|HongKong|2002.58356164_2002-06-15_2002-08-15_2002-08-01
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -60,7 +60,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->CY039495_HongKong_2004.5890411_2004-06-15_2004-08-15_2004-08-03
+>CY039495|HongKong|2004.5890411_2004-06-15_2004-08-15_2004-08-03
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -91,7 +91,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 taa------- ---------- --
->EU856853_HongKong_2001.17808219_2001-06-15_2001-03-15_2001-03-06
+>EU856853|HongKong|2001.17808219_2001-06-15_2001-03-15_2001-03-06
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtacca aacgggacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -122,7 +122,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtggga ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857026_HongKong_2003.51232877_2003-06-15_2003-07-15_2003-07-07
+>EU857026|HongKong|2003.51232877_2003-06-15_2003-07-15_2003-07-07
 ---------- ---------- ---------a tgaaggctat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -153,7 +153,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 ttctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU856916_HongKong_2002.26849315_2002-06-15_2002-04-15_2002-04-08
+>EU856916|HongKong|2002.26849315_2002-06-15_2002-04-15_2002-04-08
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -184,7 +184,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857018_HongKong_2001.85479452_2001-06-15_2001-11-15_2001-11-08
+>EU857018|HongKong|2001.85479452_2001-06-15_2001-11-15_2001-11-08
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -215,7 +215,7 @@ cattaaacaa ccggtcccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta gatgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857052_HongKong_2002.9890411_2002-06-15_2002-12-15_2002-12-28
+>EU857052|HongKong|2002.9890411_2002-06-15_2002-12-15_2002-12-28
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aagcttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -246,7 +246,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857042_HongKong_2004.61917808_2004-06-15_2004-08-15_2004-08-14
+>EU857042|HongKong|2004.61917808_2004-06-15_2004-08-15_2004-08-14
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -277,7 +277,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU856945_HongKong_2001.5369863_2001-06-15_2001-07-15_2001-07-15
+>EU856945|HongKong|2001.5369863_2001-06-15_2001-07-15_2001-07-15
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtacca aacggtacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -308,7 +308,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU856865_HongKong_2001.21643836_2001-06-15_2001-03-15_2001-03-21
+>EU856865|HongKong|2001.21643836_2001-06-15_2001-03-15_2001-03-21
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -339,7 +339,7 @@ cattgaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tattgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->CY038959_HongKong_2004.19178082_2004-06-15_2004-03-15_2004-03-11
+>CY038959|HongKong|2004.19178082_2004-06-15_2004-03-15_2004-03-11
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -370,7 +370,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 taaaaa---- ---------- --
->EU857065_HongKong_2002.09315068_2002-06-15_2002-02-15_2002-02-03
+>EU857065|HongKong|2002.09315068_2002-06-15_2002-02-15_2002-02-03
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -401,7 +401,7 @@ cattgaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tattgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU856838_HongKong_2005.33972603_2005-06-15_2005-05-15_2005-05-05
+>EU856838|HongKong|2005.33972603_2005-06-15_2005-05-15_2005-05-05
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -432,7 +432,7 @@ cattaaacaa ccggttccag atcaaaggcg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857037_HongKong_2004.6_2004-06-15_2004-08-15_2004-08-07
+>EU857037|HongKong|2004.6_2004-06-15_2004-08-15_2004-08-07
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -463,7 +463,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU856904_HongKong_2000.09863014_2000-06-15_2000-02-15_2000-02-06
+>EU856904|HongKong|2000.09863014_2000-06-15_2000-02-15_2000-02-06
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg taaatgacaa cagcacggca acgctgtgcc
 tgggacacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccacattg
@@ -494,7 +494,7 @@ cattaaacaa ccggtttcag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->CY043768_HongKong_2005.52328767_2005-06-15_2005-07-15_2005-07-10
+>CY043768|HongKong|2005.52328767_2005-06-15_2005-07-15_2005-07-10
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -525,7 +525,7 @@ cattaaacaa ccggttccag atcaaaggcg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaa-
 ---------- ---------- --
->EU856859_HongKong_2003.16438356_2003-06-15_2003-03-15_2003-03-01
+>EU856859|HongKong|2003.16438356_2003-06-15_2003-03-15_2003-03-01
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aagcttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -556,7 +556,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857043_HongKong_2004.63013699_2004-06-15_2004-08-15_2004-08-18
+>EU857043|HongKong|2004.63013699_2004-06-15_2004-08-15_2004-08-18
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -587,7 +587,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->CY040314_HongKong_2004.73150685_2004-06-15_2004-09-15_2004-09-24
+>CY040314|HongKong|2004.73150685_2004-06-15_2004-09-15_2004-09-24
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -618,7 +618,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ttgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 taaaa----- ---------- --
->EU856863_HongKong_2001.20547945_2001-06-15_2001-03-15_2001-03-16
+>EU856863|HongKong|2001.20547945_2001-06-15_2001-03-15_2001-03-16
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtacca aacgggacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -649,7 +649,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857068_HongKong_2003.10410959_2003-06-15_2003-02-15_2003-02-08
+>EU857068|HongKong|2003.10410959_2003-06-15_2003-02-15_2003-02-08
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aagcttcccg gaaataacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -680,7 +680,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->CY039239_HongKong_2005.37534247_2005-06-15_2005-05-15_2005-05-18
+>CY039239|HongKong|2005.37534247_2005-06-15_2005-05-15_2005-05-18
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -711,7 +711,7 @@ cattaaacaa ccggttccag atcaaaggcg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 taaaaa---- ---------- --
->EU857031_HongKong_2001.98630137_2001-06-15_2001-12-15_2001-12-27
+>EU857031|HongKong|2001.98630137_2001-06-15_2001-12-15_2001-12-27
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tgggacacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -742,7 +742,7 @@ cattaaacaa tcggttccag aacaaaggtg ttgaactgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857033_HongKong_2001.99178082_2001-06-15_2001-12-15_2001-12-28
+>EU857033|HongKong|2001.99178082_2001-06-15_2001-12-15_2001-12-28
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtacca aacgggacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -773,7 +773,7 @@ cattaaacaa ccggtcccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->CY038751_HongKong_2005.54246575_2005-06-15_2005-07-15_2005-07-17
+>CY038751|HongKong|2005.54246575_2005-06-15_2005-07-15_2005-07-17
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -804,7 +804,7 @@ cattaaacaa ccggttccag atcaaaggcg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY038671_HongKong_2004.8_2004-06-15_2004-10-15_2004-10-19
+>CY038671|HongKong|2004.8_2004-06-15_2004-10-15_2004-10-19
 ---------- ---------- ------acca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -835,7 +835,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->EU857011_HongKong_2005.56986301_2005-06-15_2005-07-15_2005-07-27
+>EU857011|HongKong|2005.56986301_2005-06-15_2005-07-15_2005-07-27
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -866,7 +866,7 @@ cattaaacaa ccggttccag atcaaaggcg tcgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857024_HongKong_2004.51506849_2004-06-15_2004-07-15_2004-07-07
+>EU857024|HongKong|2004.51506849_2004-06-15_2004-07-15_2004-07-07
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgcctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacaa tagtgaaaac aatcacgaat gaccaaattg
@@ -897,7 +897,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->EU857084_HongKong_2003.73972603_2003-06-15_2003-09-15_2003-09-28
+>EU857084|HongKong|2003.73972603_2003-06-15_2003-09-15_2003-09-28
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -928,7 +928,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga ----------
 ---------- ---------- --
->CY011728_NewZealand_2003.44383562_2003-06-15_2003-06-15_2003-06-12
+>CY011728|NewZealand|2003.44383562_2003-06-15_2003-06-15_2003-06-12
 ---------- ---------- -----aacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -959,7 +959,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatat aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY007395_NewZealand_2004.63287671_2004-06-15_2004-08-15_2004-08-19
+>CY007395|NewZealand|2004.63287671_2004-06-15_2004-08-15_2004-08-19
 ---------- ---------- ------acca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga cagtgaaaac aatcacgaat gaccaaattg
@@ -990,7 +990,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY007059_NewZealand_2003.50958904_2003-06-15_2003-07-15_2003-07-05
+>CY007059|NewZealand|2003.50958904_2003-06-15_2003-07-15_2003-07-05
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -1021,7 +1021,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatat aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY008139_NewZealand_2000.65479452_2000-06-15_2000-08-15_2000-08-27
+>CY008139|NewZealand|2000.65479452_2000-06-15_2000-08-15_2000-08-27
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1052,7 +1052,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgtcttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY007011_NewZealand_2003.61917808_2003-06-15_2003-08-15_2003-08-14
+>CY007011|NewZealand|2003.61917808_2003-06-15_2003-08-15_2003-08-14
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgcctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -1083,7 +1083,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatat aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY008196_NewZealand_2003.54520548_2003-06-15_2003-07-15_2003-07-19
+>CY008196|NewZealand|2003.54520548_2003-06-15_2003-07-15_2003-07-19
 ---------- ---------- --attaacca tgaagactat cattgctttg agctacattc
 tatgcctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -1114,7 +1114,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatat aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY007227_NewZealand_2003.54246575_2003-06-15_2003-07-15_2003-07-17
+>CY007227|NewZealand|2003.54246575_2003-06-15_2003-07-15_2003-07-17
 ---------- ---------- -----aacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -1145,7 +1145,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatat aaagattgga
 tcctatggat ttcctttacc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY011020_NewZealand_2000.64109589_2000-06-15_2000-08-15_2000-08-22
+>CY011020|NewZealand|2000.64109589_2000-06-15_2000-08-15_2000-08-22
 ---------- ---------- --attaacca tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1176,7 +1176,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgtcttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY008828_NewZealand_2000.79178082_2000-06-15_2000-10-15_2000-10-16
+>CY008828|NewZealand|2000.79178082_2000-06-15_2000-10-15_2000-10-16
 ---------- ---------- -----aacca tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg taaatgacaa aagcacggca acgctgtgcc
 tgggacacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccacattg
@@ -1207,7 +1207,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcagtaat
 ta-------- ---------- --
->CY009404_NewZealand_2001.50410959_2001-06-15_2001-07-15_2001-07-04
+>CY009404|NewZealand|2001.50410959_2001-06-15_2001-07-15_2001-07-04
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1238,7 +1238,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagttgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgtcttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY008620_NewZealand_2005.66849315_2005-06-15_2005-09-15_2005-09-01
+>CY008620|NewZealand|2005.66849315_2005-06-15_2005-09-15_2005-09-01
 ---------- ---------- --attaacca tgaagactat cattgctttg agctacactc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -1269,7 +1269,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY007795_NewZealand_2005.17534247_2005-06-15_2005-03-15_2005-03-06
+>CY007795|NewZealand|2005.17534247_2005-06-15_2005-03-15_2005-03-06
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -1300,7 +1300,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY007923_NewZealand_2002.48219178_2002-06-15_2002-06-15_2002-06-25
+>CY007923|NewZealand|2002.48219178_2002-06-15_2002-06-15_2002-06-25
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgcctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgtc
 tggggcatca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1331,7 +1331,7 @@ cattgaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattggg
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tattgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcagtaat
 ta-------- ---------- --
->CY007203_NewZealand_2003.53972603_2003-06-15_2003-07-15_2003-07-17
+>CY007203|NewZealand|2003.53972603_2003-06-15_2003-07-15_2003-07-17
 ---------- ---------- -----aacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -1362,7 +1362,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatat aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY012432_NewZealand_2000.81643836_2000-06-15_2000-10-15_2000-10-25
+>CY012432|NewZealand|2000.81643836_2000-06-15_2000-10-15_2000-10-25
 ---------- ---------- -------cca tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1393,7 +1393,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgtcttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcagcat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY013096_NewZealand_2002.55890411_2002-06-15_2002-07-15_2002-07-24
+>CY013096|NewZealand|2002.55890411_2002-06-15_2002-07-15_2002-07-24
 ---------- ---------- --attaacca tgaagactat cattgctttg agctacattt
 tatgcctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1424,7 +1424,7 @@ cattgaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tattgtttta ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcagtaa-
 ---------- ---------- --
->CY008652_NewZealand_2005.66849315_2005-06-15_2005-09-15_2005-09-01
+>CY008652|NewZealand|2005.66849315_2005-06-15_2005-09-15_2005-09-01
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -1455,7 +1455,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcgtgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 taa------- ---------- --
->CY008380_NewZealand_2005.54246575_2005-06-15_2005-07-15_2005-07-17
+>CY008380|NewZealand|2005.54246575_2005-06-15_2005-07-15_2005-07-17
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -1486,7 +1486,7 @@ cattaaacaa ccggttccag atcaaaggcg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY012376_NewZealand_2003.53972603_2003-06-15_2003-07-15_2003-07-17
+>CY012376|NewZealand|2003.53972603_2003-06-15_2003-07-15_2003-07-17
 ---------- ---------- --attaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -1517,7 +1517,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatat aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaa-
 ---------- ---------- --
->CY011064_NewZealand_2000.67671233_2000-06-15_2000-09-15_2000-09-04
+>CY011064|NewZealand|2000.67671233_2000-06-15_2000-09-15_2000-09-04
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg taaatgacaa cagcacggca acgctgtgcc
 tgggacacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccacattg
@@ -1548,7 +1548,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcagtaat
 ta-------- ---------- --
->CY013072_NewZealand_2001.36986301_2001-06-15_2001-05-15_2001-05-15
+>CY013072|NewZealand|2001.36986301_2001-06-15_2001-05-15_2001-05-15
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg caaatgacaa cagcacggca acgctgtgcc
 tgggacacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gacaacattg
@@ -1579,7 +1579,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttaa gtgcagtaat
 ta-------- ---------- --
->CY007667_NewZealand_2002.35616438_2002-06-15_2002-05-15_2002-05-10
+>CY007667|NewZealand|2002.35616438_2002-06-15_2002-05-15_2002-05-10
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattt
 tatgcctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgtc
 tggggcatca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1610,7 +1610,7 @@ cattgaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattggg
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tattgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcagtaat
 ta-------- ---------- --
->CY016467_NewZealand_2005.60821918_2005-06-15_2005-08-15_2005-08-11
+>CY016467|NewZealand|2005.60821918_2005-06-15_2005-08-15_2005-08-11
 ---------- --------tt ctattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -1641,7 +1641,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY008388_NewZealand_2005.57260274_2005-06-15_2005-07-15_2005-07-29
+>CY008388|NewZealand|2005.57260274_2005-06-15_2005-07-15_2005-07-29
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -1672,7 +1672,7 @@ cattaaacaa ccggttccag atcaaaggcg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY011960_NewZealand_2000.6630137_2000-06-15_2000-08-15_2000-08-30
+>CY011960|NewZealand|2000.6630137_2000-06-15_2000-08-15_2000-08-30
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattt
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 tggggcacca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1703,7 +1703,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgtcttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY008420_NewZealand_2005.58630137_2005-06-15_2005-08-15_2005-08-03
+>CY008420|NewZealand|2005.58630137_2005-06-15_2005-08-15_2005-08-03
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
@@ -1734,7 +1734,7 @@ cattaaacaa ccggttccag atcaaaggcg ttgagctgaa gtcaggatac aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY012640_NewZealand_2002.43287671_2002-06-15_2002-06-15_2002-06-07
+>CY012640|NewZealand|2002.43287671_2002-06-15_2002-06-15_2002-06-07
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattt
 tatgcctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgtc
 tggggcatca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1765,7 +1765,7 @@ cattgaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattggg
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tattgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcagtaat
 ta-------- ---------- --
->CY012000_NewZealand_2002.52054795_2002-06-15_2002-07-15_2002-07-10
+>CY012000|NewZealand|2002.52054795_2002-06-15_2002-07-15_2002-07-10
 ---------- ---------- ---------a tgaagactat cattgctttg agctacattt
 tatgcctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgtc
 tggggcatca tgcagtgcca aacggaacgc tagtgaaaac aatcacgaat gaccaaattg
@@ -1796,7 +1796,7 @@ cattgaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatac aaagattggg
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tattgttttg ctggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcagtaat
 taa------- ---------- --
->CY007267_NewZealand_2003.62739726_2003-06-15_2003-08-15_2003-08-17
+>CY007267|NewZealand|2003.62739726_2003-06-15_2003-08-15_2003-08-17
 ---------- ---------- -tattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacaaat gaccaaattg
@@ -1827,7 +1827,7 @@ cattaaacaa ccggttccag atcaaaggtg ttgagctgaa gtcaggatat aaagattgga
 tcctatggat ttcctttgcc atatcatgtt ttttgctttg tgttgctttg ttggggttca
 tcatgtgggc ctgccaaaaa ggcaacatta ggtgcaacat ttgcatttga gtgcattaat
 ta-------- ---------- --
->CY002938_NewZealand_2004.68767123_2004-06-15_2004-09-15_2004-09-08
+>CY002938|NewZealand|2004.68767123_2004-06-15_2004-09-15_2004-09-08
 ---------- --ggataatt ctattaacca tgaagactat cattgctttg agctacattc
 tatgtctggt tttcgctcaa aaacttcccg gaaatgacaa cagcacggca acgctgtgcc
 ttgggcacca tgcagtacca aacggaacga tagtgaaaac aatcacgaat gaccaaattg
