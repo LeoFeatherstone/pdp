@@ -18,8 +18,15 @@ def gen_date_group(wildcards):
 
 rule all:
     input: 
+        # Main analyses
         "processed_simulation_posteriors/ess.RData",
-        "processed_simulation_posteriors/posteriors.RData"
+        "processed_simulation_posteriors/posteriors.RData" #,        # Supplementary analyses
+        # "empirical_data/h3n2_MTBD_SC_Day-Fixed.trees",
+        # "empirical_data/h3n2_MTBD_SC_Day-Fixed.log",
+        # "empirical_data/h3n2_MTBD_SC_Month-Fixed.trees",
+        # "empirical_data/h3n2_MTBD_SC_Month-Fixed.log",
+        # "empirical_data/h3n2_MTBD_SC_Year-Fixed.trees",
+        # "empirical_data/h3n2_MTBD_SC_Year-Fixed.log"
 
 
 rule beast_version:
@@ -171,11 +178,11 @@ rule empirical_analysis_MTBD:
         xml="empirical_data/h3n2_MTBD_SC.xml",
         beast_loaded="logs/beast.version"
     output: 
-        multiext("empirical_data/h1n1_BD_SC_{res}.", "trees", "log")
+        multiext("empirical_data/h3n2_MTBD_SC_{res}.", "trees", "log")
     params: 
         seed=4321,
         date_group=gen_date_group,
-        statefile="empirical_data/h1n1_BD_SC_{res}.state"
+        statefile="empirical_data/h3n2_MTBD_SC_{res}.state"
     resources:
         runtime=300 # defined in minutes
     shell:
