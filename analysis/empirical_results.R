@@ -389,8 +389,9 @@ h3n2_data <- traces %>%
     mutate(
         interval = ifelse(parameter == "reproductiveNumber", interval, "N/A")
     )
-    
-plot <- ggplot(
+
+# Plot H3N2 parameters
+plot_parms <- ggplot(
     h3n2_data,
     aes(x = resolution, y = value, fill = interval)
 ) +
@@ -418,7 +419,7 @@ theme(
     strip.placement = "outside"
 )
 ggsave(
-    plot,
+    plot_parms,
     file = "figures/h3n2_parms.pdf",
     dpi = 300,
     height = 6, width = 8, units = "in"
