@@ -189,7 +189,7 @@ Phylodynamic and phylogenetic likelihoods also diverge where the loss in date re
 \end{figure}
 
 \subsubsection*{H1N1}
-Mean posterior $R_0$ increases from day to month resolution for the birth-death (1.08 to 1.14), yet remains near-identical for the coalescent exponential (1.14 to 1.13) (Table \ref{tab:emp-ests}). The mean posterior substitution rate also decreases for both tree priors across day to month resolution ($4.3\times10^{-3}$ to $3.9\times10^{-3}$ and $3.9\times10^{-3}$ to $3.2\times10^{-3}$ for the birth-death and coalescent exponential respectively) (Table \ref{tab:emp-ests}). The posterior tMRCA also differs between tree priors mirroring substitution rate, with a decrease from date to month resolution for the birth-death and an increase for the coalescent exponential. For the coalescent exponential, we can attribute the decrease in reproductive number and substitution rate from day to month resolution to samples being spread further in time (Figure \ref{fig:sampling}), which drives the signal for and an older outbreak and lower transmission rates. While the same is true for the sampling distribution under the birth-death, the additional information it draws from identical sampling dates as month-resolution likely inflates the mean posterior reproductive number despite the signal for a lower substitution rate and older outbreak.
+Mean posterior $R_0$ increases from day to month resolution for the birth-death (1.07 to 1.12), yet remains near-identical for the coalescent exponential (1.13 to 1.12) (Table \ref{tab:emp-ests}). The mean posterior substitution rate also decreases for both tree priors across day to month resolution ($3.8\times10^{-3}$ to $3.1\times10^{-3}$ and $3.01\times10^{-3}$ to $2.62\times10^{-3}$ for the birth-death and coalescent exponential respectively) (Table \ref{tab:emp-ests}). The posterior tMRCA also differs between tree priors mirroring substitution rate, with a decrease from date to month resolution for the birth-death and an increase for the coalescent exponential. For the coalescent exponential, we can attribute the decrease in reproductive number and substitution rate from day to month resolution to samples being spread further in time (Figure \ref{fig:sampling}), which drives the signal for and an older outbreak and lower transmission rates. While the same is true for the sampling distribution under the birth-death, the additional information it draws from identical sampling dates as month-resolution likely inflates the mean posterior reproductive number despite the signal for a lower substitution rate and older outbreak.
 
 \subsubsection*{SARS-CoV-2}
 Under the birth-death, the SARS-CoV-2 dataset behaves as expected, with an increase in posterior $R_0$ from day to month rounding. In particular, rounding to the month results in a high, yet plausible value of $R_0 = 5.972$ (Table \ref{tab:emp-ests}). Under the coalescent exponential, the mean posterior $R_0$ remains near identical across day to month treatments ($1.00$ to $1.01$ respectively). We again note that the coalescent exponential is included for completeness for the SARS-CoV-2 dataset, but is not an appropriate choice of model in practice due to the near complete-sequencing of the original transmission cluster. Thus, poor model-fit is probably the cause of unrealistic estimates of $R_0$.
@@ -291,10 +291,10 @@ LAF designed the study, performed all analyses, and wrote the paper. DJI provide
         \toprule
          & Tree Prior & Resolution & Substitution Rate (subs/site/yr) & tMRCA\\
         \midrule
-        H1N1 & BD & Day & 4.31e-3 (3.7e-3, 4.9e-3) & 3.67e-1 (3.3e-1, 4.2e-1)\\
-        H1N1 & BD & Month & 3.9e-3 (3.2e-3, 4.6e-3) & 3.53e-1 (3.1e-1, 4.1e-1)\\
-        H1N1 & CE & Day & 3.87e-3 (3.2e-3, 4.5e-3) & 4.25e-1 (3.6e-1, 5.0e-1)\\
-        H1N1 & CE & Month & 3.17e-3 (2.6e-3, 3.8e-3) & 4.59e-1 (3.8e-1, 5.6e-1)\\
+        H1N1 & BD & Day & 3.76e-3 (2.7e-3, 4.9e-3) & 4.04e-1 (3.4e-1, 5.1e-1)\\
+        H1N1 & BD & Month & 3.14e-3 (2.3e-3, 4.0e-3) & 4.12e-1 (3.3e-1, 5.2e-1)\\
+        H1N1 & CE & Day & 3.01e-3 (2.0e-3, 4.1e-3) & 4.86e-1 (3.8e-1, 6.5e-1)\\
+        H1N1 & CE & Month & 2.62e-3 (1.8e-3, 3.4e-3) & 5.04e-1 (3.9e-1, 6.8e-1)\\
         \midrule
         SARS-CoV-2 & BD & Day & 2.47e-4 (1.1e-4, 4.5e-4) & 1.45e-1 (1.4e-1, 1.5e-1)\\
         SARS-CoV-2 & BD & Month & 6.56e-4 (3.3e-4, 1.1e-3) & 1.7e-1 (1.7e-1, 1.7e-1)\\
@@ -322,10 +322,10 @@ LAF designed the study, performed all analyses, and wrote the paper. DJI provide
     \toprule
      & Tree Prior & Resolution & $R_0$ & $R_{e_1}$ & $R_{e_2}$\\
     \midrule
-    H1N1 & BD & Day & 1.08 (1.1, 1.1) & - & -\\
-    H1N1 & BD & Month & 1.14 (1.1, 1.2) & - & -\\
-    H1N1 & CE & Day & 1.14 (1.1, 1.2) & - & -\\
-    H1N1 & CE & Month & 1.13 (1.1, 1.2) & - & -\\
+    H1N1 & BD & Day & 1.07 (1.0, 1.1) & - & -\\
+    H1N1 & BD & Month & 1.12 (1.1, 1.2) & - & -\\
+    H1N1 & CE & Day & 1.13 (1.1, 1.2) & - & -\\
+    H1N1 & CE & Month & 1.12 (1.1, 1.2) & - & -\\
     \midrule
     SARS-CoV-2 & BD & Day & 1.2 (9.3e-1, 1.6) & - & -\\
     SARS-CoV-2 & BD & Month & 5.85 (3.7, 9.0) & - & -\\
