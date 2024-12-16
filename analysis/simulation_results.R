@@ -4,8 +4,6 @@
 
 library(tidyverse)
 library(latex2exp)
-library(plotly)
-library(htmlwidgets)
 
 ## TODO: Update path later
 trace <- readRDS("analysis/processed_simulation_posteriors/posteriors.RData")
@@ -62,42 +60,6 @@ posterior$factor <- factor(
         "italic(S.~aureus)", "italic(M.~tuberculosis)"
     )
 )
-
-### Handle Tree Stats
-# tree_stats <- tree_stats %>%
-#     mutate(
-#         id = paste(
-#             organism, treePrior, clockodel,
-#             resolution, replicate,
-#             sep = "_"
-#         )
-#     ) %>%
-#     filter(id %in% ess_passed) %>%
-#     ## REVERSING MISTAKES, I will be able to delete the next chunk when I rerun
-#     rename(
-#         "treePrior" = treePrior,
-#         "clockModel" = clockodel
-#     ) %>%
-#     mutate(
-#         resolution = case_when(
-#             resolution == "Day-Fixed" ~ "Year",
-#             resolution == "Month-Fixed" ~ "Month",
-#             resolution == "Year-Fixed" ~ "Day"
-#         )
-#     )
-
-# ## Making species a factor to plot with
-# tree_stats$factor <- factor(
-#     levels = c("h1n1", "sars-cov-2", "saureus", "tb"),
-#     tree_stats$organism,
-#     labels = c(
-#         "H1N1", "SARS-CoV-2",
-#         "italic(S.~aureus)", "italic(M.~tuberculosis)"
-#     )
-# )
-# ## Filter cols for binding later
-# tree_stats <- tree_stats %>%
-#     select(!c(organism, id))
 
 ## Simulation values to compare against
 rate_true <- data.frame(
@@ -186,7 +148,7 @@ clock_plot <- (posterior %>%
         scales = "free_y",
         labeller = label_parsed
     ) +
-    ylab(TeX("Substitution rate \\textit{(subs/site/time)}")) +
+    ylab(TeX("Substitution rate $\\textit{(subs/site/yr)}$")) +
     xlab("Date resolution") +
     guides(fill = "none", col = "none") +
     theme_bw() +
@@ -325,8 +287,7 @@ reproductive_number_plot <- (posterior %>%
         scales = "free",
         labeller = label_parsed
     ) +
-    ylab(TeX("\\textit{$R_{\\bullet}$}")) +
-    xlab("Date resolution") +
+    labs(y = TeX("\\textit{$R_{\\bullet}$}"), x = "Date resolution") +
     theme_bw() +
     theme(
         legend.title = element_blank(),
@@ -337,14 +298,15 @@ reproductive_number_plot <- (posterior %>%
 )
 
 ## Simulation Combined Parms plot
-cowplot::plot_grid(
+sim_panel_plot <- cowplot::plot_grid(
     labels = "AUTO",
     clock_plot, origin_plot, reproductive_number_plot,
     align = "v",
     nrow = 3
 )
 ggsave(
-    "figures/simulation_parm_panel.pdf",
+    plot = sim_panel_plot,
+    file = "figures/simulation_parm_panel.pdf",
     dpi = 300
 )
 
