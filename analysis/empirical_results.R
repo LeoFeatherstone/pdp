@@ -20,7 +20,7 @@ log_files <- list.files("analysis/empirical_data", pattern = "\\.log$", full.nam
 
 # Read and combine the .log files into lists. Filter H3N2 for the moment
 traces <- lapply(log_files[!grepl("h3n2", log_files)], tracerer::parse_beast_tracelog_file)
-names(traces) <- basename(log_files)
+names(traces) <- basename(log_files[!grepl("h3n2", log_files)])
 
 # Merge lists into a single data frame
 traces <- traces %>%
@@ -241,19 +241,19 @@ re_tab <- tab %>% select(resolution, starts_with("reproductiveNumber"))
 latex_tab1 <- kable(clock_origin_tab, format = "latex", booktabs = TRUE)
 latex_tab2 <- kable(re_tab, format = "latex", booktabs = TRUE)
 
-writeLines(latex_tab1, "empirical_clock_age.tex")
-writeLines(latex_tab2, "empirical_re.tex")
+writeLines(latex_tab1, "analysis/empirical_data/empirical_clock_age.tex")
+writeLines(latex_tab2, "analysis/empirical_data/empirical_re.tex")
   
 ## Emprirical densitree plots
 
 # List .trees files in the directory
-tree_files <- list.files("empirical_data", pattern = "\\.trees$", full.names = TRUE)
+tree_files <- list.files("analysis/empirical_data", pattern = "Fixed\\.trees$", full.names = TRUE)
 
 # Read and combine the .trees files into lists
 trees <- lapply(tree_files, read.nexus)
 
-# Remove 10% burn-in and sample 100 trees from each posterior
-trees <- lapply(trees, function(x) x[sample((0.1 * length(x)):length(x), 100)])
+# Remove 50% burn-in as above and sample 100 trees from each posterior
+trees <- lapply(trees, function(x) x[sample((0.5 * length(x)):length(x), 100)])
 
 # Name each posterior by file name without path and extension
 names(trees) <- basename(tree_files) %>%
@@ -268,17 +268,20 @@ tree_names <- names(trees) %>%
     str_replace("saureus", "italic(S.~aureus)") %>%
     str_replace("tb", "italic(M.~tuberculosis)") %>%
     str_replace("h1n1", "H1N1") %>%
+    str_replace("h3n2", "H3N2") %>%
     str_replace("sars-cov-2", "SARS-CoV-2")
 
 # colour vector matching order of colouring for resolution and tree prior above
 tree_colour <- c(
-    rep("dodgerblue", 3), rep("darkorange", 3),
-    rep("dodgerblue", 3), rep("darkorange", 3),
-    rep("dodgerblue", 3), rep("dodgerblue", 3)
+    rep("dodgerblue", 3), rep("darkorange", 3), # H1N1
+    rep("dodgerblue", 3), # H3N2
+    rep("dodgerblue", 3), rep("darkorange", 3), # SARS-CoV-2
+    rep("dodgerblue", 3), # S. aureus
+    rep("dodgerblue", 3) # M. Tuberculosis
 )
 
-# lower x limits for each organism
-x_limits <- c(rep(-0.5, 3), rep(-0.6, 3), rep(-0.2, 3), rep(-0.65, 3), rep(-35, 3), rep(-35, 3))
+# lower x limits for each organism. same order as tree_colour
+x_limits <- c(rep(-0.5, 3), rep(-0.6, 3), rep(-9.5, 3), rep(-0.2, 3), rep(-0.65, 3), rep(-35, 3), rep(-35, 3))
 
 tree_plot <- lapply(seq_along(trees), function(i) {
     ggdensitree(
@@ -297,14 +300,14 @@ tree_plot <- lapply(seq_along(trees), function(i) {
 
 # Combine the tree plots into a single panel
 tree_panel <- cowplot::plot_grid(
-    plotlist = tree_plot, ncol = 6,
+    plotlist = tree_plot, ncol = 7,
     labels = "AUTO", byrow = FALSE
 )
 
 # Save the final plot as a PDF
 ggsave(
-    plot = tree_panel, filename = "../figures/empirical_densitrees.pdf",
-    width = 17, height = 10, units = "in", dpi = 300
+    plot = tree_panel, filename = "figures/empirical_densitrees.pdf",
+    width = 19, height = 10, units = "in", dpi = 300
 )
 
 ## Empirical likelihood plots
@@ -354,43 +357,6 @@ ggsave(
     plot = emp_likelihood_plot,
     filename = "figures/empirical_likelihood.pdf",
     width = 17, height = 10, units = "in", dpi = 300
-)
-
-## Checking posterior population size under CE
-epop_plot <- traces %>% 
-    group_by(organism, resolution, treePrior) %>%
-    filter(treePrior == "CE") %>%
-    ggplot(
-        aes(
-            x = ePopSize,
-            y = growthRate,
-            fill = resolution,
-            col = resolution
-        )) +
-    stat_ellipse() +
-    geom_point(shape = 21, size = 3, alpha = 0.1) +
-    facet_wrap(
-        ~ organism, scales = "free_y"
-    ) +
-    scale_x_log10() +
-    labs(
-        x = "Scaled Effective Population Size",
-        y = "Growth Rate",
-    ) +
-    scale_discrete_manual(
-        aesthetics = c("fill", "col"),
-        values = c("red", "dodgerblue", "black")
-    ) +
-    theme(
-        legend.title = element_blank(),
-        legend.position = "bottom",
-        text = element_text(size = 12)
-    )
-
-ggsave(
-    plot = epop_plot,
-    filename = "figures/empirical_effpop.pdf",
-    dpi = 300, width = 6, height = 3
 )
 
 ### Supplementary H3N2 Figures
